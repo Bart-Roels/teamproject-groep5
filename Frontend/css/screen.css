@@ -51,11 +51,30 @@
     margin-right: 28px;
 }
 
+.o-reset-button-index {
+    border: none;
+    background: none;
+}
 
+.o-svg-index {
+    text-align: center;
+}
 
+.o-container-index {
+    margin-left: 32px;
+    margin-right: 32px;
+}
+
+.o-svg-margin {
+    margin-top: 40px;
+}
 /*---------------------------------------/*
  # COMPONENTS
 /*---------------------------------------*/
+
+.c-header-index{
+    text-align: right;
+}
 
 /*---------------------------------------/*
  # UTILITIES
