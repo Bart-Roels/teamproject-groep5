@@ -87,6 +87,15 @@
     color: white;
     font-size: 14px;
     font-weight: 600;
+    text-transform: uppercase;
+}
+
+.o-svg-margin-onboarding {
+    margin-top: 80px;
+}
+
+.o-margin-onboarding3 {
+    margin-top: 100px;
 }
 /*---------------------------------------/*
  # COMPONENTS
