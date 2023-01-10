@@ -68,6 +68,26 @@
 .o-svg-margin {
     margin-top: 40px;
 }
+
+.o-tekst-index{
+    text-align: center;
+}
+
+.o-button-index {
+    text-align: center;
+    margin-top: 32px;
+}
+
+.o-button-layout-index{
+    min-width: 100%;
+    height: 41px;
+    border-radius: 20px;
+    background-color: #707070;
+    border: none;
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+}
 /*---------------------------------------/*
  # COMPONENTS
 /*---------------------------------------*/
