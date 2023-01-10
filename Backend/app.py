@@ -21,7 +21,7 @@ def test():
 
 from helpers.mqqt import Mqqt
 # Mqqt
-mqqt = Mqqt("192.168.168.159", 1883, "jens", "jens")
+mqqt = Mqqt("192.168.220.1", 1883, "paaltje", "pole")
 # Connect to broker
 client = mqqt.connect_mqtt()
 
@@ -52,6 +52,13 @@ def memorryGame():
         mqqt.send(client, str(item), "off")
         # Print sequence
         print(item)
+
+    # While loop to check if sequence is correct
+    while True:
+        # Subscribe to button topic
+        bericht = mqqt.subscribe(client, "button")
+        print(bericht)
+
 
     # Add 1 to sequence_number
     sequence_number += 1

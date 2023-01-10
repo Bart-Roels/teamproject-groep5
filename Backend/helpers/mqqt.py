@@ -97,12 +97,17 @@ class Mqqt:
             print(f"Failed to send message to topic {topic}")
 
     # Method to subscribe to a topic
+   
     def subscribe(self, client, topic):
+        global message_recieved 
         def on_message(client, userdata, msg):
-            print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
+            message_recieved = str(msg.payload.decode("utf-8"))
 
         client.subscribe(topic)
         client.on_message = on_message
+
+        # Return message
+        return message_recieved
         
 
         
