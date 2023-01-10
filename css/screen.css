@@ -1,0 +1,63 @@
+/*---------------------------------------/*
+ # SETTINGS
+/*---------------------------------------*/
+
+/*---------------------------------------/*
+ # GENERIC
+/*---------------------------------------*/
+
+
+/*---------------------------------------/* 
+ # ELEMENTS
+/*---------------------------------------*/
+
+/*---------------------------------------/*
+ # OBJECTS
+/*---------------------------------------*/
+
+.o-container {
+    margin-left: 16px;
+    margin-right: auto;
+    width: 100%;
+}
+
+.c-header {
+    width: 100%;
+    float: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+    margin-bottom: 32px;
+}
+
+
+.c-logo__symbol {
+    height: 100%;
+    margin-bottom: 8px;
+}
+
+        /*
+    Component: mobile nav
+    ---
+    Dedicated mobile nav component
+*/
+
+.aboutme_logos {
+    display: flex;
+}
+
+.aboutmelogo_margin {
+    margin-right: 28px;
+}
+
+
+
+/*---------------------------------------/*
+ # COMPONENTS
+/*---------------------------------------*/
+
+/*---------------------------------------/*
+ # UTILITIES
+/*---------------------------------------*/
+
