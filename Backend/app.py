@@ -3,75 +3,105 @@ import time
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
+import paho.mqtt.client as mqtt
+import random
+import time
+import functools
+import threading
+
+# GLOBAL VARIABLES
+client = mqtt.Client()
+client.username_pw_set("paaltje", "pole")
+client.connect("192.168.220.1", 1883)
+counter = 0
+sequence_number = 1
+sequence = []
+
 #region FLASK APP
 app = Flask(__name__)
 CORS(app)
 endpoint = '/api/v1'
 
 
-@app.route(endpoint + '/test/', methods=['GET'])
+@app.route(endpoint + '/test/', methods=['POST'])
 def test():
-    if request.method == 'GET':
-        memorryGame()
-        return "Test"
+    global sequence_number
+    if request.method == 'POST':
+        sequence_number = 1
+        start_memory()
+        return "oke",200
 
 #endregion
 
 #region HARDWARE APP
 
-from helpers.mqqt import Mqqt
-# Mqqt
-mqqt = Mqqt("192.168.220.1", 1883, "paaltje", "pole")
-# Connect to broker
-client = mqqt.connect_mqtt()
-
-def memorryGame():
 
 
-    # Number of leds
-    sequence_number = 10
-    # Hardware leds
-    leds = [1 ,2, 3, 4]
-    # Sequence
+# MEMORY GAME
+
+def on_message(client, userdata, message):
+    global counter
+    global sequence_number
+    global sequence
+
+    # decode the message
+    received_sequence = message.payload.decode("utf-8")
+    print(received_sequence)
+
+    # check if the received sequence matches the current sequence
+    if int(received_sequence) == sequence[counter]:
+        counter += 1
+
+        # check if the entire sequence has been matched
+        if counter == len(sequence):
+            print("You have won!")
+            counter = 0
+            sequence_number += 1
+            client.loop_stop()
+            sequence = generate_sequence(sequence_number)
+            time.sleep(1)
+            send_sequence(sequence)
+
+    else:
+        print("Sequence does not match. Game over.")
+        # reset sequence number to 0
+        sequence_number = 0
+        client.loop_stop()
+        counter = 0
+
+
+def generate_sequence(sequence_number):
+    leds = [3, 4, 1 ,2]
     sequence = []
-    # Generate sequence
     for i in range(sequence_number):
-        # Generate random led out leds list
         led = leds[random.randint(0, len(leds)-1)]
-        # Add led to sequence
         sequence.append(led)
-        # Return sequence
-  
-    # Publish sequence to broker
-    for item in sequence:
-        # Publish on to I topic
-        mqqt.send(client, str(item), "on")
-        # Delay 
+    return sequence
+
+def send_sequence(sequence):
+    for i in range(len(sequence)):
+        print("SEND XX")
+        client.publish(str(sequence[i]), "on")
+        time.sleep(5)
+        client.publish(str(sequence[i]), "off")
         time.sleep(1)
-        # Publish off to I topic
-        mqqt.send(client, str(item), "off")
-        # Print sequence
-        print(item)
 
-    # While loop to check if sequence is correct
-    while True:
-        # Subscribe to button topic
-        bericht = mqqt.subscribe(client, "button")
-        print(bericht)
-
-
-    # Add 1 to sequence_number
-    sequence_number += 1
-
-
-
-
+def start_memory():
+    global client
+    global sequence_number
+    global sequence
+    client.subscribe("button")
+    sequence = generate_sequence(sequence_number)
+    send_sequence(sequence)
+    client.on_message = on_message
+    client.loop_start()
 
 #endregion 
-
 
 
 # Start app
 if __name__ == '__main__':
     app.run(debug=False)
+    print("Starting project")
+
 
