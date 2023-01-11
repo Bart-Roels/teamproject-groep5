@@ -2,6 +2,11 @@
  # SETTINGS
 /*---------------------------------------*/
 
+html {
+    background-color: #F2F2F2;
+}
+
+
 /*---------------------------------------/*
  # GENERIC
 /*---------------------------------------*/
@@ -120,6 +125,11 @@
     padding-top: 57px;  
     padding-bottom: 57px;
     text-align: center;
+}
+
+.o-footer {
+    background-color: white;
+    width: 100%;
 }
 
 
