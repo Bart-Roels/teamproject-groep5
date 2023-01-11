@@ -2,6 +2,11 @@
  # SETTINGS
 /*---------------------------------------*/
 
+html {
+    background-color: #F2F2F2;
+}
+
+
 /*---------------------------------------/*
  # GENERIC
 /*---------------------------------------*/
@@ -97,6 +102,37 @@
 .o-margin-onboarding3 {
     margin-top: 100px;
 }
+
+.o-container-home {
+    margin-left: 16px;
+    margin-right: 16px;
+}
+
+.o-margin-top-home {
+    margin-top: 70px;
+}
+
+
+.grid-container {
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-gap: 16px;
+}
+
+.grid-item {
+    background-color: gray;
+    border-radius: 20px;
+    padding-top: 57px;  
+    padding-bottom: 57px;
+    text-align: center;
+}
+
+.o-footer {
+    background-color: white;
+    width: 100%;
+}
+
+
 /*---------------------------------------/*
  # COMPONENTS
 /*---------------------------------------*/
