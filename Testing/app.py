@@ -19,6 +19,10 @@ def on_all():
         time.sleep(1)
         client.publish(str(i), "off")
 
+def zen_game():
+    client.publish("1", "1")
+
+
 # MQQT CLIENT
 def on_message(client, userdata, message):
     global game
@@ -36,6 +40,7 @@ def on_message(client, userdata, message):
         elif message == "zen":
             game = "zen"
             print("zen")
+            zen_game()
         elif message == "minesweepr":
             game = "minesweepr"
             print("minesweepr")
@@ -70,8 +75,9 @@ client.on_message= on_message
 # Subscribe to the topic "game"
 client.subscribe("games")
 client.subscribe("buttons")
-client.loop_forever()
+# client.loop_forever()
 
 if __name__ == '__main__':
     print("Starting server")
+    on_all()
     app.run(debug=False)
