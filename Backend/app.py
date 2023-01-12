@@ -73,6 +73,7 @@ def on_message(client, userdata, message):
 def generate_sequence(sequence_number):
     leds = [3, 4, 1 ,2]
     sequence = []
+    #test
     for i in range(sequence_number):
         led = leds[random.randint(0, len(leds)-1)]
         sequence.append(led)
