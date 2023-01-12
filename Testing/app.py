@@ -15,9 +15,17 @@ button4 = "off"
 # turn on all led's mqqt
 def on_all():
     for i in range(1, 5):
-        client.publish(str(i), "1")
+        client.publish(str(i), "0")
         time.sleep(1)
         client.publish(str(i), "off")
+
+#code voor game red vs blue
+def redvsblue():
+    client.publish(str(1), "0")
+    client.loop(1)
+    client.publish(str(1), "off")
+
+
 
 # MQQT CLIENT
 def on_message(client, userdata, message):
@@ -33,6 +41,7 @@ def on_message(client, userdata, message):
         elif message == "redblue":
             game = "redblue"
             print("redblue")
+            redvsblue()
         elif message == "zen":
             game = "zen"
             print("zen")
@@ -41,6 +50,7 @@ def on_message(client, userdata, message):
             print("minesweepr")
     if topic == "buttons":
         if message == "1":
+            # test_first_led()
             button1 = "on"
         elif message == "2":
             button2 = "on"
@@ -61,6 +71,8 @@ def on_message(client, userdata, message):
         # elif game == "minesweepr":
         #     # Do read button stuff voor minesweepr
         #     print("minesweeper button incomming")
+
+
 
         
 client = mqtt.Client()
