@@ -60,7 +60,8 @@ def on_message(client, userdata, message):
             client.loop_stop()
             sequence = generate_sequence(sequence_number)
             time.sleep(1)
-            send_sequence(sequence)
+            for i in range(len(sequence)):
+                send_sequence(i)
 
     else:
         print("Sequence does not match. Game over.")
@@ -73,18 +74,17 @@ def on_message(client, userdata, message):
 def generate_sequence(sequence_number):
     leds = [3, 4, 1 ,2]
     sequence = []
-    #test
     for i in range(sequence_number):
         led = leds[random.randint(0, len(leds)-1)]
         sequence.append(led)
     return sequence
 
-def send_sequence(sequence):
-    for i in range(len(sequence)):
+def send_sequence(i):
         print("SEND XX")
-        client.publish(str(sequence[i]), "on")
-        time.sleep(5)
-        client.publish(str(sequence[i]), "off")
+        client.publish(str(i), "on")
+        print(i)
+        time.sleep(1)
+        client.publish(str(i), "off")
         time.sleep(1)
 
 def start_memory():
