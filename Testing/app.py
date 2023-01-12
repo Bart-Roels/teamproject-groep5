@@ -1,4 +1,6 @@
 import time
+import threading
+import random
 from flask import Flask, request
 import paho.mqtt.client as mqtt
 import socket
@@ -12,22 +14,23 @@ button2 = "off"
 button3 = "off"
 button4 = "off"
 
+score_team_blue = 0
+score_team_red = 0
+
 # turn on all led's mqqt
+
+
 def on_all():
     for i in range(1, 5):
         client.publish(str(i), "0")
         time.sleep(1)
         client.publish(str(i), "off")
 
-#code voor game red vs blue
-def redvsblue():
-    client.publish(str(1), "0")
-    client.loop(1)
-    client.publish(str(1), "off")
-
 
 
 # MQQT CLIENT
+
+
 def on_message(client, userdata, message):
     global game
     # print topic and message
@@ -72,18 +75,22 @@ def on_message(client, userdata, message):
         #     # Do read button stuff voor minesweepr
         #     print("minesweeper button incomming")
 
+def redvsblue():
+    print('red vs blue')
+    for i in range(1, 5):
+        client.publish(str(i), "0")
+        time.sleep(1)
+        client.publish(str(i), "off")
 
-
-        
 client = mqtt.Client()
 client.connect("127.0.0.1", 1883)
-client.on_message= on_message 
-# Hier zet je MQQT CODE VOOR NAAR WEB SERVER TE STUREN 
+client.on_message = on_message
+# Hier zet je MQQT CODE VOOR NAAR WEB SERVER TE STUREN
 # Subscribe to the topic "game"
 client.subscribe("games")
 client.subscribe("buttons")
 client.loop_forever()
 
-if __name__ == '__main__':
+while True:
     print("Starting server")
     app.run(debug=False)
