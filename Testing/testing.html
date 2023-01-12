@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="testing.css">
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+    <script src="testing.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="led-container">
+        <svg class="led " id="led-1" viewBox="0 0 100 100" stroke="black" stroke-width="3" opacity="0.3">
+            <circle cx="50" cy="50" r="40" fill="red"  ></circle>
+        </svg>
+        <svg class="led " id="led-2" viewBox="0 0 100 100" stroke="black" stroke-width="3"  opacity="0.3" >
+            <circle cx="50" cy="50" r="40" fill="yellow"></circle>
+        </svg>
+        <svg class="led " id="led-3" viewBox="0 0 100 100" stroke="black" stroke-width="3" opacity="0.3">
+            <circle cx="50" cy="50" r="40" fill="green"  ></circle>
+        </svg>
+        <svg class="led " id="led-4" viewBox="0 0 100 100" stroke="black" stroke-width="3"  opacity="0.3">
+            <circle cx="50" cy="50" r="40" fill="blue" ></circle>
+        </svg>
+      </div>
+      <div class="button-container">
+        <button class="red-button" data-led-id="1">Red</button>
+        <button class="yellow-button" data-led-id="2">Yellow</button>
+        <button class="green-button" data-led-id="3">Green</button>
+        <button class="blue-button" data-led-id="4">Blue</button>
+      </div>
+    </div>
+  </body>
+</html>
