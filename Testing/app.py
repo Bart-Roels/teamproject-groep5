@@ -4,9 +4,31 @@ import socket
 
 app = Flask(__name__)
 
-# Connect to the MQTT broker
+
+# Define the callbacks for connecting, publishing and receiving messages
+def on_connect(client, userdata, flags, rc):
+    print("Connected with result code "+str(rc))
+    # Subscribing in on_connect() means that if we lose the connection and
+    # reconnect then subscriptions will be renewed.
+    client.subscribe("1")
+
+
+def on_message(client, userdata, msg):
+    print(msg.topic+" "+str(msg.payload))
+
+# Create the MQTT client and set the callbacks
 client = mqtt.Client()
-client.connect("ws://localhost:9001")
+client.on_connect = on_connect
+client.on_message = on_message
+
+# Connect to the MQTT WebSocket
+client.connect("ws://localhost", port=9100, keepalive=60)
+
+# Start the loop to process incoming MQTT messages
+client.loop_forever()
+
+
+# FLASK
 
 @app.route('/turn_on_led', methods=['POST'])
 def turn_on_led():
@@ -18,6 +40,7 @@ def turn_on_led():
     client.publish("leds/{}".format(led_id), 'on')
 
     return "Led turned on!"
+
 
 if __name__ == '__main__':
     app.run(debug=True)
