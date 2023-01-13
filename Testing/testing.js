@@ -5,7 +5,7 @@ client.on('connect', () => {
   console.log('Connected to the MQTT WebSocket');
   const colorsArray = ['red', 'yellow', 'green', 'blue'];
   // Subscribe to the topics
-  client.subscribe('0');
+  client.subscribe('0'); 
   client.subscribe('1');
   client.subscribe('2');
   client.subscribe('3');

@@ -75,6 +75,7 @@ def analyse_pressed_buttons(number):
         global score_team_red
         score_team_red += 1
         print(f"score red: {score_team_red}")
+        #client.publish("memorypoints",f"score red:{score_team_red} score blue:{score_team_blue}")
         redvsblue()
 
     elif number == blue_led:
@@ -83,7 +84,7 @@ def analyse_pressed_buttons(number):
         score_team_blue += 1
         print(f"score blue: {score_team_blue}")
         redvsblue()
-
+    client.publish("memorypoints",f"score red:{score_team_red} score blue:{score_team_blue}")
 
 def random_leds():
     a = random.randint(0, 3)
