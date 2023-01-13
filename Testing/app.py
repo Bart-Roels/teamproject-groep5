@@ -61,8 +61,9 @@ def on_message(client, userdata, message):
 
 # GAMES
 def generate_sequence(sequence_number):
-    leds = [0, 1, 2, 3]
-    global sequence
+    # 2, 3
+    leds = [0, 1, 2 , 3]
+    global sequenc
     # Generate sequence
     for i in range(sequence_number):
         led = leds[random.randint(0, len(leds)-1)]
@@ -97,6 +98,13 @@ def send_sequence(sequence, blink = False):
 
 
 def check_sequence(received_sequence):
+    client.publish(str(received_sequence), str(received_sequence))
+    client.loop()
+    time.sleep(0.5)
+    client.publish(str(received_sequence), "off")
+    client.loop()
+    time.sleep(0.5)
+
     global sequence_number
     global sequence
     global counter
