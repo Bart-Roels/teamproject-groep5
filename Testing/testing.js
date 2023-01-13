@@ -5,37 +5,43 @@ client.on('connect', () => {
   console.log('Connected to the MQTT WebSocket');
   const colorsArray = ['red', 'yellow', 'green', 'blue'];
   // Subscribe to the topics
+  client.subscribe('0');
   client.subscribe('1');
   client.subscribe('2');
   client.subscribe('3');
-  client.subscribe('4');
+  client.subscribe('memorypoints');
   // Handle messages received on the subscribed topic
   client.on('message', (topic, message) => {
     message = message.toString();
     console.log('Received message on topic ' + topic + ': ' + message);
     // Check the message
-    if (message === 'off') {
-      if (topic === '1') {
-        document.getElementById('led-1').style.backgroundColor = 'white';
-      } else if (topic === '2') {
-        document.getElementById('led-2').style.backgroundColor = 'white';
-      } else if (topic === '3') {
-        document.getElementById('led-3').style.backgroundColor = 'white';
-      } else if (topic === '4') {
-        document.getElementById('led-4').style.backgroundColor = 'white';
-      }
+    if (topic === 'memorypoints') {
+      document.getElementById('memorypoints').innerHTML = message;
     } else {
-      index = parseInt(message);
-      if (topic === '1') {
-        console.log('LED 1 on');
-        // Set opacity to 1
-        document.getElementById('led-1').style.backgroundColor = colorsArray[index];
-      } else if (topic === '2') {
-        document.getElementById('led-2').style.backgroundColor = colorsArray[index];
-      } else if (topic === '3') {
-        document.getElementById('led-3').style.backgroundColor = colorsArray[index];
-      } else if (topic === '4') {
-        document.getElementById('led-4').style.backgroundColor = colorsArray[index];
+      if (message === 'off') {
+        if (topic === '0') {
+          document.getElementById('led-1').style.backgroundColor = 'white';
+        } else if (topic === '1') {
+          document.getElementById('led-2').style.backgroundColor = 'white';
+        } else if (topic === '2') {
+          document.getElementById('led-3').style.backgroundColor = 'white';
+        } else if (topic === '3') {
+          document.getElementById('led-4').style.backgroundColor = 'white';
+        }
+      } else {
+        index = parseInt(message);
+        index = index;
+        if (topic === '0') {
+          console.log('LED 1 on');
+          // Set opacity to 1
+          document.getElementById('led-1').style.backgroundColor = colorsArray[index];
+        } else if (topic === '1') {
+          document.getElementById('led-2').style.backgroundColor = colorsArray[index];
+        } else if (topic === '2') {
+          document.getElementById('led-3').style.backgroundColor = colorsArray[index];
+        } else if (topic === '3') {
+          document.getElementById('led-4').style.backgroundColor = colorsArray[index];
+        }
       }
     }
   });

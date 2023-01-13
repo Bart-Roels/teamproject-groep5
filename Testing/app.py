@@ -49,30 +49,27 @@ def on_message(client, userdata, message):
             game = "minesweepr"
             print("minesweepr")
     if topic == "buttons":
-        if message == "1":
-            analyse_pressed_buttons(1)
-        elif message == "2":
-            analyse_pressed_buttons(2)
-        elif message == "3":
-            analyse_pressed_buttons(3)
-        elif message == "4":
-            analyse_pressed_buttons(4)
+        if game == "memory":
+            # Do read button stuff voor memory
+            print("memory button incomming")
+        elif game == "redblue":
+            # Do read button stuff voor redblue
+            print("red vs blue button incomming")
+            analyse_pressed_buttons(int(message))
+        elif game == "zen":
+            # Do read button stuff voor zen
+            print("zen button incomming")
+        elif game == "minesweepr":
+            # Do read button stuff voor minesweepr
+            print("minesweeper button incomming")
 
-        # if game == "memory":
-        #     # Do read button stuff voor memory
-        #     print("memory button incomming")
-        # elif game == "redblue":
-        #     # Do read button stuff voor redblue
-        #     print("red vs blue button incomming")
-        # elif game == "zen":
-        #     # Do read button stuff voor zen
-        #     print("zen button incomming")
-        # elif game == "minesweepr":
-        #     # Do read button stuff voor minesweepr
-        #     print("minesweeper button incomming")
 
 def analyse_pressed_buttons(number):
-    print(f"button pressed: {number}")
+    global game
+    global red_led
+    global blue_led
+    print(f"red: {red_led} blue:{blue_led}")
+    print(f"button pressed: {number}; {game}")
     if number == red_led:
         print("red wins")
         global score_team_red
@@ -88,21 +85,18 @@ def analyse_pressed_buttons(number):
         redvsblue()
 
 
-
 def random_leds():
-
-    a = random.randint(1, 4)
-    b = random.randint(1, 4)
-
+    a = random.randint(0, 3)
+    b = random.randint(0, 3)
     while a == b:
-        b = random.randint(1, 4)
+        b = random.randint(0, 3)
     return [a, b]
 
 
 def redvsblue():
     global red_led, blue_led
     print('red vs blue')
-    for i in range(1, 5):
+    for i in range(0, 4):
         client.publish(str(i), "off")
     list_leds = random_leds()
     print(list_leds)
