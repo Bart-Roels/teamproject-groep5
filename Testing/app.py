@@ -15,18 +15,10 @@ sequence = [] # for memory
 won = [2,2,2,2] # for memory 
 lose = [0,0,0,0]
 
+# MQQT CLIENT       
 
 
-
-def send_message():
-    client.loop_start()
-    # Publish message
-    client.publish(str(1), str(2))
-    time.sleep(2)
-    client.publish(str(1), "off")
-    client.loop_stop()
-       
-
+   
 # Handeling incomming messages
 def on_message(client, userdata, message):
     global game
@@ -62,6 +54,11 @@ def on_message(client, userdata, message):
             # Do read button stuff voor minesweepr
             print("minesweeper button incomming")
 
+def on_connect(client, userdata, flags, rc):
+    print("Connected with result code " + str(rc))
+    client.subscribe("buttons")
+    client.subscribe("games")
+
 # GAMES
 def generate_sequence(sequence_number):
     # 2, 3
@@ -72,7 +69,6 @@ def generate_sequence(sequence_number):
         led = leds[random.randint(0, len(leds)-1)]
         sequence.append(led)
     return sequence
-
 
 def send_sequence(sequence, blink = False):
     global bussy
@@ -99,7 +95,6 @@ def send_sequence(sequence, blink = False):
             client.publish(str(i), "off")
 
     bussy = False
-
 
 def check_sequence(received_sequence):
     # Replay sequence
@@ -140,7 +135,6 @@ def check_sequence(received_sequence):
         send_sequence(lose, False)
         send_sequence(sequence=sequence, blink=True)
 
-
 def start_memory():
     global bussy 
     global sequence_number
@@ -149,15 +143,23 @@ def start_memory():
     sequence = generate_sequence(sequence_number)
     send_sequence(sequence, True)
 
-# MQQT CLIENT       
-client = mqtt.Client()
-client.connect("127.0.0.1", 1883)
-client.on_message= on_message 
-client.subscribe("games")
-client.subscribe("buttons")
-client.loop_forever()
+
+
+# FLASK ROUTES
+@app.route('/test', methods=['GET'])
+def test():
+    return "test"
 
 # APP START
 if __name__ == '__main__':
-    print("Starting server")
-    app.run(debug=False)
+    client = mqtt.Client()
+    #client.username_pw_set(username, password)
+    client.on_connect = on_connect
+    client.on_message = on_message
+    client.connect("127.0.0.1", 1883)
+    client.loop_forever()
+    app.run(host='0.0.0.0', debug=True, port=5000)
+
+
+
+

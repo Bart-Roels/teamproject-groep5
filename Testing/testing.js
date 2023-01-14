@@ -63,7 +63,7 @@ const listen = () => {
     btn.addEventListener('click', () => {
       const message = btn.getAttribute('data-led-id');
       client.publish('buttons', message);
-      // console.log(`Button ${message} pressed`);
+      console.log(`Button ${message} pressed en send to MQTT`);
     });
   });
 };
