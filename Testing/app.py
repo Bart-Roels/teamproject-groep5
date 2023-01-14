@@ -1,10 +1,8 @@
 import random
 import time
 from flask import Flask, request
-import paho.mqtt.client as mqtt
-import socket
-
-app = Flask(__name__)
+from flask_mqtt import Mqtt
+from flask_socketio import SocketIO
 
 # GLOBAL VARIABLES
 game = "none"
@@ -15,12 +13,28 @@ sequence = [] # for memory
 won = [2,2,2,2] # for memory 
 lose = [0,0,0,0]
 
-# MQQT CLIENT       
+# MQQT CLIENT  
+app = Flask(__name__)
+app.config['SECRET'] = 'my secret key'   
+app.config['MQTT_BROKER_URL'] = '127.0.0.1'
+app.config['MQTT_BROKER_PORT'] = 1883
+app.config['MQTT_REFRESH_TIME'] = 1.0  # refresh time in seconds
+mqtt = Mqtt(app)
+
+# Send simple message
+def send_demo():
+    sequence = [0,1,2,3]
+    for item in sequence:
+        mqtt.publish(str(item), "1")
+        print(f"Sending: {item}")
+        time.sleep(1)
+        mqtt.publish(str(item), "off")
+        print(f"Sending: off")
 
 
-   
-# Handeling incomming messages
-def on_message(client, userdata, message):
+
+@mqtt.on_message()
+def handle_mqtt_message(client, userdata, message):
     global game
     # print topic and message
     topic = message.topic
@@ -30,7 +44,7 @@ def on_message(client, userdata, message):
         if message == "memory":
             game = "memory"
             print("starting memory")
-            start_memory()
+            send_demo()
         elif message == "redblue":
             game = "redblue"
             print("redblue")
@@ -54,16 +68,17 @@ def on_message(client, userdata, message):
             # Do read button stuff voor minesweepr
             print("minesweeper button incomming")
 
-def on_connect(client, userdata, flags, rc):
+@mqtt.on_connect()
+def handle_connect(client, userdata, flags, rc):
     print("Connected with result code " + str(rc))
-    client.subscribe("buttons")
-    client.subscribe("games")
+    mqtt.subscribe("buttons")
+    mqtt.subscribe("games")
+
 
 # GAMES
 def generate_sequence(sequence_number):
-    # 2, 3
     leds = [0, 1, 2 , 3]
-    global sequenc
+    global sequence
     # Generate sequence
     for i in range(sequence_number):
         led = leds[random.randint(0, len(leds)-1)]
@@ -72,38 +87,35 @@ def generate_sequence(sequence_number):
 
 def send_sequence(sequence, blink = False):
     global bussy
-
     if(blink == True):
         for item in sequence:
             # Publish message
-            client.publish(str(item), str(item))
+            mqtt.publish(str(item), "1")
             print(f"Sending: {item}")
 
-            client.loop()
+            # Wait 2 seconds before sending next message mqqt flask
             time.sleep(2)
 
             print("Sending: off")
-            client.publish(str(item), "off")
+            mqtt.publish(str(item), "off")
     else:
-        client.publish(str(0), str(sequence[0]))
-        client.publish(str(1), str(sequence[1]))
-        client.publish(str(2), str(sequence[2]))
-        client.publish(str(3), str(sequence[3]))
-        client.loop()
-        time.sleep(2)
+        mqtt.publish(str(0), str(sequence[0]))
+        mqtt.publish(str(1), str(sequence[1]))
+        mqtt.publish(str(2), str(sequence[2]))
+        mqtt.publish(str(3), str(sequence[3]))
+        time.sleep(1)
         for i in range(0,5):
-            client.publish(str(i), "off")
+            mqtt.publish(str(i), "off")
 
     bussy = False
 
 def check_sequence(received_sequence):
     # Replay sequence
-    client.publish(str(received_sequence), str(received_sequence))
-    client.loop()
+    mqtt.publish(str(received_sequence), str(received_sequence))
     time.sleep(0.5)
-    client.publish(str(received_sequence), "off")
-    client.loop()
+    mqtt.publish(str(received_sequence), "off")
     time.sleep(0.5)
+
 
     # Global variables
     global sequence_number
@@ -123,7 +135,7 @@ def check_sequence(received_sequence):
             sequence = []
             # You have won
             print(f"You have won! your points: {sequence_number}")
-            client.publish("memorypoints", str(sequence_number))
+            mqtt.publish("memorypoints", str(sequence_number))
             send_sequence(won, False)
             # Start new game en higher sequence 
             sequence_number += 1
@@ -136,30 +148,22 @@ def check_sequence(received_sequence):
         send_sequence(sequence=sequence, blink=True)
 
 def start_memory():
+    # Global variables
     global bussy 
     global sequence_number
-    global sequence
+    # Start game
     bussy = True
     sequence = generate_sequence(sequence_number)
-    send_sequence(sequence, True)
+    send_sequence(sequence=sequence, blink=True)
 
+# Flask route
+@app.route('/')
+def index():
+    send_demo()
+    return "Hello World"
 
-
-# FLASK ROUTES
-@app.route('/test', methods=['GET'])
-def test():
-    return "test"
 
 # APP START
 if __name__ == '__main__':
-    client = mqtt.Client()
-    #client.username_pw_set(username, password)
-    client.on_connect = on_connect
-    client.on_message = on_message
-    client.connect("127.0.0.1", 1883)
-    client.loop_forever()
-    app.run(host='0.0.0.0', debug=True, port=5000)
-
-
-
+    app.run(debug=False, host='0.0.0.0')
 

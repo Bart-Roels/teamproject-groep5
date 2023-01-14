@@ -54,7 +54,7 @@ const listen = () => {
     btn.addEventListener('click', () => {
       const topic = btn.getAttribute('data-game-id');
       client.publish('games', topic);
-      // console.log(`Start game ${topic}`);
+      console.log(`Start game ${topic}`);
     });
   });
 
