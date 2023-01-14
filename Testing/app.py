@@ -9,12 +9,19 @@ app = Flask(__name__)
 
 # GLOBAL VARIABLES
 game = "none"
+
+#global variables for redblue
 red_led = -1
 blue_led = -1
 
 score_team_blue = 0
 score_team_red = 0
 
+#global variables for zen
+random_led_zen = -1
+random_color_zen = -1
+previous_time = -1
+total_score_zen = 0
 # turn on all led's mqqt
 
 
@@ -45,6 +52,7 @@ def on_message(client, userdata, message):
         elif message == "zen":
             game = "zen"
             print("zen")
+            zen_game()
         elif message == "minesweepr":
             game = "minesweepr"
             print("minesweepr")
@@ -55,16 +63,17 @@ def on_message(client, userdata, message):
         elif game == "redblue":
             # Do read button stuff voor redblue
             print("red vs blue button incomming")
-            analyse_pressed_buttons(int(message))
+            analyse_pressed_buttons_redvsblue(int(message))
         elif game == "zen":
             # Do read button stuff voor zen
             print("zen button incomming")
+            analyse_buttons_zen(int(message))
         elif game == "minesweepr":
             # Do read button stuff voor minesweepr
             print("minesweeper button incomming")
 
 
-def analyse_pressed_buttons(number):
+def analyse_pressed_buttons_redvsblue(number):
     global game
     global red_led
     global blue_led
@@ -86,6 +95,36 @@ def analyse_pressed_buttons(number):
         redvsblue()
     client.publish("memorypoints",f"score red:{score_team_red} score blue:{score_team_blue}")
 
+def reward_response_time(response_time):
+    global total_score_zen
+    print(f"response time: {response_time}")
+    if response_time < 1:
+        print("reward 10")
+        total_score_zen += 10    
+    elif response_time < 3:
+        print("reward 5")
+        total_score_zen += 5
+    elif response_time < 5:
+        print("reward 3")
+        total_score_zen += 3
+    elif response_time < 10:
+        print("reward 2")
+        total_score_zen += 2
+    else:
+        print("reward 1")
+        total_score_zen += 1
+    
+    client.publish("memorypoints",f"score zen:{total_score_zen} - response time:{response_time}")
+def analyse_buttons_zen(number):
+    global game
+    global random_led_zen
+    global previous_time
+    print(f"button pressed: {number}; {game}")
+    if number == random_led_zen:
+        response_time = time.time() - previous_time
+        print(f"correct {response_time}")
+        reward_response_time(response_time)
+        zen_game()
 def random_leds():
     a = random.randint(0, 3)
     b = random.randint(0, 3)
@@ -105,6 +144,18 @@ def redvsblue():
     blue_led = list_leds[1]
     client.publish(str(red_led), "0")
     client.publish(str(blue_led), "3")
+
+def zen_game():
+    global random_led_zen
+    global random_color_zen
+    global previous_time
+    print('zen game started')
+    for i in range(0, 4):
+        client.publish(str(i), "off")
+    random_led_zen = random.randint(0, 3)
+    random_color = random.randint(0, 3)
+    client.publish(str(random_led_zen), str(random_color))
+    previous_time = time.time()
 
 
 client = mqtt.Client()
