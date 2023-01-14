@@ -1,27 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/screen.css">
-    <link rel="stylesheet" href="css/mobilenav-components.css">
-    <title>Document</title>
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                toggleNav();
-            })
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Over ons | Interactieve paaltjes</title>
+    <meta name="description" content="Speel onze interactieve paaltjes">
 
-            function toggleNav() {
-                let toggleTrigger = document.querySelectorAll(".js-toggle-nav");
-                for (let i = 0; i < toggleTrigger.length; i++) {
-                    toggleTrigger[i].addEventListener("touchstart", function () {
-                        document.querySelector("html").classList.toggle("has-mobile-nav");
-                    })
-                }
-            }
-        </script>
-</head>
+    <link rel="icon" href="img/logos/favicon.svg" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+    <link rel="manifest" href="manifest.json" />
+
+    <link rel="stylesheet" href="css/normalize.css" />
+    <link rel="stylesheet" href="css/screen.css" />
+
+    <script src="script/datahandler.js"></script>
+    <script src="script/app.js"></script>
+  </head>
 <body>
     <main>
     <div>
