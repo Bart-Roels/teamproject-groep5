@@ -8,11 +8,13 @@ app = Flask(__name__)
 
 # GLOBAL VARIABLES
 game = "none"
+bussy = False
 counter = 0 # for memory
 sequence_number = 1 # for memory
 sequence = [] # for memory
 won = [2,2,2,2] # for memory 
 lose = [0,0,0,0]
+
 
 
 
@@ -48,7 +50,8 @@ def on_message(client, userdata, message):
             print("minesweepr")
     if topic == "buttons":
         if game == "memory":
-            check_sequence(message)
+            if bussy == False:
+                check_sequence(message)
         elif game == "redblue":
             # Do read button stuff voor redblue
             print("red vs blue button incomming")
@@ -72,6 +75,8 @@ def generate_sequence(sequence_number):
 
 
 def send_sequence(sequence, blink = False):
+    global bussy
+
     if(blink == True):
         for item in sequence:
             # Publish message
@@ -93,11 +98,11 @@ def send_sequence(sequence, blink = False):
         for i in range(0,5):
             client.publish(str(i), "off")
 
-
-
+    bussy = False
 
 
 def check_sequence(received_sequence):
+    # Replay sequence
     client.publish(str(received_sequence), str(received_sequence))
     client.loop()
     time.sleep(0.5)
@@ -105,11 +110,13 @@ def check_sequence(received_sequence):
     client.loop()
     time.sleep(0.5)
 
+    # Global variables
     global sequence_number
     global sequence
     global counter
     global won
     global lose
+
     print(int(received_sequence) == sequence[counter])
     # check if the received sequence matches the current sequence
     if int(received_sequence) == sequence[counter]:
@@ -125,6 +132,7 @@ def check_sequence(received_sequence):
             send_sequence(won, False)
             # Start new game en higher sequence 
             sequence_number += 1
+            # Start new game
             start_memory()
     else:
         print("Sequence does not match. Game over.")
@@ -133,10 +141,11 @@ def check_sequence(received_sequence):
         send_sequence(sequence=sequence, blink=True)
 
 
-
 def start_memory():
+    global bussy 
     global sequence_number
     global sequence
+    bussy = True
     sequence = generate_sequence(sequence_number)
     send_sequence(sequence, True)
 
