@@ -77,15 +77,29 @@ def analyse_buttons_minesweeper(message):
     print(f'button {message} pressed; game: {game}')
     if message == str(list_minesweeper[index_minesweeper]):
         print('correct')
+        client.publish(str(list_minesweeper[index_minesweeper]), "2")
         index_minesweeper += 1
         print(f'score: {index_minesweeper}')
         if index_minesweeper == 4:
+            client.loop()
+            time.sleep(1)
             print('game won')
             score_minesweeper += 1
-            index_minesweeper = 0
             client.publish('memorypoints', str(score_minesweeper))
+            index_minesweeper = 0
+            for i in range(4):
+                client.publish(str(i), "off")
+            client.loop()
+            time.sleep(1)
+            
             minesweeper()
     else:
+        for i in range(4):
+            client.publish(str(i), "0")
+        client.loop()
+        time.sleep(1)
+        for i in range(4):
+            client.publish(str(i), "off")
         print('wrong')
         index_minesweeper = 0
         minesweeper()
