@@ -1,4 +1,5 @@
-import time, random
+import time
+import random
 from flask import Flask, request
 import paho.mqtt.client as mqtt
 import socket
@@ -12,7 +13,7 @@ button2 = "off"
 button3 = "off"
 button4 = "off"
 
-#global variables for minesweeper
+# global variables for minesweeper
 
 list_minesweeper = []
 index_minesweeper = 0
@@ -27,46 +28,7 @@ def on_all():
         time.sleep(1)
         client.publish(str(i), "off")
 
-# Minesweeper
 
-
-def start_minesweepr():
-    print('start minesweeper')
-    global list_minesweeper
-    global index_minesweeper
-    for i in range(4):
-        client.publish(str(i), "off")
-    list_minesweeper = random.sample(range(4),4)
-    show_sequence_minesweeper(1)
-    print(list_minesweeper)
-
-def analyse_buttons_minesweeper(number):
-    global game
-    global list_minesweeper
-    global index_minesweeper
-    global score_minesweeper
-    print(f"button pressed: {number}; {game}")
-    if number == list_minesweeper[index_minesweeper]:
-        print('correct')
-        index_minesweeper += 1
-        if index_minesweeper == 4:
-            print('game won')
-            score_minesweeper += 1
-
-            index_minesweeper = 0
-            start_minesweepr()
-        show_sequence_minesweeper(index_minesweeper + 1)
-    else:
-        print('game over')
-        index_minesweeper = 0
-        start_minesweepr()
-def show_sequence_minesweeper(number):
-    print('show sequence')
-    global list_minesweeper
-    global index_minesweeper
-    for i in range(number):
-        client.publish(str(list_minesweeper[i]), str(list_minesweeper[i]))
-        
 # MQQT CLIENT
 
 
@@ -89,7 +51,7 @@ def on_message(client, userdata, message):
         elif message == "minesweepr":
             game = "minesweepr"
             print("minesweepr")
-            start_minesweepr()
+            minesweeper()
     if topic == "buttons":
         if game == "memory":
             # Do read button stuff voor memory
@@ -103,7 +65,41 @@ def on_message(client, userdata, message):
         elif game == "minesweepr":
             # Do read button stuff voor minesweepr
             print("minesweeper button incomming")
-            analyse_buttons_minesweeper(int(message))
+            analyse_buttons_minesweeper(message)
+
+# Minesweeper
+
+
+def analyse_buttons_minesweeper(message):
+    global game
+    global index_minesweeper
+    global score_minesweeper
+    print(f'button {message} pressed; game: {game}')
+    if message == str(list_minesweeper[index_minesweeper]):
+        print('correct')
+        index_minesweeper += 1
+        print(f'score: {index_minesweeper}')
+        if index_minesweeper == 4:
+            print('game won')
+            score_minesweeper += 1
+            index_minesweeper = 0
+            client.publish('memorypoints', str(score_minesweeper))
+            minesweeper()
+    else:
+        print('wrong')
+        index_minesweeper = 0
+        minesweeper()
+
+def minesweeper():
+    print('start minesweeper')
+    global list_minesweeper
+    global index_minesweeper
+    list_minesweeper = random.sample(range(4), 4)
+    print(list_minesweeper)
+    client.publish(str(list_minesweeper[index_minesweeper]), "1")
+    client.loop()
+    time.sleep(1)
+    client.publish(str(list_minesweeper[index_minesweeper]), "off")
 
 
 client = mqtt.Client()
