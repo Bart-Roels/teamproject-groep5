@@ -18,6 +18,7 @@ button4 = "off"
 list_minesweeper = []
 index_minesweeper = 0
 score_minesweeper = 0
+level_minesweeper = -1
 
 # turn on all led's mqqt
 
@@ -51,7 +52,7 @@ def on_message(client, userdata, message):
         elif message == "minesweepr":
             game = "minesweepr"
             print("minesweepr")
-            minesweeper()
+            start_minesweeper()
     if topic == "buttons":
         if game == "memory":
             # Do read button stuff voor memory
@@ -74,27 +75,103 @@ def analyse_buttons_minesweeper(message):
     global game
     global index_minesweeper
     global score_minesweeper
+    global level_minesweeper
     print(f'button {message} pressed; game: {game}')
-    if message == str(list_minesweeper[index_minesweeper]):
-        print('correct')
-        client.publish(str(list_minesweeper[index_minesweeper]), "2")
-        index_minesweeper += 1
-        print(f'score: {index_minesweeper}')
-        if index_minesweeper == 4:
+    # gemakkelijk level, de speler kan blijven proberen zonder opnieuw te beginnen
+    if level_minesweeper ==1:
+        print('easy')
+        if message == str(list_minesweeper[index_minesweeper]):
+            print('correct')
+            client.publish(str(list_minesweeper[index_minesweeper]), "2")
+            index_minesweeper += 1
+            print(f'score: {index_minesweeper}')
+            if index_minesweeper == 4:
+                client.loop()
+                time.sleep(1)
+                print('game won')
+                score_minesweeper += 1
+                client.publish('memorypoints', str(score_minesweeper))
+                index_minesweeper = 0
+                for i in range(4):
+                    client.publish(str(i), "off")
+                client.loop()
+                time.sleep(1)
+                minesweeper()
+        else:
+            print('wrong')
+    # medium level, de speler moet opnieuw beginnen als hij een verkeerde knop indrukt
+    elif level_minesweeper == 2:
+        print('medium')
+        if message == str(list_minesweeper[index_minesweeper]):
+            print('correct')
+            client.publish(str(list_minesweeper[index_minesweeper]), "2")
+            index_minesweeper += 1
+            print(f'index: {index_minesweeper}')
+            if index_minesweeper == 4:
+                client.loop()
+                time.sleep(1)
+                print('game won')
+                score_minesweeper += 1
+                client.publish('memorypoints', str(score_minesweeper))
+                index_minesweeper = 0
+                for i in range(4):
+                    client.publish(str(i), "off")
+                client.loop()
+                time.sleep(1)
+                minesweeper()
+        else:
+            print('wrong! start again')
+            index_minesweeper = 0
+            for i in range(4):
+                client.publish(str(i), "0")
             client.loop()
             time.sleep(1)
-            print('game won')
-            score_minesweeper += 1
-            client.publish('memorypoints', str(score_minesweeper))
-            index_minesweeper = 0
             for i in range(4):
                 client.publish(str(i), "off")
             client.loop()
             time.sleep(1)
             minesweeper()
-    else:      
-        print('wrong')
-        
+    # moeilijk level, de speler moet opnieuw beginnen als hij een verkeerde knop indrukt en er is geen aanwijzing
+    elif level_minesweeper == 3:
+        print('hard')
+        if message == str(list_minesweeper[index_minesweeper]):
+            print('correct')
+            client.publish(str(list_minesweeper[index_minesweeper]), "2")
+            index_minesweeper += 1
+            print(f'index: {index_minesweeper}')
+            if index_minesweeper == 4:
+                client.loop()
+                time.sleep(1)
+                print('game won')
+                score_minesweeper += 1
+                client.publish('memorypoints', str(score_minesweeper))
+                index_minesweeper = 0
+                for i in range(4):
+                    client.publish(str(i), "off")
+                client.loop()
+                time.sleep(1)
+                minesweeper()
+        else:
+            print('wrong! start again')
+            index_minesweeper = 0
+            for i in range(4):
+                client.publish(str(i), "0")
+            client.loop()
+            time.sleep(1)
+            for i in range(4):
+                client.publish(str(i), "off")
+            client.loop()
+            time.sleep(1)
+            minesweeper()
+
+def select_difficulty_minesweeper():
+    global level_minesweeper
+    print('select difficulty')
+    print('Level 1: easy')
+    print('Level 2: medium')
+    print('Level 3: hard')
+    level_minesweeper = int(input('Select level: '))
+    print(f'level {level_minesweeper} selected')
 
 
 def minesweeper():
@@ -103,11 +180,25 @@ def minesweeper():
     global index_minesweeper
     list_minesweeper = random.sample(range(4), 4)
     print(list_minesweeper)
-    client.publish(str(list_minesweeper[index_minesweeper]), "1")
-    client.loop()
-    time.sleep(1)
-    client.publish(str(list_minesweeper[index_minesweeper]), "off")
+    if level_minesweeper  == 1 or level_minesweeper == 2:
+        client.publish(str(list_minesweeper[index_minesweeper]), "1")
+        client.loop()
+        time.sleep(1)
+        client.publish(str(list_minesweeper[index_minesweeper]), "off")
 
+def start_minesweeper():
+    print('start minesweeper')
+    global list_minesweeper
+    global index_minesweeper
+    global level_minesweeper
+    list_minesweeper = random.sample(range(4), 4)
+    print(list_minesweeper)
+    select_difficulty_minesweeper()
+    if level_minesweeper == 1 or level_minesweeper == 2:
+        client.publish(str(list_minesweeper[index_minesweeper]), "1")
+        client.loop()
+        time.sleep(1)
+        client.publish(str(list_minesweeper[index_minesweeper]), "off")
 
 client = mqtt.Client()
 client.connect("127.0.0.1", 1883)
