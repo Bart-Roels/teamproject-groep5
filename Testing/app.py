@@ -19,6 +19,13 @@ def on_all():
         time.sleep(1)
         client.publish(str(i), "off")
 
+# Minesweeper
+def start_minesweepr():
+    for i in range(1, 5):
+        client.publish(str(i), "1")
+        time.sleep(1)
+        client.publish(str(i), "off")
+
 # MQQT CLIENT
 def on_message(client, userdata, message):
     global game
@@ -39,6 +46,7 @@ def on_message(client, userdata, message):
         elif message == "minesweepr":
             game = "minesweepr"
             print("minesweepr")
+            start_minesweepr()
     if topic == "buttons":
         if message == "1":
             button1 = "on"
