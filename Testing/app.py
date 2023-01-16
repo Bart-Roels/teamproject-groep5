@@ -1,4 +1,6 @@
 import time
+import threading
+import random
 from flask import Flask, request
 import paho.mqtt.client as mqtt
 import socket
@@ -12,6 +14,11 @@ button2 = "off"
 button3 = "off"
 button4 = "off"
 
+random_led_zen = -1
+random_color_zen = -1
+
+list_minesweeper = []
+
 # turn on all led's mqqt
 def on_all():
     for i in range(1, 5):
@@ -21,10 +28,24 @@ def on_all():
 
 # Minesweeper
 def start_minesweepr():
-    for i in range(1, 5):
-        client.publish(str(i), "1")
-        time.sleep(1)
-        client.publish(str(i), "off")
+    global list_minesweeper
+    global random_led_zen
+    if random_led_zen not in list_minesweeper:
+        random_led_zen = random.randint(1, 4)
+        list_minesweeper.append(random_led_zen)
+        client.publish(str(random_led_zen), str(1))
+        print(list_minesweeper)
+    else:
+        random_led_zen = random.randint(1, 4)
+
+def analyse_buttons_minesweeper(number):
+    global game
+    global random_led_zen
+    print(f"button pressed: {number}; {game}")
+    if number == random_led_zen:
+        start_minesweepr()
+
+ 
 
 # MQQT CLIENT
 def on_message(client, userdata, message):
@@ -48,27 +69,19 @@ def on_message(client, userdata, message):
             print("minesweepr")
             start_minesweepr()
     if topic == "buttons":
-        if message == "1":
-            button1 = "on"
-        elif message == "2":
-            button2 = "on"
-        elif message == "3":
-            button3 = "on"
-        elif message == "4":
-            button4 = "on"
-
-        # if game == "memory":
-        #     # Do read button stuff voor memory
-        #     print("memory button incomming")
-        # elif game == "redblue":
-        #     # Do read button stuff voor redblue
-        #     print("red vs blue button incomming")
-        # elif game == "zen":
-        #     # Do read button stuff voor zen
-        #     print("zen button incomming")
-        # elif game == "minesweepr":
-        #     # Do read button stuff voor minesweepr
-        #     print("minesweeper button incomming")
+        if game == "memory":
+            # Do read button stuff voor memory
+            print("memory button incomming")
+        elif game == "redblue":
+            # Do read button stuff voor redblue
+            print("red vs blue button incomming")
+        elif game == "zen":
+            # Do read button stuff voor zen
+            print("zen button incomming")
+        elif game == "minesweepr":
+            # Do read button stuff voor minesweepr
+            print("minesweeper button incomming")
+            analyse_buttons_minesweeper(int(message))
 
         
 client = mqtt.Client()
