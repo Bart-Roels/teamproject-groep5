@@ -91,18 +91,11 @@ def analyse_buttons_minesweeper(message):
                 client.publish(str(i), "off")
             client.loop()
             time.sleep(1)
-            
             minesweeper()
-    else:
-        for i in range(4):
-            client.publish(str(i), "0")
-        client.loop()
-        time.sleep(1)
-        for i in range(4):
-            client.publish(str(i), "off")
+    else:      
         print('wrong')
-        index_minesweeper = 0
-        minesweeper()
+        
+
 
 def minesweeper():
     print('start minesweeper')
