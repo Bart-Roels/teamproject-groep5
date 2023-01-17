@@ -130,7 +130,6 @@ def analyse_buttons_minesweeper(message):
                 client.publish(str(i), "off")
             client.loop()
             time.sleep(1)
-            minesweeper()
     # moeilijk level, de speler moet opnieuw beginnen als hij een verkeerde knop indrukt en er is geen aanwijzing
     elif level_minesweeper == 3:
         print('hard')
@@ -162,7 +161,6 @@ def analyse_buttons_minesweeper(message):
                 client.publish(str(i), "off")
             client.loop()
             time.sleep(1)
-            minesweeper()
 
 def select_difficulty_minesweeper():
     global level_minesweeper
