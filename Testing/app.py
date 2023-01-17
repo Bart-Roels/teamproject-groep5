@@ -1,5 +1,6 @@
-import time
 import random
+import threading
+import time
 from flask import Flask, request
 import paho.mqtt.client as mqtt
 import socket
@@ -14,6 +15,9 @@ button3 = "off"
 button4 = "off"
 
 # global variables for zen
+start_zen_game = False
+new_zen_game = False
+
 random_led_zen = -1
 random_color_zen = -1
 previous_time = -1
@@ -29,13 +33,34 @@ def on_all():
         client.publish(str(i), "off")
 
 
-def zen_game():
-    client.publish("1", "1")
+# def zen_game():
+#     client.publish("1", "1")
+
+# MQQT functions
 
 
-# MQQT CLIENT
+def on_connect(client, userdata, flags, rc):  # Handels connection
+    if rc == 0:
+        print("Connected OK Returned code=", rc)
+        client.subscribe("games")
+        client.subscribe("buttons")
+    else:
+        print("Bad connection Returned code=", rc)
+
+
+def on_disconnect(client, userdata, rc):
+    if rc != 0:
+        print("Unexpected MQTT disconnection. Attempting to reconnect.")
+        try:
+            client.reconnect()
+        except socket.error:
+            print("Failed to reconnect. Exiting.")
+
+
 def on_message(client, userdata, message):
     global game
+    global new_zen_game
+    global start_zen_game
     # print topic and message
     topic = message.topic
     message = message.payload.decode("utf-8")
@@ -51,7 +76,9 @@ def on_message(client, userdata, message):
         elif message == "zen":
             game = "zen"
             print("zen")
-            zen_game()
+            start_zen_game = True
+            new_zen_game = True
+            #zen_game()
         elif message == "minesweepr":
             game = "minesweepr"
             print("minesweepr")
@@ -99,36 +126,60 @@ def analyse_buttons_zen(number):
     global game
     global random_led_zen
     global previous_time
+    global new_zen_game
     print(f"button pressed: {number}; {game}")
     if number == random_led_zen:
         response_time = time.time() - previous_time
         print(f"correct {response_time}")
         reward_response_time(response_time)
-        zen_game()
+        new_zen_game = True
 
 
 def zen_game():
     global random_led_zen
     global random_color_zen
     global previous_time
-    print('zen game started')
-    for i in range(0, 4):
-        client.publish(str(i), "off")
-    random_led_zen = random.randint(0, 3)
-    random_color = random.randint(0, 3)
-    client.publish(str(random_led_zen), str(random_color))
-    previous_time = time.time()
+    global start_zen_game
+    global new_zen_game
+    while True:
+        if(start_zen_game):
+            if(new_zen_game):
+                for i in range(0, 4):
+                    client.publish(str(i), "off")
+                random_led_zen = random.randint(0, 3)
+                random_color_zen = random.randint(0, 3)
+                print(f"random led: {random_led_zen} kleur: {random_color_zen}")
+                client.publish(str(random_led_zen), str(random_color_zen))
+                previous_time = time.time()
+                new_zen_game = False
 
 
+
+# MQQT CLIENT
 client = mqtt.Client()
 client.connect("127.0.0.1", 1883)
-client.on_message = on_message
-# Hier zet je MQQT CODE VOOR NAAR WEB SERVER TE STUREN
-# Subscribe to the topic "game"
-client.subscribe("games")
-client.subscribe("buttons")
-client.loop_forever()
+client.on_connect = on_connect
+client.on_disconnect = on_disconnect
 
+# THREADS
+
+
+def subscribing():
+    client.on_message = on_message
+    client.loop_forever()
+
+
+def start_threads():
+    # Start subscribeing thread
+    sub = threading.Thread(target=subscribing)
+    sub.start()
+    # Start memory thread
+    mem = threading.Thread(target=zen_game)
+    mem.start()
+
+
+# APP START
 if __name__ == '__main__':
     print("Starting server")
+    start_threads()
     app.run(debug=False)
