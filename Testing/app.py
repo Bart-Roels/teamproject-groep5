@@ -125,11 +125,10 @@ def analyse_buttons_minesweeper(message):
             for i in range(4):
                 client.publish(str(i), "0")
             client.loop()
-            time.sleep(1)
+            time.sleep(0.5)
             for i in range(4):
                 client.publish(str(i), "off")
-            client.loop()
-            time.sleep(1)
+            hint()
     # moeilijk level, de speler moet opnieuw beginnen als hij een verkeerde knop indrukt en er is geen aanwijzing
     elif level_minesweeper == 3:
         print('hard')
@@ -156,11 +155,10 @@ def analyse_buttons_minesweeper(message):
             for i in range(4):
                 client.publish(str(i), "0")
             client.loop()
-            time.sleep(1)
+            time.sleep(0.5)
             for i in range(4):
                 client.publish(str(i), "off")
-            client.loop()
-            time.sleep(1)
+
 
 def select_difficulty_minesweeper():
     global level_minesweeper
@@ -178,6 +176,13 @@ def minesweeper():
     global index_minesweeper
     list_minesweeper = random.sample(range(4), 4)
     print(list_minesweeper)
+    if level_minesweeper  == 1 or level_minesweeper == 2:
+        client.publish(str(list_minesweeper[index_minesweeper]), "1")
+        client.loop()
+        time.sleep(1)
+        client.publish(str(list_minesweeper[index_minesweeper]), "off")
+    
+def hint():
     if level_minesweeper  == 1 or level_minesweeper == 2:
         client.publish(str(list_minesweeper[index_minesweeper]), "1")
         client.loop()

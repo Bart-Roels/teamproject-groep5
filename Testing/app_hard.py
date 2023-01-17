@@ -101,8 +101,7 @@ def analyse_buttons_minesweeper(message):
         time.sleep(1)
         for i in range(4):
             client.publish(str(i), "off")
-        client.loop()
-        time.sleep(1)
+
         
         
 
