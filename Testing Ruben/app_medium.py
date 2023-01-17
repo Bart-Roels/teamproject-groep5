@@ -1,5 +1,4 @@
 import time
-import threading
 import random
 from flask import Flask, request
 import paho.mqtt.client as mqtt
@@ -20,24 +19,17 @@ list_minesweeper = []
 index_minesweeper = 0
 score_minesweeper = 0
 
-
-# MQTT functions
-def on_connect(client, userdata, flags, rc):  # Handels connection
-    if rc == 0:
-        print("Connected OK Returned code=", rc)
-        client.subscribe("games")
-        client.subscribe("buttons")
-    else:
-        print("Bad connection Returned code=", rc)
+# turn on all led's mqqt
 
 
-def on_disconnect(client, userdata, rc):
-    if rc != 0:
-        print("Unexpected MQTT disconnection. Attempting to reconnect.")
-        try:
-            client.reconnect()
-        except socket.error:
-            print("Failed to reconnect. Exiting.")
+def on_all():
+    for i in range(1, 5):
+        client.publish(str(i), "1")
+        time.sleep(1)
+        client.publish(str(i), "off")
+
+
+# MQQT CLIENT
 
 
 def on_message(client, userdata, message):
@@ -87,7 +79,7 @@ def analyse_buttons_minesweeper(message):
         print('correct')
         client.publish(str(list_minesweeper[index_minesweeper]), "2")
         index_minesweeper += 1
-        print(f'score: {index_minesweeper}')
+        print(f'index: {index_minesweeper}')
         if index_minesweeper == 4:
             client.loop()
             time.sleep(1)
@@ -101,7 +93,17 @@ def analyse_buttons_minesweeper(message):
             time.sleep(1)
             minesweeper()
     else:
-        print('wrong')
+        print('wrong! start again')
+        index_minesweeper = 0
+        for i in range(4):
+            client.publish(str(i), "0")
+        client.loop()
+        time.sleep(1)
+        for i in range(4):
+            client.publish(str(i), "off")
+        client.loop()
+        time.sleep(1)
+        minesweeper()
 
 
 def minesweeper():
@@ -116,29 +118,15 @@ def minesweeper():
     client.publish(str(list_minesweeper[index_minesweeper]), "off")
 
 
-# MQTT client
 client = mqtt.Client()
 client.connect("127.0.0.1", 1883)
-client.on_connect = on_connect
-client.on_disconnect = on_disconnect
+client.on_message = on_message
+# Hier zet je MQQT CODE VOOR NAAR WEB SERVER TE STUREN
+# Subscribe to the topic "game"
+client.subscribe("games")
+client.subscribe("buttons")
+client.loop_forever()
 
-
-def subscribing():
-    client.on_message = on_message
-    client.loop_forever()
-
-
-def start_threads():
-    # Start subscribing thread
-    print("Starting subscribing thread")
-    sub = threading.Thread(target=subscribing)
-    sub.start()
-    mine = threading.Thread(target=minesweeper)
-    mine.start()
-
-
-# APP START
 if __name__ == '__main__':
     print("Starting server")
-    start_threads()
     app.run(debug=False)
