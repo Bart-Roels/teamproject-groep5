@@ -8,6 +8,7 @@ import socket
 app = Flask(__name__)
 
 # GLOBAL VARIABLES
+bussy = False # for memory
 new_game = False # for memory
 blink = True # for memory
 haswon = False # for memory
@@ -17,8 +18,6 @@ start_memory_var = False # for memory
 counter = 0 # for memory
 sequence_number = 1 # for memory
 sequence = [] # for memory
-
-
 
 # MQQT functions 
 def on_connect(client, userdata, flags, rc): # Handels connection 
@@ -42,6 +41,7 @@ def on_message(client, userdata, message): # Handels incomming messages
     global game
     global start_memory_var 
     global new_game
+    global sequence_number
     # print topic and message
     topic = message.topic
     message = message.payload.decode("utf-8")
@@ -52,6 +52,7 @@ def on_message(client, userdata, message): # Handels incomming messages
             print("starting memory")
             game = "memory"
             # Start memory
+            sequence_number = 1
             start_memory_var = True
             new_game = True
         elif message == "redblue":
@@ -78,7 +79,7 @@ def on_message(client, userdata, message): # Handels incomming messages
 
 # GAMES
 def generate_sequence(sequence_number): # Generate random sequence 
-    leds = [0, 1, 2, 3]
+    leds = [0, 1, 2]
     global sequence
     # Generate sequence
     for i in range(sequence_number):
@@ -88,7 +89,9 @@ def generate_sequence(sequence_number): # Generate random sequence
 
 def send_sequence(sequence, blink=False): # Send sequence
     # Global variables
-
+    global bussy 
+    # Set bussy
+    bussy = True
     # Send sequence
     if(blink == True):
         for item in sequence:
@@ -110,6 +113,8 @@ def send_sequence(sequence, blink=False): # Send sequence
         time.sleep(3)
         for i in range(0,5):
             client.publish(str(i), "off")
+    # Set bussy
+    bussy = False
 
 def check_sequence(received_sequence): # CHeck sequence
     # Global variables
@@ -118,30 +123,29 @@ def check_sequence(received_sequence): # CHeck sequence
     global sequence
     global haswon
     global haslost
+    global bussy 
 
-    print(int(received_sequence) == sequence[counter])
-    # check if the received sequence matches the current sequence
-    if int(received_sequence) == sequence[counter]:
-        counter += 1
-        # check if the entire sequence has been matched
-        if counter == len(sequence): 
-            # Resent counter en sequence 
+    # Check if not bussy
+    if not bussy:
+        # check if the received sequence matches the current sequence
+        if int(received_sequence) == sequence[counter]:
+            counter += 1
+            # check if the entire sequence has been matched
+            if counter == len(sequence): 
+                # Resent counter en sequence 
+                counter = 0
+                sequence = []
+                # You have won
+                print(f"You have won! your points: {sequence_number}")
+                client.publish("memorypoints", str(sequence_number))
+                # Higher sequence number
+                sequence_number += 1
+                # Has won
+                haswon = True     
+        else:
             counter = 0
-            sequence = []
-            # You have won
-            print(f"You have won! your points: {sequence_number}")
-            client.publish("memorypoints", str(sequence_number))
-
-            # Higher sequence number
-            sequence_number += 1
-            # Has won
-            haswon = True     
-    else:
-        counter = 0
-        # LOGIC
-        haslost = True
-
-
+            # LOGIC
+            haslost = True
 
 def start_memory(): #start memory game
     # Global variables
@@ -169,19 +173,15 @@ def start_memory(): #start memory game
                     new_game = True
                 elif(haslost == True):
                     send_sequence(lose, False)
+                    # Replay sequence
+                    send_sequence(sequence, True)
                     haslost = False
-                    print("You have lost")
+                    print("You have lost replaying sequence")
 
-
-
-# FLASK ROUTES
-@app.route('/memory', methods=['GET'])
-def memory():
-    return "Starting memory"
 
 # MQQT CLIENT
 client = mqtt.Client()
-client.connect("localhost", 1883)
+client.connect("192.168.220.1", 1883)
 client.on_connect=on_connect
 client.on_disconnect = on_disconnect
 
