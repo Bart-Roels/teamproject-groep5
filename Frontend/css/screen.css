@@ -324,6 +324,16 @@ input:disabled {
     padding: 0;
 }
 
+.o-row--tags {
+    padding: 0;
+}
+
+@media (min-width: 576px) {
+    .o-row--tags {
+        padding: 0 var(--global-whitespace);
+    }
+}
+
 /* size modifiers */
 
 .o-row--sm {
@@ -561,6 +571,13 @@ input:disabled {
     fill: var(--global-color-alpha);
 }
 
+@media (min-width: 576px) {
+    .c-logo {
+        height: 56px;
+        width: 112px;
+    }
+}
+
 /*
     Component: header
     ---
@@ -706,9 +723,11 @@ input:disabled {
         transform: translateY(0);
         scale: 0.7;
     }
+
     50% {
         scale: 0.9;
     }
+
     100% {
         transform: translateY(-4px);
         scale: 1;
@@ -810,6 +829,96 @@ input:disabled {
     }
 }
 
+/*
+    Component: about
+    ---
+    About component
+*/
+
+.c-about {
+    padding: 0 16px;
+}
+
+.c-about__text {
+    font-size: 14px;
+    font-weight: var(--global-fontWeight-regular);
+    margin-bottom: 16px;
+    line-height: 24px;
+}
+
+.c-about__logos {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+    gap: 4px;
+}
+
+@media (min-width: 576px) {
+    .c-about {
+        padding: 0 24px;
+    }
+
+    .c-about__text {
+        font-size: 16px;
+        line-height: 28px;
+    }
+}
+
+/*
+    Component: tags
+    ---
+    tags component
+*/
+
+.c-tags {
+    font-size: 14px;
+    font-weight: var(--global-fontWeight-regular);
+    color: var(--global-color-neutral-dark);
+    overflow: auto;
+    white-space: nowrap;
+    margin-bottom: 16px;
+    padding-left: 24px;
+}
+
+.c-tags__list {
+    display: flex;
+    gap: 8px;
+    margin: 0;
+}
+
+.c-tag label {
+    padding: 10px;
+    border-radius: var(--global-borderRadius-lg);
+    background-color: var(--global-color-neutral-xxxx-light);
+    line-height: 1;
+    display: inline-block;
+}
+
+.c-tag input:checked+label {
+    background-color: var(--global-color-alpha);
+    color: var(--global-color-neutral-xxxx-light);
+    transition: all 0.2s ease-in-out;
+}
+
+@media (min-width: 576px) {
+    .c-tags {
+        font-size: 16px;
+        padding-left: 0;
+    }
+}
+
+/*
+    Component: dropdown
+    ---
+    Dropdown component
+*/
+
+.c-dropdown {
+    max-width: 300px;
+}
+
+
+
 /*------------------------------------*\
 #UTILITIES
 \*------------------------------------*/
@@ -908,29 +1017,7 @@ input:disabled {
     Utility classes to create smaller or bigger test
 */
 
-.u-text-xs {
-    font-size: .75rem;
-}
 
-.u-text-sm {
-    font-size: .875rem;
-}
-
-.u-text-md {
-    font-size: 24px;
-}
-
-.u-text-lg {
-    font-size: 1.125rem;
-}
-
-.u-text-xxl {
-    font-size: 1.375rem;
-}
-
-.u-text-xxxxxl {
-    font-size: 2.1875rem;
-}
 
 /*
     Utilities: font-weight
