@@ -51,6 +51,7 @@ def on_message(client, userdata, message):
     global game
     global start_minesweeper
     global new_game_minesweeper
+    global level_minesweeper
     # print topic and message
     topic = message.topic
     message = message.payload.decode("utf-8")
@@ -111,11 +112,16 @@ def analyse_buttons_minesweeper(message):
             haswon = True
     else:
         print('wrong')
+        if level_minesweeper == 2 or level_minesweeper == 3:
+            print('game lost')
+            haslost = True
 
 
 def send_hint_function():
     global list_minesweeper
     global index_minesweeper
+    global level_minesweeper
+        
     client.publish(str(list_minesweeper[0]), "1")
     time.sleep(1)
     client.publish(str(list_minesweeper[0]), "off")
@@ -126,6 +132,15 @@ def sequence_off():
     for i in range(4):
         client.publish(str(i), "off")
     time.sleep(1)
+
+
+def sequence_mistake():
+    print('mistake')
+    for i in range(4):
+        client.publish(str(i), "0")
+    time.sleep(1)
+    for i in range(4):
+        client.publish(str(i), "off")
 
 
 def minesweeper():
@@ -141,9 +156,12 @@ def minesweeper():
         if (start_minesweeper):
             if (new_game_minesweeper):
                 list_minesweeper = random.sample(range(4), 4)
-                print(list_minesweeper)
+                
                 index_minesweeper = 0
-                send_hint_function()
+                print(f'level minesweeper: {level_minesweeper}')
+                if level_minesweeper == 1 or level_minesweeper == 2:
+                    send_hint_function()
+                
                 new_game_minesweeper = False
             else:
                 if (haswon):
@@ -151,6 +169,13 @@ def minesweeper():
                     sequence_off()
                     haswon = False
                     new_game_minesweeper = True
+                elif (haslost):
+                    print('Game has been lost')
+                    sequence_mistake()
+                    if level_minesweeper == 2:
+                        send_hint_function()
+                    index_minesweeper = 0
+                    haslost = False
 
 
 # MQTT client
