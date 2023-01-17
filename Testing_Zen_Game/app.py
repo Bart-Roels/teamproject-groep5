@@ -16,6 +16,8 @@ button4 = "off"
 
 # global variables for minesweeper
 
+busy_minesweeper = False
+
 list_minesweeper = []
 index_minesweeper = 0
 score_minesweeper = 0
@@ -98,49 +100,59 @@ def analyse_buttons_minesweeper(message):
     global score_minesweeper
     global haswon
     global haslost
-    print(f'button {message} pressed; game: {game}')
-    print(f'controle{message == str(list_minesweeper[index_minesweeper])}')
-    if message == str(list_minesweeper[index_minesweeper]):
-        print('correct')
-        client.publish(str(list_minesweeper[index_minesweeper]), "2")
-        index_minesweeper += 1
-        print(f'score: {index_minesweeper}')
-        if index_minesweeper == 4:
-            print('game won')
-            score_minesweeper += 1
-            client.publish('memorypoints', str(score_minesweeper))
-            haswon = True
-    else:
-        print('wrong')
-        if level_minesweeper == 2 or level_minesweeper == 3:
-            print('game lost')
-            haslost = True
+    global busy_minesweeper
+    if not busy_minesweeper:
+        print(f'button {message} pressed; game: {game}')
+        print(f'controle{message == str(list_minesweeper[index_minesweeper])}')
+        if message == str(list_minesweeper[index_minesweeper]):
+            print('correct')
+            client.publish(str(list_minesweeper[index_minesweeper]), "2")
+            index_minesweeper += 1
+            print(f'score: {index_minesweeper}')
+            if index_minesweeper == 4:
+                print('game won')
+                score_minesweeper += 1
+                client.publish('memorypoints', str(score_minesweeper))
+                haswon = True
+        else:
+            print('wrong')
+            if level_minesweeper == 2 or level_minesweeper == 3:
+                print('game lost')
+                haslost = True
 
 
 def send_hint_function():
     global list_minesweeper
     global index_minesweeper
     global level_minesweeper
-        
+    global busy_minesweeper
+    busy_minesweeper = True
     client.publish(str(list_minesweeper[0]), "1")
     time.sleep(1)
     client.publish(str(list_minesweeper[0]), "off")
+    busy_minesweeper = False
 
 
 def sequence_off():
+    global busy_minesweeper
+    busy_minesweeper = True
     print('sequence off')
     for i in range(4):
         client.publish(str(i), "off")
     time.sleep(1)
+    busy_minesweeper = False
 
 
 def sequence_mistake():
+    global busy_minesweeper
+    busy_minesweeper = True
     print('mistake')
     for i in range(4):
         client.publish(str(i), "0")
     time.sleep(1)
     for i in range(4):
         client.publish(str(i), "off")
+    busy_minesweeper = False
 
 
 def minesweeper():
@@ -156,12 +168,12 @@ def minesweeper():
         if (start_minesweeper):
             if (new_game_minesweeper):
                 list_minesweeper = random.sample(range(4), 4)
-                
+
                 index_minesweeper = 0
                 print(f'level minesweeper: {level_minesweeper}')
                 if level_minesweeper == 1 or level_minesweeper == 2:
                     send_hint_function()
-                
+
                 new_game_minesweeper = False
             else:
                 if (haswon):
