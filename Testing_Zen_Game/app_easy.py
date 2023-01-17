@@ -146,12 +146,7 @@ def minesweeper():
                     sequence_off()
                     haswon = False
                     new_game_minesweeper = True
-    # list_minesweeper = random.sample(range(4), 4)
-    # print(list_minesweeper)
-    # client.publish(str(list_minesweeper[index_minesweeper]), "1")
-    # client.loop()
-    # time.sleep(1)
-    # client.publish(str(list_minesweeper[index_minesweeper]), "off")
+
 
 
 # MQTT client
@@ -180,3 +175,4 @@ if __name__ == '__main__':
     print("Starting server")
     start_threads()
     app.run(debug=False)
+ 

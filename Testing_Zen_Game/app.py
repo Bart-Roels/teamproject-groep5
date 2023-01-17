@@ -1,5 +1,5 @@
-import threading
 import time
+import threading
 import random
 from flask import Flask, request
 import paho.mqtt.client as mqtt
@@ -13,33 +13,44 @@ button1 = "off"
 button2 = "off"
 button3 = "off"
 button4 = "off"
-haswon = False
-haslost = False
-start_minesweeper_var = False
 
 # global variables for minesweeper
 
 list_minesweeper = []
 index_minesweeper = 0
 score_minesweeper = 0
-level_minesweeper = -1
+start_minesweeper = False
+hint_send = False
+new_game_minesweeper = False
+haswon = False
+haslost = False
+level_minesweeper = 0
 
-# turn on all led's mqqt
-
-
-def on_all():
-    for i in range(1, 5):
-        client.publish(str(i), "1")
-        time.sleep(1)
-        client.publish(str(i), "off")
+# MQTT functions
 
 
-# MQQT CLIENT
+def on_connect(client, userdata, flags, rc):  # Handels connection
+    if rc == 0:
+        print("Connected OK Returned code=", rc)
+        client.subscribe("games")
+        client.subscribe("buttons")
+    else:
+        print("Bad connection Returned code=", rc)
+
+
+def on_disconnect(client, userdata, rc):
+    if rc != 0:
+        print("Unexpected MQTT disconnection. Attempting to reconnect.")
+        try:
+            client.reconnect()
+        except socket.error:
+            print("Failed to reconnect. Exiting.")
 
 
 def on_message(client, userdata, message):
     global game
-    global start_minesweeper_var
+    global start_minesweeper
+    global new_game_minesweeper
     # print topic and message
     topic = message.topic
     message = message.payload.decode("utf-8")
@@ -57,8 +68,11 @@ def on_message(client, userdata, message):
         elif message == "minesweepr":
             game = "minesweepr"
             print("minesweepr")
-            start_minesweeper()
-            start_minesweeper_var = True
+            print('1: easy level, 2: medium level, 3: hard level')
+            level_minesweeper = int(input('choose level: '))
+            print(f'chosen level {level_minesweeper}')
+            start_minesweeper = True
+            new_game_minesweeper = True
     if topic == "buttons":
         if game == "memory":
             # Do read button stuff voor memory
@@ -81,179 +95,87 @@ def analyse_buttons_minesweeper(message):
     global game
     global index_minesweeper
     global score_minesweeper
-    global level_minesweeper
+    global haswon
+    global haslost
     print(f'button {message} pressed; game: {game}')
-    # gemakkelijk level, de speler kan blijven proberen zonder opnieuw te beginnen
-    if level_minesweeper ==1:
-        print('easy')
-        if message == str(list_minesweeper[index_minesweeper]):
-            print('correct')
-            client.publish(str(list_minesweeper[index_minesweeper]), "2")
-            index_minesweeper += 1
-            print(f'score: {index_minesweeper}')
-            if index_minesweeper == 4:
-                client.loop()
-                time.sleep(1)
-                print('game won')
-                score_minesweeper += 1
-                client.publish('memorypoints', str(score_minesweeper))
-                index_minesweeper = 0
-                for i in range(4):
-                    client.publish(str(i), "off")
-                client.loop()
-                time.sleep(1)
-                minesweeper()
-        else:
-            print('wrong')
-    # medium level, de speler moet opnieuw beginnen als hij een verkeerde knop indrukt
-    elif level_minesweeper == 2:
-        print('medium')
-        if message == str(list_minesweeper[index_minesweeper]):
-            print('correct')
-            client.publish(str(list_minesweeper[index_minesweeper]), "2")
-            index_minesweeper += 1
-            print(f'index: {index_minesweeper}')
-            if index_minesweeper == 4:
-                client.loop()
-                time.sleep(1)
-                print('game won')
-                score_minesweeper += 1
-                client.publish('memorypoints', str(score_minesweeper))
-                index_minesweeper = 0
-                for i in range(4):
-                    client.publish(str(i), "off")
-                client.loop()
-                time.sleep(1)
-                minesweeper()
-        else:
-            print('wrong! start again')
-            index_minesweeper = 0
-            for i in range(4):
-                client.publish(str(i), "0")
-            client.loop()
-            time.sleep(1)
-            for i in range(4):
-                client.publish(str(i), "off")
-            hint()
-    # moeilijk level, de speler moet opnieuw beginnen als hij een verkeerde knop indrukt en er is geen aanwijzing
-    elif level_minesweeper == 3:
-        print('hard')
-        if message == str(list_minesweeper[index_minesweeper]):
-            print('correct')
-            client.publish(str(list_minesweeper[index_minesweeper]), "2")
-            index_minesweeper += 1
-            print(f'index: {index_minesweeper}')
-            if index_minesweeper == 4:
-                client.loop()
-                time.sleep(1)
-                print('game won')
-                score_minesweeper += 1
-                client.publish('memorypoints', str(score_minesweeper))
-                index_minesweeper = 0
-                for i in range(4):
-                    client.publish(str(i), "off")
-                client.loop()
-                time.sleep(1)
-                minesweeper()
-        else:
-            print('wrong! start again')
-            index_minesweeper = 0
-            for i in range(4):
-                client.publish(str(i), "0")
-            client.loop()
-            time.sleep(1)
-            for i in range(4):
-                client.publish(str(i), "off")
+    print(f'controle{message == str(list_minesweeper[index_minesweeper])}')
+    if message == str(list_minesweeper[index_minesweeper]):
+        print('correct')
+        client.publish(str(list_minesweeper[index_minesweeper]), "2")
+        index_minesweeper += 1
+        print(f'score: {index_minesweeper}')
+        if index_minesweeper == 4:
+            print('game won')
+            score_minesweeper += 1
+            client.publish('memorypoints', str(score_minesweeper))
+            haswon = True
+    else:
+        print('wrong')
 
 
-def select_difficulty_minesweeper():
-    global level_minesweeper
-    print('select difficulty')
-    print('Level 1: easy')
-    print('Level 2: medium')
-    print('Level 3: hard')
-    level_minesweeper = int(input('Select level: '))
-    print(f'level {level_minesweeper} selected')
+def send_hint_function():
+    global list_minesweeper
+    global index_minesweeper
+    client.publish(str(list_minesweeper[0]), "1")
+    time.sleep(1)
+    client.publish(str(list_minesweeper[0]), "off")
+
+
+def sequence_off():
+    print('sequence off')
+    for i in range(4):
+        client.publish(str(i), "off")
+    time.sleep(1)
 
 
 def minesweeper():
     print('start minesweeper')
     global list_minesweeper
     global index_minesweeper
-    list_minesweeper = random.sample(range(4), 4)
-    print(list_minesweeper)
-    if level_minesweeper  == 1 or level_minesweeper == 2:
-        client.publish(str(list_minesweeper[index_minesweeper]), "1")
-        client.loop()
-        time.sleep(1)
-        client.publish(str(list_minesweeper[index_minesweeper]), "off")
-    
-def hint():
-    if level_minesweeper  == 1 or level_minesweeper == 2:
-        client.publish(str(list_minesweeper[index_minesweeper]), "1")
-        client.loop()
-        time.sleep(1)
-        client.publish(str(list_minesweeper[index_minesweeper]), "off")
-
-def start_minesweeper():
-    print('start minesweeper')
-    global list_minesweeper
-    global index_minesweeper
+    global new_game_minesweeper
+    global start_minesweeper
+    global haswon
+    global haslost
     global level_minesweeper
-    list_minesweeper = random.sample(range(4), 4)
-    print(list_minesweeper)
-    select_difficulty_minesweeper()
-    if level_minesweeper == 1 or level_minesweeper == 2:
-        client.publish(str(list_minesweeper[index_minesweeper]), "1")
-        client.loop()
-        time.sleep(1)
-        client.publish(str(list_minesweeper[index_minesweeper]), "off")
-
-# def start_thread_minesweeper():
-#     global haswon
-#     global haslost
-#     global start_minesweeper_var
-#     while True:
-#         if(start_minesweeper_var == True):
-#             if(new_game == True):
-#                 sequence = generate_sequence(sequence_number)
-#                 send_sequence(sequence, True)
-#                 new_game = False
-#             else:
-#                 if(haswon == True):
-#                     # Play win sequence
-#                     send_sequence(won)
-#                     haswon = False
-#                     # Start new sequence
-#                     new_game = True
-#                 elif(haslost == True):
-#                     send_sequence(lose, False)
-#                     haslost = False
-#                     print("You have lost")
+    while True:
+        if (start_minesweeper):
+            if (new_game_minesweeper):
+                list_minesweeper = random.sample(range(4), 4)
+                print(list_minesweeper)
+                index_minesweeper = 0
+                send_hint_function()
+                new_game_minesweeper = False
+            else:
+                if (haswon):
+                    print('Game has been won')
+                    sequence_off()
+                    haswon = False
+                    new_game_minesweeper = True
 
 
-def subscribeing():
-    client.on_message= on_message 
-    client.loop_forever()
-
-def start_threads():
-    # Start subscribeing thread
-    sub = threading.Thread(target=subscribeing)
-    sub.start()  
-    # Start memory thread
-    mem = threading.Thread(target=start_minesweeper)
-    mem.start()
-
-
+# MQTT client
 client = mqtt.Client()
 client.connect("127.0.0.1", 1883)
-client.on_message = on_message
-# Hier zet je MQQT CODE VOOR NAAR WEB SERVER TE STUREN
-# Subscribe to the topic "game"
-client.subscribe("games")
-client.subscribe("buttons")
-client.loop_forever()
+client.on_connect = on_connect
+client.on_disconnect = on_disconnect
 
+
+def subscribing():
+    client.on_message = on_message
+    client.loop_forever()
+
+
+def start_threads():
+    # Start subscribing thread
+    print("Starting subscribing thread")
+    sub = threading.Thread(target=subscribing)
+    sub.start()
+    mine = threading.Thread(target=minesweeper)
+    mine.start()
+
+
+# APP START
 if __name__ == '__main__':
     print("Starting server")
+    start_threads()
     app.run(debug=False)
