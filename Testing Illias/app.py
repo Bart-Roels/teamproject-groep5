@@ -1,3 +1,4 @@
+import threading
 import time
 import random
 from flask import Flask, request
@@ -12,6 +13,9 @@ button1 = "off"
 button2 = "off"
 button3 = "off"
 button4 = "off"
+haswon = False
+haslost = False
+start_minesweeper_var = False
 
 # global variables for minesweeper
 
@@ -35,6 +39,7 @@ def on_all():
 
 def on_message(client, userdata, message):
     global game
+    global start_minesweeper_var
     # print topic and message
     topic = message.topic
     message = message.payload.decode("utf-8")
@@ -53,6 +58,7 @@ def on_message(client, userdata, message):
             game = "minesweepr"
             print("minesweepr")
             start_minesweeper()
+            start_minesweeper_var = True
     if topic == "buttons":
         if game == "memory":
             # Do read button stuff voor memory
@@ -125,7 +131,7 @@ def analyse_buttons_minesweeper(message):
             for i in range(4):
                 client.publish(str(i), "0")
             client.loop()
-            time.sleep(0.5)
+            time.sleep(1)
             for i in range(4):
                 client.publish(str(i), "off")
             hint()
@@ -155,7 +161,7 @@ def analyse_buttons_minesweeper(message):
             for i in range(4):
                 client.publish(str(i), "0")
             client.loop()
-            time.sleep(0.5)
+            time.sleep(1)
             for i in range(4):
                 client.publish(str(i), "off")
 
@@ -202,6 +208,42 @@ def start_minesweeper():
         client.loop()
         time.sleep(1)
         client.publish(str(list_minesweeper[index_minesweeper]), "off")
+
+# def start_thread_minesweeper():
+#     global haswon
+#     global haslost
+#     global start_minesweeper_var
+#     while True:
+#         if(start_minesweeper_var == True):
+#             if(new_game == True):
+#                 sequence = generate_sequence(sequence_number)
+#                 send_sequence(sequence, True)
+#                 new_game = False
+#             else:
+#                 if(haswon == True):
+#                     # Play win sequence
+#                     send_sequence(won)
+#                     haswon = False
+#                     # Start new sequence
+#                     new_game = True
+#                 elif(haslost == True):
+#                     send_sequence(lose, False)
+#                     haslost = False
+#                     print("You have lost")
+
+
+def subscribeing():
+    client.on_message= on_message 
+    client.loop_forever()
+
+def start_threads():
+    # Start subscribeing thread
+    sub = threading.Thread(target=subscribeing)
+    sub.start()  
+    # Start memory thread
+    mem = threading.Thread(target=start_minesweeper)
+    mem.start()
+
 
 client = mqtt.Client()
 client.connect("127.0.0.1", 1883)
