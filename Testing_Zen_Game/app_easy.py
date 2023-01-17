@@ -19,9 +19,15 @@ button4 = "off"
 list_minesweeper = []
 index_minesweeper = 0
 score_minesweeper = 0
-
+start_minesweeper = False
+hint_send = False
+new_game_minesweeper = False
+haswon = False
+haslost = False
 
 # MQTT functions
+
+
 def on_connect(client, userdata, flags, rc):  # Handels connection
     if rc == 0:
         print("Connected OK Returned code=", rc)
@@ -42,6 +48,8 @@ def on_disconnect(client, userdata, rc):
 
 def on_message(client, userdata, message):
     global game
+    global start_minesweeper
+    global new_game_minesweeper
     # print topic and message
     topic = message.topic
     message = message.payload.decode("utf-8")
@@ -59,7 +67,8 @@ def on_message(client, userdata, message):
         elif message == "minesweepr":
             game = "minesweepr"
             print("minesweepr")
-            minesweeper()
+            start_minesweeper = True
+            new_game_minesweeper = True
     if topic == "buttons":
         if game == "memory":
             # Do read button stuff voor memory
@@ -82,38 +91,67 @@ def analyse_buttons_minesweeper(message):
     global game
     global index_minesweeper
     global score_minesweeper
+    global haswon
+    global haslost
     print(f'button {message} pressed; game: {game}')
+    print(f'controle{message == str(list_minesweeper[index_minesweeper])}')
     if message == str(list_minesweeper[index_minesweeper]):
         print('correct')
         client.publish(str(list_minesweeper[index_minesweeper]), "2")
         index_minesweeper += 1
         print(f'score: {index_minesweeper}')
         if index_minesweeper == 4:
-            client.loop()
-            time.sleep(1)
             print('game won')
             score_minesweeper += 1
             client.publish('memorypoints', str(score_minesweeper))
-            index_minesweeper = 0
-            for i in range(4):
-                client.publish(str(i), "off")
-            client.loop()
-            time.sleep(1)
-            minesweeper()
+            haswon = True
     else:
         print('wrong')
+
+
+def send_hint_function():
+    global list_minesweeper
+    global index_minesweeper
+    client.publish(str(list_minesweeper[0]), "1")
+    time.sleep(1)
+    client.publish(str(list_minesweeper[0]), "off")
+
+
+def sequence_off():
+    print('sequence off')
+    for i in range(4):
+        client.publish(str(i), "off")
+    time.sleep(1)
 
 
 def minesweeper():
     print('start minesweeper')
     global list_minesweeper
     global index_minesweeper
-    list_minesweeper = random.sample(range(4), 4)
-    print(list_minesweeper)
-    client.publish(str(list_minesweeper[index_minesweeper]), "1")
-    client.loop()
-    time.sleep(1)
-    client.publish(str(list_minesweeper[index_minesweeper]), "off")
+    global new_game_minesweeper
+    global start_minesweeper
+    global haswon
+    global haslost
+    while True:
+        if (start_minesweeper):
+            if (new_game_minesweeper):
+                list_minesweeper = random.sample(range(4), 4)
+                print(list_minesweeper)
+                index_minesweeper = 0
+                send_hint_function()
+                new_game_minesweeper = False
+            else:
+                if (haswon):
+                    print('Game has been won')
+                    sequence_off()
+                    haswon = False
+                    new_game_minesweeper = True
+    # list_minesweeper = random.sample(range(4), 4)
+    # print(list_minesweeper)
+    # client.publish(str(list_minesweeper[index_minesweeper]), "1")
+    # client.loop()
+    # time.sleep(1)
+    # client.publish(str(list_minesweeper[index_minesweeper]), "off")
 
 
 # MQTT client
