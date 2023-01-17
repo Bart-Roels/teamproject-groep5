@@ -62,7 +62,7 @@ const listen = () => {
   btnsLed.forEach((btn) => {
     btn.addEventListener('click', () => {
       const message = btn.getAttribute('data-led-id');
-      client.publish('buttons', message);
+      client.publish('button', message);
       console.log(`Button ${message} pressed en send to MQTT`);
     });
   });
