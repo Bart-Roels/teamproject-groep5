@@ -96,10 +96,10 @@
         <div class="o-container">
           <div class="c-tags">
             <ul class="o-list c-tags__list">
-              <li class="c-tag"><input class="o-hide-accessible" type="radio" name="game" id="memorygame" checked /><label for="memorygame">Memory Game</label></li>
-              <li class="c-tag"><input class="o-hide-accessible" type="radio" name="game" id="redvsblue" /><label for="redvsblue">Red vs Blue</label></li>
-              <li class="c-tag"><input class="o-hide-accessible" type="radio" name="game" id="zengame" /><label for="zengame">Zen Game</label></li>
-              <li class="c-tag"><input class="o-hide-accessible" type="radio" name="game" id="minesweeper" /><label for="minesweeper">Mine Sweeper</label></li>
+              <li class="c-tag"><input class="o-hide-accessible js-game-btn" type="radio" name="game" id="memorygame" checked /><label for="memorygame">Memory Game</label></li>
+              <li class="c-tag"><input class="o-hide-accessible js-game-btn" type="radio" name="game" id="redvsblue" /><label for="redvsblue">Red vs Blue</label></li>
+              <li class="c-tag"><input class="o-hide-accessible js-game-btn" type="radio" name="game" id="zengame" /><label for="zengame">Zen Game</label></li>
+              <li class="c-tag"><input class="o-hide-accessible js-game-btn" type="radio" name="game" id="minesweeper" /><label for="minesweeper">Mine Sweeper</label></li>
             </ul>
           </div>
         </div>
@@ -107,14 +107,31 @@
       <section class="o-row">
         <div class="o-container">
           <div class="c-ranking">
-            <div class="c-ranking__dropdown js-dropdown">
-              <select class="c-dropdown" name="dorpdown">
+            <span class="c-custom-select">
+              <select class="c-input c-custom-select__input js-dropdown" name="select1" id="select1">
                 <option value="3">3 min</option>
                 <option value="5">5 min</option>
                 <option value="10">10 min</option>
               </select>
-            </div>
+              <svg class="c-custom-select__symbol" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M36 18L24 30L12 18" stroke="#333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </span>
             <h1 class="c-title">Rangschikking &#129321;</h1>
+            <div class="c-ranking__body">
+              <ul class="o-list c-ranking__items js-rangschikking">
+                <li class="c-ranking__item c-ranking__item--first"><span><img src="img/icons/first_place.svg" alt="eerste plaat badge"></span><span>Lei</span><span class="c-ranking__score">1420p</span></li>
+                <li class="c-ranking__item c-ranking__item--second"><span><img src="img/icons/second_place.svg" alt="eerste plaat badge"></span><span>Bard</span><span class="c-ranking__score">1133p</span></li>
+                <li class="c-ranking__item c-ranking__item--third"><span><img src="img/icons/thrid_place.svg" alt="eerste plaat badge"></span><span>Ruben</span><span class="c-ranking__score">1000p</span></li>
+                <li class="c-ranking__item"><span>4</span><span>Boy33</span><span class="c-ranking__score">900p</span></li>
+                <li class="c-ranking__item"><span>5</span><span>DCDF</span><span class="c-ranking__score">843p</span></li>
+                <li class="c-ranking__item"><span>6</span><span>Jens</span><span class="c-ranking__score">732p</span></li>
+                <li class="c-ranking__item"><span>7</span><span>Arnoux</span><span class="c-ranking__score">632p</span></li>
+                <li class="c-ranking__item"><span>8</span><span>Arnuad</span><span class="c-ranking__score">532p</span></li>
+                <li class="c-ranking__item"><span>9</span><span>Kobe</span><span class="c-ranking__score">242p</span></li>
+                <li class="c-ranking__item"><span>10</span><span>Bjarne</span><span class="c-ranking__score">132p</span></li>
+              </ul>
+            </div>
           </div>
         </div>
       </section>

@@ -43,6 +43,23 @@ const listener = () => {
       }
     });
   });
+
+  const gameBtns = document.querySelectorAll('.js-game-btn');
+  const dropdown = document.querySelector('.js-dropdown');
+  gameBtns.forEach((btn) => {
+    btn.addEventListener('change', () => {
+      const game = btn.id;
+      if (game === 'minesweeper') {
+        dropdown.innerHTML = `<option value="makkelijk">makkelijk</option>
+                <option value="normaal">normaal</option>
+                <option value="moeilijk">moeilijk</option>`;
+      } else {
+        dropdown.innerHTML = `<option value="3">3 min</option>
+                <option value="5">5 min</option>
+                <option value="10">10 min</option>`;
+      }
+    });
+  });
 };
 
 const init = () => {
