@@ -76,6 +76,18 @@ def on_message(client, userdata, message): # Handels incomming messages
         elif game == "minesweepr":
             # Do read button stuff voor minesweepr
             print("minesweeper button incomming")
+    if topic == "stop":
+        if game == "memory":
+            start_memory_var = False
+            new_game = False
+            sequence_number = 1
+            print("stop memory")
+        elif game == "redblue":
+            print("stop redblue")
+        elif game == "zen":
+            print("stop zen")
+        elif game == "minesweepr":
+            print("stop minesweepr")
 
 # GAMES
 def generate_sequence(sequence_number): # Generate random sequence 
@@ -181,7 +193,8 @@ def start_memory(): #start memory game
 
 # MQQT CLIENT
 client = mqtt.Client()
-client.connect("192.168.220.1", 1883)
+# client.connect("192.168.220.1", 1883)
+client.connect("localhost", 1883)
 client.on_connect=on_connect
 client.on_disconnect = on_disconnect
 

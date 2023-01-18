@@ -30,7 +30,7 @@ client.on('connect', () => {
         }
       } else {
         index = parseInt(message);
-        index = index ;
+        index = index;
         if (topic === '0') {
           console.log('LED 1 on');
           // Set opacity to 1
@@ -65,6 +65,18 @@ const listen = () => {
       client.publish('button', message);
       console.log(`Button ${message} pressed en send to MQTT`);
     });
+  });
+
+  const btnAction = document.querySelector('.js-button-action');
+  btnAction.addEventListener('click', () => {
+    const message = btnAction.getAttribute('data-action-id');
+    if (message === 'stop') {
+      client.publish('stop');
+      // Refresh the page
+      location.reload();
+      console.log('Stop game');
+
+    }
   });
 };
 
