@@ -53,6 +53,8 @@ def on_message(client, userdata, message):
     global game
     global start_redvsblue_game
     global new_game_redvsblue
+    global score_team_blue
+    global score_team_red
     # print topic and message
     topic = message.topic
     message = message.payload.decode("utf-8")
@@ -64,6 +66,8 @@ def on_message(client, userdata, message):
         elif message == "redblue":
             game = "redblue"
             print("redblue")
+            score_team_blue = 0
+            score_team_red = 0
             start_redvsblue_game = True
             new_game_redvsblue = True
             # redvsblue()
@@ -87,6 +91,19 @@ def on_message(client, userdata, message):
         elif game == "minesweepr":
             # Do read button stuff voor minesweepr
             print("minesweeper button incomming")
+    if topic == "stop":
+        if game == "memory":
+            print("stop memory")
+        elif game == "redblue":
+            print("stop redblue")
+            start_redvsblue_game = False
+            new_game_redvsblue = False
+            game = None
+
+        elif game == "zen":
+            print("stop zen")
+        elif game == "minesweepr":
+            print("stop minesweepr")
 
 
 def analyse_pressed_buttons_redvsblue(number):
@@ -101,7 +118,6 @@ def analyse_pressed_buttons_redvsblue(number):
         score_team_red += 1
         print(f"score red: {score_team_red}")
         new_game_redvsblue = True
-
 
     elif number == blue_led:
         print("blue wins")
