@@ -16,6 +16,9 @@
 
     <script src="script/datahandler.js"></script>
     <script src="script/app.js"></script>
+
+    <script src="vendor/lottie-player.js"></script>
+
   </head>
   <body class="js-form-page">
     <main>
@@ -58,17 +61,19 @@
                   <input class="c-input js-name-input" type="text" name="username" id="username" placeholder="bijv. Bart23" required />
                 </p>
               </div>
-              <p class="c-form-field c-custom-select">
-                <label class="c-label js-dropdown-label" for="username"> Selecteer tijdslimiet </label>
-                <select class="c-input c-custom-select__input--form js-dropdown" name="select1" id="select1">
-                  <option value="3">3 min</option>
-                  <option value="5">5 min</option>
-                  <option value="10">10 min</option>
-                </select>
-                <svg class="c-custom-select__symbol" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M36 18L24 30L12 18" stroke="#333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-              </p>
+              <div class="js-form-select">
+                <p class="c-form-field c-custom-select">
+                  <label class="c-label js-dropdown-label" for="username"> Selecteer tijdslimiet </label>
+                  <select class="c-input c-custom-select__input--form js-dropdown" name="select1" id="select1">
+                    <option value="3">3 min</option>
+                    <option value="5">5 min</option>
+                    <option value="10">10 min</option>
+                  </select>
+                  <svg class="c-custom-select__symbol" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M36 18L24 30L12 18" stroke="#333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </p>
+              </div>
               <button class="o-button-reset c-button js-form-start-btn">START NU</button>
               <div class="c-form__info">
                 <div class="c-form__icon">
@@ -84,12 +89,15 @@
                     <path d="M21 34H28" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
                   </svg>
                 </div>
-                <p class="c-form__info-text js-form-info-text">In 'memory game' is de bedoeling dat je de getoonde sequentie van led's zo lang mogelijk probeert na te doen door de juiste paaltjes aan te klikken. Er zal telkens een extra led toegevoegd worden.</p>
+                <p class="c-form__info-text js-form-info-text">
+                  In 'memory game' is de bedoeling dat je de getoonde sequentie van led's zo lang mogelijk probeert na te doen door de juiste paaltjes aan te klikken. Er zal telkens een extra led toegevoegd worden.
+                </p>
               </div>
             </div>
           </form>
         </div>
       </section>
     </main>
+    <div class="c-countdown"></div>
   </body>
 </html>
