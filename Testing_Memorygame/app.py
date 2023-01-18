@@ -6,7 +6,7 @@ import paho.mqtt.client as mqtt
 import socket
 import logging
 
-# Set up app and logging
+# Set up app 
 app = Flask(__name__)
 logging.basicConfig(filename='error.log', level=logging.ERROR)
 
@@ -247,6 +247,9 @@ client.connect("localhost", 1883)
 client.on_connect=on_connect
 client.on_disconnect = on_disconnect
 
+#endregion
+
+#region FLASK ROUTES
 #endregion
 
 #region THREADS
