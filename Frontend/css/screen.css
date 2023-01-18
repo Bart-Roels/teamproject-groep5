@@ -1259,6 +1259,98 @@ input:disabled {
     }
 }
 
+/*
+    Component: live scoreboard
+    ---
+    Live scoreboard component
+*/
+
+.c-live {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.c-live--red {
+    background-color: var(--global-color-error);
+    height: 50vh;
+}
+
+.c-live--blue {
+    background-color: var(--global-color-alpha);
+    height: 50vh;
+}
+
+.c-live__score {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    font-size: 40px;
+    font-weight: var(--global-fontWeight-bold);
+    color: var(--global-color-neutral-xxx-light);
+}
+
+.c-live__timer {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.c-timer {
+    padding: 20px 40px;
+    background-color: var(--global-color-neutral-xxx-light);
+    border-radius: var(--global-borderRadius-md);
+    /* make a box-shadow */
+    box-shadow: 0 0 0 0 var(--global-color-neutral-xxx-light);
+}
+
+.c-timer__time {
+    margin: 0;
+    font-size: 40px;
+    line-height: 1;
+    font-weight: var(--global-fontWeight-bold);
+}
+
+@media (min-width: 576px) {
+    .c-live__score {
+        font-size: 60px;
+    }
+
+    .c-timer__time {
+        font-size: 60px;
+    }
+}
+
+@media (min-width: 768px) {
+    .c-live {
+        flex-direction: row;
+    }
+
+    .c-timer__time {
+        font-size: 80px;
+    }
+
+    .c-live--red, .c-live--blue {
+        width: 50vw;
+        height: 100vh;
+    }
+
+    .c-live__score {
+        font-size: 80px;
+    }
+}
+
+@media (min-width: 992px) {
+    .c-live__score {
+        font-size: 120px;
+    }
+
+    .c-timer__time {
+        font-size: 100px;
+    }
+}
 
 /*------------------------------------*\
 #UTILITIES

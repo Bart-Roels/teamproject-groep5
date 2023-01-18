@@ -128,7 +128,7 @@ const checkValidity = (arrField, arrInput, arrError) => {
 const countDown3sec = () => {
   const countDown = document.querySelector('.c-countdown');
   countDown.classList.add('is-visible');
-  countDown.innerHTML = `<lottie-player class="c-countdown__animation" src="img/test.json" background="transparent"  speed="1"  style="width: 300px; height: 300px;" autoplay></lottie-player>`;
+  countDown.innerHTML = `<lottie-player class="c-countdown__animation" src="img/count.json" background="transparent"  speed="1"  style="width: 300px; height: 300px;" autoplay></lottie-player>`;
 
   setTimeout(() => {
     countDown.innerHTML = '';
