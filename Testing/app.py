@@ -44,6 +44,7 @@ def on_connect(client, userdata, flags, rc):  # Handels connection
         print("Connected OK Returned code=", rc)
         client.subscribe("games")
         client.subscribe("buttons")
+        client.subscribe("stop")
     else:
         print("Bad connection Returned code=", rc)
 
