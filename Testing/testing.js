@@ -5,7 +5,7 @@ client.on('connect', () => {
   console.log('Connected to the MQTT WebSocket');
   const colorsArray = ['red', 'yellow', 'green', 'blue'];
   // Subscribe to the topics
-  client.subscribe('0'); 
+  client.subscribe('0');
   client.subscribe('1');
   client.subscribe('2');
   client.subscribe('3');
@@ -65,6 +65,16 @@ const listen = () => {
       client.publish('buttons', message);
       // console.log(`Button ${message} pressed`);
     });
+  });
+  const btnAction = document.querySelector('.js-button-action');
+  btnAction.addEventListener('click', () => {
+    const message = btnAction.getAttribute('data-action-id');
+    if (message === 'stop') {
+      client.publish('stop', 'stop');
+      // Refresh the page
+      console.log('Stop game');
+      location.reload();
+    }
   });
 };
 

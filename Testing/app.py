@@ -61,6 +61,7 @@ def on_message(client, userdata, message):
     global game
     global new_zen_game
     global start_zen_game
+    global total_score_zen
     # print topic and message
     topic = message.topic
     message = message.payload.decode("utf-8")
@@ -76,6 +77,7 @@ def on_message(client, userdata, message):
         elif message == "zen":
             game = "zen"
             print("zen")
+            total_score_zen = 0
             start_zen_game = True
             new_zen_game = True
             #zen_game()
@@ -97,7 +99,18 @@ def on_message(client, userdata, message):
         elif game == "minesweepr":
             # Do read button stuff voor minesweepr
             print("minesweeper button incomming")
-
+    if topic == "stop":
+        if game == "memory":
+            print("stop memory")
+        elif game == "redblue":
+            print("stop redblue")
+        elif game == "zen":
+            print("stop zen")
+            start_zen_game = False
+            new_zen_game = False
+            game = None
+        elif game == "minesweepr":
+            print("stop minesweepr")
 
 def reward_response_time(response_time):
     global total_score_zen
