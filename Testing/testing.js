@@ -67,17 +67,39 @@ const listen = () => {
     });
   });
 
-  const btnAction = document.querySelector('.js-button-action');
-  btnAction.addEventListener('click', () => {
+  const buttons = document.querySelectorAll('.js-button-action');
+  buttons.forEach(button =>{
+    button.addEventListener('click', (event)=>{
+      const message = event.target.getAttribute('data-action-id');
+      console.log(message);
+      if (message === 'stop') {
+        client.publish('stop', "stop");
+        // Refresh the page
+        console.log('Stop game');
+        location.reload();
+  
+      }else if(message==='pauze'){
+        client.publish('pauze', "pauze");
+        console.log('Pauze game');
+        location.reload();
+      }
+    })
+  })
+  /*btnAction.addEventListener('click', () => {
     const message = btnAction.getAttribute('data-action-id');
+    console.log(message);
     if (message === 'stop') {
       client.publish('stop', "stop");
       // Refresh the page
       console.log('Stop game');
       location.reload();
 
+    }else if(message==='pauze'){
+      client.publish('pauze', "pauze");
+      console.log('Pauze game');
+      location.reload();
     }
-  });
+  });*/
 };
 
 // Dom loaded

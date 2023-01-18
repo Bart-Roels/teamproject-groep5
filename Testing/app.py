@@ -20,6 +20,8 @@ score_team_red = 0
 start_redvsblue_game = False
 new_game_redvsblue = False
 
+stop_event = threading.Event()
+thread_active  = True
 # turn on all led's mqqt
 
 
@@ -36,6 +38,8 @@ def on_connect(client, userdata, flags, rc):  # Handels connection
         print("Connected OK Returned code=", rc)
         client.subscribe("games")
         client.subscribe("buttons")
+        client.subscribe("stop")
+        client.subscribe("pauze")
     else:
         print("Bad connection Returned code=", rc)
 
@@ -104,7 +108,23 @@ def on_message(client, userdata, message):
             print("stop zen")
         elif game == "minesweepr":
             print("stop minesweepr")
-
+    if topic == "pauze":
+        if game == "memory":
+            print("pauze memory")
+        elif game == "redblue":
+            print("pauze redblue")
+            global thread_active
+            if thread_active:
+                stop_event.set()
+                thread_active = False
+            elif not thread_active:
+                mem = threading.Thread(target=redvsblue)
+                mem.start()
+                thread_active = True
+        elif game == "zen":
+            print("pauze zen")
+        elif game == "minesweepr":
+            print("pauze minesweepr")
 
 def analyse_pressed_buttons_redvsblue(number):
     global game
@@ -139,24 +159,25 @@ def random_leds():
 
 
 def redvsblue():
-    global red_led, blue_led
-    global start_redvsblue_game
-    global new_game_redvsblue
-    print('red vs blue')
-    while True:
-        if (start_redvsblue_game):
-            if (new_game_redvsblue):
-                print('new game')
-                for i in range(0, 4):
-                    client.publish(str(i), "off")
-                list_leds = random_leds()
-                print(list_leds)
-                red_led = list_leds[0]
-                blue_led = list_leds[1]
-                client.publish(str(red_led), "0")
-                client.publish(str(blue_led), "3")
-                new_game_redvsblue = False
-
+    while not stop_event.is_set():
+        global red_led, blue_led
+        global start_redvsblue_game
+        global new_game_redvsblue
+        print('red vs blue')
+        while True:
+            if (start_redvsblue_game):
+                if (new_game_redvsblue):
+                    print('new game')
+                    for i in range(0, 4):
+                        client.publish(str(i), "off")
+                    list_leds = random_leds()
+                    print(list_leds)
+                    red_led = list_leds[0]
+                    blue_led = list_leds[1]
+                    client.publish(str(red_led), "0")
+                    client.publish(str(blue_led), "3")
+                    new_game_redvsblue = False
+    print('red vs blue paused')
 
 # MQQT CLIENT
 client = mqtt.Client()
