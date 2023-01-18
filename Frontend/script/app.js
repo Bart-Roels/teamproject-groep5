@@ -69,6 +69,35 @@ const listener = () => {
       window.location.href = 'form.html';
     });
   });
+
+  const backBtn = document.querySelector('.js-back-btn');
+  backBtn.addEventListener('click', () => {
+    window.location.href = 'index.html';
+  });
+};
+
+const checkValidity = (arrField, arrInput, arrError) => {
+  const formStartBtn = document.querySelector('.js-form-start-btn');
+  formStartBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    for (let i = 0; i < arrField.length; i++) {
+      if (!isEmpty(arrInput[i].value)) {
+        arrError[i].classList.remove('is-visible');
+        arrField[i].classList.remove('has-error');
+      } else {
+        arrError[i].classList.add('is-visible');
+        arrField[i].classList.add('has-error');
+      }
+    }
+  });
+  for (let i = 0; i < arrField.length; i++) {
+    arrInput[i].addEventListener('input', (e) => {
+      if (!isEmpty(arrInput[i].value)) {
+        arrError[i].classList.remove('is-visible');
+        arrField[i].classList.remove('has-error');
+      }
+    });
+  }
 };
 
 const showFieldToForm = () => {
@@ -76,20 +105,44 @@ const showFieldToForm = () => {
   console.log(selectedGameForm);
   const title = document.querySelector('.js-form-title');
   const icon = document.querySelector('.js-form-icon');
+
+  const formNameInput = document.querySelector('.js-name-input');
+  const formNameField = document.querySelector('.js-name-field');
+  const formNameError = document.querySelector('.js-name-error-message');
+
+  const formFields = document.querySelector('.js-form-fields');
+
   if (selectedGameForm === 'bluevsred') {
     title.textContent = 'Blue vs Red';
     icon.innerHTML = `<svg class="c-icon" width="77" height="77" viewBox="0 0 77 77"><g transform="translate(-286.5 -347.5)"><g transform="translate(288.308 349.308)"><path d="M37,0h0a0,0,0,0,1,0,0V74a0,0,0,0,1,0,0h0A37,37,0,0,1,0,37v0A37,37,0,0,1,37,0Z" transform="translate(-0.308 -0.308)" fill="#f33" stroke="#919799" stroke-width="3" /><path d="M0,0H0A37,37,0,0,1,37,37v0A37,37,0,0,1,0,74H0a0,0,0,0,1,0,0V0A0,0,0,0,1,0,0Z" transform="translate(36.692 -0.308)" fill="#44c8f5" stroke="#919799" stroke-width="3" /></g></g></svg>`;
+    formFields.innerHTML = `<p class="c-form-field js-red-field"><label class="c-label" for="red">Red team naam<span class="c-label__error-message js-red-error-message">Verplicht invullen</span></label><input class="c-input js-red-input" type="text" name="red" id="red" placeholder="bijv. Duivels" required /></p> <p class="c-form-field js-blue-field"><label class="c-label" for="blue">Blue team naam<span class="c-label__error-message js-blue-error-message">Verplicht invullen</span></label><input class="c-input js-blue-input" type="text" name="blue" id="blue" placeholder="bijv. Spartanen" required /></p> `;
+    const formRedInput = document.querySelector('.js-red-input');
+    const formRedField = document.querySelector('.js-red-field');
+    const formRedError = document.querySelector('.js-red-error-message');
+    const formBlueInput = document.querySelector('.js-blue-input');
+    const formBlueField = document.querySelector('.js-blue-field');
+    const formBlueError = document.querySelector('.js-blue-error-message');
+    checkValidity([formRedField, formBlueField], [formRedInput, formBlueInput], [formRedError, formBlueError]);
   } else if (selectedGameForm === 'zengame') {
     title.textContent = 'Zen Game';
     icon.innerHTML = `<svg class="c-icon u-color-zen-game" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="28" r="16" fill="none"  stroke-width="3"/><path d="M28 4L20 4"  stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 4V12"  stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M35 16L38 13"  stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 28V22"  stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 28H18"  stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+    checkValidity([formNameField], [formNameInput], [formNameError]);
   } else if (selectedGameForm === 'minesweeper') {
     console.log('minesweeper');
     title.textContent = 'Mine sweeper';
     icon.innerHTML = `<svg class="c-icon u-color-mine-sweeper" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.2632 44L14.6271 35.6852C10.031 32.5934 7 27.2927 7 21.2727C7 11.7333 14.6112 4 24 4C33.3888 4 41 11.7333 41 21.2727C41 27.2927 37.969 32.5934 33.3729 35.6852L36.7368 44H11.2632Z" fill="none"  stroke-width="3" stroke-linejoin="round"/><path d="M20 38V44"  stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M28 38V44"  stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 23C18.6569 23 20 21.6569 20 20C20 18.3431 18.6569 17 17 17C15.3431 17 14 18.3431 14 20C14 21.6569 15.3431 23 17 23Z" fill="none"  stroke-width="3" stroke-linejoin="round"/><path d="M31 23C32.6569 23 34 21.6569 34 20C34 18.3431 32.6569 17 31 17C29.3431 17 28 18.3431 28 20C28 21.6569 29.3431 23 31 23Z" fill="none"  stroke-width="3" stroke-linejoin="round"/><path d="M32 44H24"  stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 44H16"  stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+    document.querySelector('.js-dropdown').innerHTML = `<option value="easy">Makkelijk</option><option value="medium">Normaal</option><option value="hard">Moeilijk</option>`;
+    document.querySelector('.js-dropdown-label').textContent = 'Moeilijkheidsgraad';
+    checkValidity([formNameField], [formNameInput], [formNameError]);
   } else if (selectedGameForm === 'memorygame') {
     title.textContent = 'Memory Game';
     icon.innerHTML = `<svg class="c-icon" width="75" height="75" viewBox="0 0 75 75"><g transform="translate(-254.5 -305.5)"><g transform="translate(256 307)"><path d="M36,0h0a0,0,0,0,1,0,0V36a0,0,0,0,1,0,0H0a0,0,0,0,1,0,0v0A36,36,0,0,1,36,0Z" fill="#f33" stroke="#919799" stroke-width="3"/><path d="M0,0H0A36,36,0,0,1,36,36v0a0,0,0,0,1,0,0H0a0,0,0,0,1,0,0V0A0,0,0,0,1,0,0Z" transform="translate(36)" fill="#44c8f5" stroke="#919799" stroke-width="3"/><path d="M0,0H36a0,0,0,0,1,0,0V36a0,0,0,0,1,0,0h0A36,36,0,0,1,0,0V0A0,0,0,0,1,0,0Z" transform="translate(0 36)" fill="#e5ea49" stroke="#919799" stroke-width="3"/><path d="M0,0H36a0,0,0,0,1,0,0V0A36,36,0,0,1,0,36H0a0,0,0,0,1,0,0V0A0,0,0,0,1,0,0Z" transform="translate(36 36)" fill="#5ed540" stroke="#919799" stroke-width="3"/></g></g></svg>`;
+    checkValidity([formNameField], [formNameInput], [formNameError]);
   }
+};
+
+const isEmpty = function (fieldValue) {
+  return !fieldValue || fieldValue.length < 1;
 };
 
 const init = () => {

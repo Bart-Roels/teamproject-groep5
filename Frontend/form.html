@@ -23,12 +23,12 @@
       <header class="o-row">
         <div class="o-container">
           <div class="c-header">
-            <div class="c-header__back-btn">
+            <button class="c-header__back-btn js-back-btn o-button-reset">
               <svg class="c-icon--md" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12 23.9917H36" stroke="#333" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
                 <path d="M24 36L12 24L24 12" stroke="#333" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
               </svg>
-            </div>
+            </button>
             <div class="c-header__icon js-form-icon">
               <svg class="c-icon" width="77" height="77" viewBox="0 0 77 77">
                 <g transform="translate(-286.5 -347.5)">
@@ -39,13 +39,55 @@
                 </g>
               </svg>
             </div>
-            <div class="c-header__title js-form-title">Memory Game</div>
+            <h1 class="c-header__title js-form-title">Memory Game</h1>
           </div>
         </div>
       </header>
       <section class="o-row">
         <div class="o-container">
-         
+          <!-- make form -->
+          <form action="#" class="c-form u-max-width-xs u-align-center">
+            <div class="c-form__body">
+              <h2 class="c-title">Bijna klaar &#128540;</h2>
+              <div class="js-form-fields">
+                <p class="c-form-field js-name-field">
+                  <label class="c-label" for="username">
+                    Naam
+                    <span class="c-label__error-message js-name-error-message">Verplicht invullen</span>
+                  </label>
+                  <input class="c-input js-name-input" type="text" name="username" id="username" placeholder="bijv. Bart23" required />
+                </p>
+              </div>
+              <p class="c-form-field c-custom-select">
+                <label class="c-label js-dropdown-label" for="username"> Selecteer tijdslimiet </label>
+                <select class="c-input c-custom-select__input--form js-dropdown" name="select1" id="select1">
+                  <option value="3">3 min</option>
+                  <option value="5">5 min</option>
+                  <option value="10">10 min</option>
+                </select>
+                <svg class="c-custom-select__symbol" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M36 18L24 30L12 18" stroke="#333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </p>
+              <button class="o-button-reset c-button js-form-start-btn">START NU</button>
+              <div class="c-form__info">
+                <div class="c-form__icon">
+                  <svg class="c-icon" width="24" height="24" viewBox="0 0 48 48" fill="black" stroke="black">
+                    <path
+                      d="M24 44C29.5228 44 34.5228 41.7614 38.1421 38.1421C41.7614 34.5228 44 29.5228 44 24C44 18.4772 41.7614 13.4772 38.1421 9.85786C34.5228 6.23858 29.5228 4 24 4C18.4772 4 13.4772 6.23858 9.85786 9.85786C6.23858 13.4772 4 18.4772 4 24C4 29.5228 6.23858 34.5228 9.85786 38.1421C13.4772 41.7614 18.4772 44 24 44Z"
+                      fill="none"
+                      stroke-width="4"
+                      stroke-linejoin="round"
+                    />
+                    <path fill-rule="evenodd" stroke-width="0" clip-rule="evenodd" d="M24 11C25.3807 11 26.5 12.1193 26.5 13.5C26.5 14.8807 25.3807 16 24 16C22.6193 16 21.5 14.8807 21.5 13.5C21.5 12.1193 22.6193 11 24 11Z" />
+                    <path d="M24.5 34V20H23.5H22.5" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M21 34H28" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </div>
+                <p class="c-form__info-text">In 'memory game' is de bedoeling dat je de getoonde sequentie van led's zo lang mogelijk probeert na te doen door de juiste paaltjes aan te klikken. Er zal telkens een extra led toegevoegd worden.</p>
+              </div>
+            </div>
+          </form>
         </div>
       </section>
     </main>
