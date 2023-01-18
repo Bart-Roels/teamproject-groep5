@@ -71,10 +71,10 @@ const listen = () => {
   btnAction.addEventListener('click', () => {
     const message = btnAction.getAttribute('data-action-id');
     if (message === 'stop') {
-      client.publish('stop');
+      client.publish('stop', "stop");
       // Refresh the page
-      location.reload();
       console.log('Stop game');
+      location.reload();
 
     }
   });
