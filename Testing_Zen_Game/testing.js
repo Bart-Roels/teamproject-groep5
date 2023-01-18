@@ -66,6 +66,17 @@ const listen = () => {
       // console.log(`Button ${message} pressed`);
     });
   });
+  const btnAction = document.querySelector('.js-button-action');
+  btnAction.addEventListener('click', () => {
+    const message = btnAction.getAttribute('data-action-id');
+    if (message === 'stop') {
+      client.publish('stop', "stop");
+      // Refresh the page
+      console.log('Stop game');
+      location.reload();
+
+    }
+  });
 };
 
 // Dom loaded

@@ -54,6 +54,7 @@ def on_message(client, userdata, message):
     global start_minesweeper
     global new_game_minesweeper
     global level_minesweeper
+    global score_minesweeper
     # print topic and message
     topic = message.topic
     message = message.payload.decode("utf-8")
@@ -74,6 +75,7 @@ def on_message(client, userdata, message):
             print('1: easy level, 2: medium level, 3: hard level')
             level_minesweeper = int(input('choose level: '))
             print(f'chosen level {level_minesweeper}')
+            score_minesweeper = 0
             start_minesweeper = True
             new_game_minesweeper = True
     if topic == "buttons":
@@ -91,7 +93,18 @@ def on_message(client, userdata, message):
             print("minesweeper button incomming")
             
             analyse_buttons_minesweeper(message)
+    if topic == "stop":
+        if game == "memory":
+            print("stop memory")
+        elif game == "redblue":
+            print("stop redblue")
+        elif game == "zen":
+            print("stop zen")
+        elif game == "minesweepr":
+            start_minesweeper = False
+            new_game_minesweeper = False
 
+            print("stop minesweepr")
 # Minesweeper
 
 
