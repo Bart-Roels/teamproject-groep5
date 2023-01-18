@@ -66,7 +66,7 @@ const listen = () => {
       // console.log(`Button ${message} pressed`);
     });
   });
-
+  let pauzeState = false;
   const buttons = document.querySelectorAll('.js-button-action');
   buttons.forEach(button =>{
     button.addEventListener('click', (event)=>{
@@ -79,9 +79,17 @@ const listen = () => {
         location.reload();
   
       }else if(message==='pauze'){
-        client.publish('pauze', "pauze");
-        console.log('Pauze game');
-        location.reload();
+        if(pauzeState === false){
+          pauzeState = true;
+          client.publish('pauze', "pauze");
+          console.log('Pauze game');
+          location.reload();
+        }else{
+          pauzeState = false;
+          client.publish('unpauze', "unpauze");
+          console.log('Pauze game');
+          location.reload();
+        }
       }
     })
   })
