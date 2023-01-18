@@ -147,6 +147,7 @@ def on_message(client, userdata, message):
                 print("unpauze minesweepr")
     except socket.error as e:
         logger.error(e)
+        
 def analyse_pressed_buttons_redvsblue(number):
     try:
         global game
