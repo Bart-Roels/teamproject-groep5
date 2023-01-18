@@ -27,7 +27,7 @@ new_game_minesweeper = False
 haswon = False
 haslost = False
 level_minesweeper = 0
-
+semaphore = threading.Semaphore(1)
 # MQTT functions
 
 
@@ -89,6 +89,7 @@ def on_message(client, userdata, message):
         elif game == "minesweepr":
             # Do read button stuff voor minesweepr
             print("minesweeper button incomming")
+            
             analyse_buttons_minesweeper(message)
 
 # Minesweeper
@@ -119,7 +120,6 @@ def analyse_buttons_minesweeper(message):
             if level_minesweeper == 2 or level_minesweeper == 3:
                 print('game lost')
                 haslost = True
-
 
 def send_hint_function():
     global list_minesweeper
@@ -156,39 +156,42 @@ def sequence_mistake():
 
 
 def minesweeper():
-    print('start minesweeper')
-    global list_minesweeper
-    global index_minesweeper
-    global new_game_minesweeper
-    global start_minesweeper
-    global haswon
-    global haslost
-    global level_minesweeper
-    while True:
-        if (start_minesweeper):
-            if (new_game_minesweeper):
-                list_minesweeper = random.sample(range(4), 4)
-
-                index_minesweeper = 0
-                print(f'level minesweeper: {level_minesweeper}')
-                if level_minesweeper == 1 or level_minesweeper == 2:
-                    send_hint_function()
-
-                new_game_minesweeper = False
-            else:
-                if (haswon):
-                    print('Game has been won')
-                    sequence_off()
-                    haswon = False
-                    new_game_minesweeper = True
-                elif (haslost):
-                    print('Game has been lost')
-                    sequence_mistake()
-                    if level_minesweeper == 2:
-                        send_hint_function()
+    semaphore.acquire()
+    try:
+        print('start minesweeper')
+        global list_minesweeper
+        global index_minesweeper
+        global new_game_minesweeper
+        global start_minesweeper
+        global haswon
+        global haslost
+        global level_minesweeper
+        while True:
+            if (start_minesweeper):
+                if (new_game_minesweeper):
+                    list_minesweeper = random.sample(range(4), 4)
+                    print(f'list: {list_minesweeper}')
                     index_minesweeper = 0
-                    haslost = False
+                    print(f'level minesweeper: {level_minesweeper}')
+                    if level_minesweeper == 1 or level_minesweeper == 2:
+                        send_hint_function()
 
+                    new_game_minesweeper = False
+                else:
+                    if (haswon):
+                        print('Game has been won')
+                        sequence_off()
+                        haswon = False
+                        new_game_minesweeper = True
+                    elif (haslost):
+                        print('Game has been lost')
+                        sequence_mistake()
+                        if level_minesweeper == 2:
+                            send_hint_function()
+                        index_minesweeper = 0
+                        haslost = False
+    finally:
+        semaphore.release()
 
 # MQTT client
 client = mqtt.Client()
