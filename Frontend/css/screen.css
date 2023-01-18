@@ -1,148 +1,885 @@
-/*---------------------------------------/*
- # SETTINGS
-/*---------------------------------------*/
+/*------------------------------------*\
+#FONTS
+\*------------------------------------*/
+
+@font-face {
+    font-family: 'Lato';
+    font-weight: 400;
+    src: url('../fonts/Lato-Regular.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Lato';
+    font-weight: 500;
+    src: url('../fonts/Lato-Medium.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Lato';
+    font-weight: 600;
+    src: url('../fonts/Lato-SemiBold.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Lato';
+    font-weight: 700;
+    src: url('../fonts/Lato-Bold.ttf') format('truetype');
+}
+
+/*------------------------------------*\
+#Variables
+\*------------------------------------*/
+
+:root {
+    /* colors */
+    --global-color-alpha: #44C8F5;
+    --global-color-alpha-light: #47CFFF;
+    --global-color-alpha-dark: #3CB0D9;
+    --global-color-alpha-transparent: #44C8F580;
+
+    --global-color-secondary: #F56331;
+    --global-color-third: #E5EA49;
+    --global-color-fourth: #5ED540;
+
+    --global-color-neutral-xxxx-light: #FFFFFF;
+    --global-color-neutral-xxx-light: #F5F9FA;
+    --global-color-neutral-xx-light: #DAE2E5;
+    --global-color-neutral-x-light: #C2C9CC;
+    --global-color-neutral-light: #AAB0B2;
+    --global-color-neutral: #919799;
+    --global-color-neutral-dark: #797E7F;
+    --global-color-neutral-x-dark: #616466;
+    --global-color-neutral-xx-dark: #484B4C;
+    --global-color-neutral-xxx-dark: #303233;
+    --global-color-neutral-xxxx-dark: #181919;
+    --global-color-error: #FF3333;
+    --global-color-error-transparent: #FF333380;
+
+    --global-color-firstPlace: #F1C43B;
+    --global-color-secondPlace: #BFCDD9;
+    --global-color-thirdPlace: #D98841;
+
+    /* global page settings */
+    --global-page-color: var(--global-color-neutral-xxxx-dark);
+    --global-page-backgroundColor: var(--global-color-neutral-xxx-light);
+    --global-selection-backgroundColor: var(--global-color-alpha);
+    --global-selection-color: var(--global-color-neutral-xxx-light);
+    --global-font-family: 'Lato', Helvetica, Arial, sans-serif;
+
+    /* font weights */
+    --global-fontWeight-regular: 400;
+    --global-fontWeight-medium: 500;
+    --global-fontWeight-semibold: 600;
+    --global-fontWeight-bold: 700;
+
+    /* border radius */
+    --global-borderWidth: .0625rem;
+    /* --global-borderRadius-xs: .3125rem; */
+    /* = 5px */
+    --global-borderRadius-sm: .625;
+    /* = 10px */
+    --global-borderRadius-md: .9375rem;
+    /* = 15px */
+    --global-borderRadius-lg: 1.25rem;
+    /* = 20px */
+
+    /* transitions */
+    --global-transitionEasing-out: ease-out;
+    --global-transitionEasing-out-cubic: cubic-bezier(0.22, 0.61, 0.36, 1);
+    --global-transitionDuration-100ms: .1s;
+    --global-transitionDuration-200ms: .2s;
+    --global-transitionDuration-300ms: .3s;
+
+    /* Baseline settings */
+    --global-baseline: 0.5rem;
+    /* = 8px */
+    --global-whitespace: calc(var(--global-baseline) * 3);
+    /* = 24px */
+    --global-whitespace-xs: calc(var(--global-baseline) * .5);
+    /* = 4px */
+    --global-whitespace-sm: calc(var(--global-baseline) * 1);
+    /*  = 8px */
+    --global-whitespace-md: calc(var(--global-baseline) * 2);
+    /*  = 16px */
+    --global-whitespace-lg: calc(var(--global-baseline) * 4);
+    /*  = 32px */
+    --global-whitespace-xl: calc(var(--global-baseline) * 5);
+    /*  = 40px */
+    --global-whitespace-xxl: calc(var(--global-whitespace) * 2);
+    /*  = 48px */
+    --global-whitespace-xxxl: calc(var(--global-whitespace) * 3);
+    /*  = 72px */
+
+    /* forms */
+    --global-label-color: var(--global-color-neutral-x-dark);
+    --global-placeholder-color: var(--global-color-neutral-dark);
+    --global-input-backgroundColor: var(--global-color-neutral-xxxx-light);
+    --global-input-color: var(--global-color-neutral-xxx-dark);
+    --global-input-borderColor: var(--global-color-neutral-xx-light);
+    --global-input-hover-borderColor: var(--global-color-alpha);
+    --global-input-focus-borderColor: var(--global-color-alpha);
+    --global-input-focus-boxShadowSpread: 0 0 0 4px;
+    --global-input-focus-boxShadowColor: var(--global-color-alpha-transparent);
+    --global-input-error-borderColor: var(--global-color-error);
+    --global-input-error-boxShadowColor: var(--global-color-error-transparent);
+}
+
+/*------------------------------------*\
+#GENERIC
+\*------------------------------------*/
+
+/*
+    Generic: Page
+    ---
+    Global page styles + universal box-sizing:
+*/
 
 html {
-    background-color: #F2F2F2;
+    line-height: 1.5;
+    font-family: var(--global-font-family);
+    color: var(--global-page-color);
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: var(--global-page-backgroundColor);
+    scroll-behavior: smooth;
+}
+
+*,
+*:before,
+*:after {
+    box-sizing: inherit;
 }
 
 
-/*---------------------------------------/*
- # GENERIC
-/*---------------------------------------*/
+/*
+* Remove text-shadow in selection highlight:
+* https://twitter.com/miketaylr/status/12228805301
+*
+* Customize the background color to match your design.
+*/
 
+::selection {
+    background: var(--global-selection-backgroundColor);
+    color: var(--global-selection-color);
+    text-shadow: none;
+}
 
-/*---------------------------------------/* 
- # ELEMENTS
-/*---------------------------------------*/
+/*------------------------------------*\
+#Elements
+\*------------------------------------*/
 
-/*---------------------------------------/*
- # OBJECTS
-/*---------------------------------------*/
+/*
+Elements: Images
+---
+Default markup for images to make them responsive
+*/
+
+img {
+    max-width: 100%;
+    vertical-align: top;
+}
+
+/*
+    Elements: typography
+    ---
+    Default markup for typographic elements
+*/
+
+h1,
+h2,
+h3 {
+    font-weight: 600;
+}
+
+h1 {
+    font-size: 36px;
+    line-height: 1.5;
+    margin: 0 0 24px;
+}
+
+h2 {
+    font-size: 32px;
+    line-height: 1.5;
+    margin: 0 0 24px;
+}
+
+h3 {
+    font-size: 26px;
+    line-height: 1.5;
+    margin: 0 0 24px;
+}
+
+h4,
+h5,
+h6 {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.5;
+    margin: 0 0 24px;
+}
+
+p,
+ol,
+ul,
+dl,
+table,
+address,
+figure {
+    margin: 0 0 24px;
+}
+
+ul,
+ol {
+    padding-left: 24px;
+}
+
+li ul,
+li ol {
+    margin-bottom: 0;
+}
+
+blockquote {
+    font-style: normal;
+    font-size: 23px;
+    line-height: 32px;
+    margin: 0 0 24px;
+}
+
+blockquote * {
+    font-size: inherit;
+    line-height: inherit;
+}
+
+figcaption {
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
+    margin-top: 8px;
+}
+
+hr {
+    border: 0;
+    height: 1px;
+    background: LightGrey;
+    margin: 0 0 24px;
+}
+
+a {
+    transition: all var(--global-transitionDuration-100ms) var(--global-transitionEasing-out);
+    color: var(--global-color-alpha);
+    outline-color: var(--global-color-alpha);
+    outline-width: medium;
+    outline-offset: 2px;
+}
+
+a:active,
+a:visited {
+    color: var(--global-color-alpha-dark);
+}
+
+a:hover,
+a:focus {
+    color: var(--global-color-alpha-light);
+}
+
+label,
+input {
+    display: inline-block;
+}
+
+select {
+    width: 100%;
+}
+
+input::placeholder {
+    color: gray;
+}
+
+input:disabled {
+    cursor: not-allowed;
+}
+
+/*------------------------------------*\
+#OBJECTS
+\*------------------------------------*/
+
+/*
+    Objects: Row
+    ---
+    Creates a horizontal row that stretches the viewport and adds padding around children
+*/
+
+.o-row {
+    position: relative;
+    padding: var(--global-whitespace-md) var(--global-whitespace-md) 0;
+}
+
+/* size modifiers */
+
+.o-row--sm {
+    padding-left: 48px;
+    padding-right: 48px;
+}
+
+/*
+    Objects: Container
+    ---
+    Creates a horizontal container that sets de global max-width
+*/
 
 .o-container {
-    margin-left: 16px;
+    margin-left: auto;
     margin-right: auto;
+    max-width: 45rem;
+    /* 45rem * 16px = 720px */
     width: 100%;
 }
 
-.c-header {
-    width: 100%;
-    float: left;
+/*
+    Objects: section
+    ---
+    Creates vertical whitespace between adjacent sections inside a row
+*/
+
+.o-section {
+    position: relative;
+}
+
+.o-section+.o-section {
+    padding-top: var(--global-whitespace-sm);
+}
+
+/*
+    Objects: Layout
+    ---
+    The layout object provides us with a column-style layout system. This object
+    contains the basic structural elements, but classes should be complemented
+    with width utilities
+*/
+
+.o-layout {
+    display: -webkit-flex;
+    display: -ms-flexbox;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 8px;
-    margin-bottom: 32px;
+    flex-wrap: wrap;
 }
 
+.o-layout__item {
+    flex-basis: 100%;
+}
+
+/* gutter modifiers, these affect o-layout__item too */
+
+.o-layout--gutter {
+    margin: 0 -12px;
+}
+
+.o-layout--gutter>.o-layout__item {
+    padding: 0 12px;
+}
+
+.o-layout--gutter-sm {
+    margin: 0 -6px;
+}
+
+.o-layout--gutter-sm>.o-layout__item {
+    padding: 0 6px;
+}
+
+.o-layout--gutter-lg {
+    margin: 0 -24px;
+}
+
+.o-layout--gutter-lg>.o-layout__item {
+    padding: 0 24px;
+}
+
+/* reverse horizontal row modifier */
+
+.o-layout--row-reverse {
+    flex-direction: row-reverse;
+}
+
+/* Horizontal alignment modifiers*/
+
+.o-layout--justify-start {
+    justify-content: flex-start;
+}
+
+.o-layout--justify-end {
+    justify-content: flex-end;
+}
+
+.o-layout--justify-center {
+    justify-content: center;
+}
+
+.o-layout--justify-space-around {
+    justify-content: space-around;
+}
+
+.o-layout--justify-space-evenly {
+    justify-content: space-evenly;
+}
+
+.o-layout--justify-space-between {
+    justify-content: space-between;
+}
+
+/* Vertical alignment modifiers */
+
+.o-layout--align-start {
+    align-items: flex-start;
+}
+
+.o-layout--align-end {
+    align-items: flex-end;
+}
+
+.o-layout--align-center {
+    align-items: center;
+}
+
+.o-layout--align-baseline {
+    align-items: baseline;
+}
+
+/* Vertical alignment modifiers that only work if there is one than one flex item */
+
+.o-layout--align-content-start {
+    align-content: start;
+}
+
+.o-layout--align-content-end {
+    align-content: end;
+}
+
+.o-layout--align-content-center {
+    align-content: center;
+}
+
+.o-layout--align-content-space-around {
+    align-content: space-around;
+}
+
+.o-layout--align-content-space-between {
+    align-content: space-between;
+}
+
+
+/*
+    Objects: List
+    ---
+    Small reusable object to remove default list styling from lists
+*/
+
+.o-list {
+    list-style: none;
+    padding: 0;
+}
+
+/*
+    Object: Button reset
+    ---
+    Small button reset object
+*/
+
+.o-button-reset {
+    border: none;
+    margin: 0;
+    padding: 0;
+    width: auto;
+    overflow: visible;
+    background: transparent;
+
+    /* inherit font & color from ancestor */
+    color: inherit;
+    font: inherit;
+
+    /* Normalize `line-height`. Cannot be changed from `normal` in Firefox 4+. */
+    line-height: normal;
+
+    /* Corrects font smoothing for webkit */
+    -webkit-font-smoothing: inherit;
+    -moz-osx-font-smoothing: inherit;
+
+    /* Corrects inability to style clickable `input` types in iOS */
+    -webkit-appearance: none;
+}
+
+/*
+    Object: Hide accessible
+    ---
+    Accessibly hide any element
+*/
+
+.o-hide-accessible {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+/*------------------------------------*\
+#COMPONENTS
+\*------------------------------------*/
+
+/*
+    Component: Logo
+    ---
+    Website main logo
+*/
+
+.c-logo {
+    height: 1.5rem;
+    width: 1.5rem;
+    display: flex;
+    align-items: center;
+    margin: 0;
+}
+
+.c-logo-md {
+    height: 2rem;
+    width: 2rem;
+}
 
 .c-logo__symbol {
     height: 100%;
-    margin-bottom: 8px;
+    width: 100%;
+    transition: fill 0.2s ease;
 }
 
-        /*
-    Component: mobile nav
+.c-logo__symbol path,
+.c-logo__symbol text {
+    fill: var(--global-logo-color);
+}
+
+.c-logo__symbol:hover path,
+.c-logo__symbol:hover text {
+    fill: var(--global-color-alpha);
+}
+
+@media (min-width: 576px) {
+    .c-logo {
+        height: 2rem;
+        width: 2rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .c-logo {
+        height: 3.5rem;
+        width: 3.5rem;
+    }
+}
+
+/*
+    Component: header
     ---
-    Dedicated mobile nav component
+    Main header of the website
 */
 
-.aboutme_logos {
+.c-header {
     display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: var(--navbar-height, 3.5rem);
+    transition: height 0.3s ease-out;
 }
 
-.aboutmelogo_margin {
-    margin-right: 28px;
+.is-scrolled {
+    --navbar-height: 2rem;
 }
 
-.o-reset-button-index {
-    border: none;
-    background: none;
+.c-header__nav {
+    display: none;
 }
 
-.o-svg-index {
+@media (min-width: 768px) {
+    .c-header {
+        height: var(--navbar-height, 4.5rem);
+    }
+
+    .is-scrolled {
+        --navbar-height: 3.5rem;
+    }
+}
+
+@media (min-width: 992px) {
+    .c-header {
+        height: var(--navbar-height, 6.75rem);
+    }
+
+    .is-scrolled {
+        --navbar-height: 4rem;
+
+    }
+
+    .c-header__nav {
+        display: block;
+    }
+
+    .c-header__mobile-nav-trigger {
+        display: none;
+    }
+}
+
+/*------------------------------------*\
+#UTILITIES
+\*------------------------------------*/
+
+/*
+    Utilities: color
+    ---
+    Utility classes to put specific colors onto elements
+*/
+
+.u-color-text-light {
+    color: var(--global-color-text-light);
+}
+
+/*
+    Utilities: spacing
+    ---
+    Utility classes to put specific margins and paddings onto elements
+*/
+
+.u-mb-clear {
+    margin-bottom: 0 !important;
+}
+
+.u-mb-xs {
+    margin-bottom: var(--global-whitespace-xs) !important;
+}
+
+.u-mb-sm {
+    margin-bottom: var(--global-whitespace-sm) !important;
+}
+
+.u-mb-md {
+    margin-bottom: var(--global-whitespace-md) !important;
+}
+
+.u-mb-lg {
+    margin-bottom: var(--global-whitespace-lg) !important;
+}
+
+.u-mb-xl {
+    margin-bottom: var(--global-whitespace-xl) !important;
+}
+
+/*
+    Utilities: max-width
+    ---
+    Utility classes to put specific max widths onto elements
+*/
+
+.u-max-width-xs {
+    max-width: 27em !important;
+}
+
+.u-max-width-sm {
+    max-width: 32em !important;
+}
+
+.u-max-width-md {
+    max-width: 50em !important;
+}
+
+.u-max-width-lg {
+    max-width: 63.5em !important;
+}
+
+.u-max-width-none {
+    max-width: none !important;
+}
+
+/*
+    Utilities: align
+    ---
+    Utility classes align text or components
+*/
+
+.u-text-align-center {
     text-align: center;
 }
 
-.o-container-index {
-    margin-left: 32px;
-    margin-right: 32px;
+.u-align-center {
+    margin: 0 auto;
 }
 
-.o-svg-margin {
-    margin-top: 40px;
+/*
+    Utilities: text
+    ---
+    Utility classes to create smaller or bigger test
+*/
+
+.u-text-xs {
+    font-size: .75rem;
 }
 
-.o-tekst-index{
-    text-align: center;
+.u-text-sm {
+    font-size: .875rem;
 }
 
-.o-button-index {
-    text-align: center;
-    margin-top: 32px;
+.u-text-md {
+    font-size: 1rem;
 }
 
-.o-button-layout-index{
-    min-width: 100%;
-    height: 41px;
-    border-radius: 20px;
-    background-color: #707070;
-    border: none;
-    color: white;
-    font-size: 14px;
-    font-weight: 600;
-    text-transform: uppercase;
+.u-text-lg {
+    font-size: 1.125rem;
 }
 
-.o-svg-margin-onboarding {
-    margin-top: 80px;
+.u-text-xxl {
+    font-size: 1.375rem;
 }
 
-.o-margin-onboarding3 {
-    margin-top: 100px;
+.u-text-xxxxxl {
+    font-size: 2.1875rem;
 }
 
-.o-container-home {
-    margin-left: 16px;
-    margin-right: 16px;
+/*
+    Utilities: font-weight
+    ---
+    Utility classes to put specific font weights onto elements
+*/
+
+.u-fw-regular {
+    font-weight: var(--global-fontWeight-regular)
 }
 
-.o-margin-top-home {
-    margin-top: 70px;
+.u-fw-medium {
+    font-weight: var(--global-fontWeight-medium)
 }
 
-
-.grid-container {
-    display: grid;
-    grid-template-columns: auto auto;
-    grid-gap: 16px;
+.u-fw-semibold {
+    font-weight: var(--global-fontWeight-semibold)
 }
 
-.grid-item {
-    background-color: gray;
-    border-radius: 20px;
-    padding-top: 57px;  
-    padding-bottom: 57px;
-    text-align: center;
+.u-fw-bold {
+    font-weight: var(--global-fontWeight-bold)
 }
 
-.o-footer {
-    background-color: white;
-    width: 100%;
+/*------------------------------------*\
+#MEDIA
+\*------------------------------------*/
+
+/*
+    Media: prefers-reduced-motion
+    ---
+    Media Query to detect if the user has requested that the system minimize the amount of animation or motion it uses.
+*/
+
+/* When the user has requested that the system minimize the amount of animation or motion it uses */
+/* @media (prefers-reduced-motion) {} */
+
+/*
+    Media Queries
+    ---
+    EXAMPLE Media Queries for Responsive Design.
+    These examples override the primary ('mobile first') styles.
+    USE THEM INLINE!
+*/
+
+/* Extra small devices (portrait phones, less than 576px)
+No media query since this is the default in mobile first design
+*/
+
+/* Small devices (landscape phones, 576px and up)
+@media (min-width: 576px) {}
+*/
+
+/* Medium devices (tablets, 768px and up)
+@media (min-width: 768px) {}
+*/
+
+/* Large devices (landscape tablets, desktops, 992px and up)
+@media (min-width: 992px) {}
+*/
+
+/* Extra large devices (large desktops, 1200px and up)
+@media (min-width: 1200px) {} */
+
+
+/*
+    Print styles.
+    ---
+    Inlined to avoid the additional HTTP request:
+    http://www.phpied.com/delay-loading-your-print-css/
+*/
+
+@media print {
+
+    *,
+    *:before,
+    *:after {
+        background: transparent !important;
+        color: #000 !important;
+        /* Black prints faster:
+        http://www.sanbeiji.com/archives/953 */
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    a,
+    a:visited {
+        text-decoration: underline;
+    }
+
+    a[href]:after {
+        content: " ("attr(href) ")";
+    }
+
+    abbr[title]:after {
+        content: " ("attr(title) ")";
+    }
+
+    /*
+    * Don't show links that are fragment identifiers,
+    * or use the `javascript:` pseudo protocol
+    */
+    a[href^="#"]:after,
+    a[href^="javascript:"]:after {
+        content: "";
+    }
+
+    pre {
+        white-space: pre-wrap !important;
+    }
+
+    pre,
+    blockquote {
+        border: 1px solid #999;
+        page-break-inside: avoid;
+    }
+
+    /*
+    * Printing Tables:
+    * http://css-discuss.incutio.com/wiki/Printing_Tables
+    */
+    thead {
+        display: table-header-group;
+    }
+
+    tr,
+    img {
+        page-break-inside: avoid;
+    }
+
+    p,
+    h2,
+    h3 {
+        orphans: 3;
+        widows: 3;
+    }
+
+    h2,
+    h3 {
+        page-break-after: avoid;
+    }
 }
-
-
-
-/*---------------------------------------/*
- # COMPONENTS
-/*---------------------------------------*/
-
-.c-header-index{
-    text-align: right;
-}
-
-/*---------------------------------------/*
- # UTILITIES
-/*---------------------------------------*/
-
