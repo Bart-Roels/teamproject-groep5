@@ -43,6 +43,7 @@ def on_message(client, userdata, message): # Handels incomming messages
     global start_memory_var 
     global new_game
     global sequence_number
+    global sequence
     # print topic and message
     topic = message.topic
     message = message.payload.decode("utf-8")
@@ -53,6 +54,7 @@ def on_message(client, userdata, message): # Handels incomming messages
             print("starting memory")
             game = "memory"
             # Start memory
+            sequence = []
             sequence_number = 1
             start_memory_var = True
             new_game = True
@@ -82,6 +84,7 @@ def on_message(client, userdata, message): # Handels incomming messages
             start_memory_var = False
             new_game = False
             sequence_number = 1
+            game = None
             print("stop memory")
         elif game == "redblue":
             print("stop redblue")
