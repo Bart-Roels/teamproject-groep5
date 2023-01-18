@@ -84,6 +84,21 @@ const checkValidity = (arrField, arrInput, arrError) => {
       if (!isEmpty(arrInput[i].value)) {
         arrError[i].classList.remove('is-visible');
         arrField[i].classList.remove('has-error');
+
+        if (localStorage.getItem('selectedGameForm') == 'bluevsred' && i == arrField.length - 1) {
+          // get values
+          const nameRed = arrInput[i].value;
+          const nameBlue = arrInput[i - 1].value;
+          const selectedDropdown = document.querySelector('.js-dropdown').value;
+          console.log(nameRed, nameBlue, selectedDropdown);
+          // count down timer 3 2 1
+        } else if (localStorage.getItem('selectedGameForm') != 'bluevsred') {
+          // get values
+          const name = arrInput[i].value;
+          const selectedDropdown = document.querySelector('.js-dropdown').value;
+          console.log(name, selectedDropdown);
+          // count down timer 3 2 1
+        }
       } else {
         arrError[i].classList.add('is-visible');
         arrField[i].classList.add('has-error');
