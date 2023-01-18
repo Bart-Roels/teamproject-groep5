@@ -431,27 +431,7 @@ def random_leds():
     except Exception as e:
         logger.error(e)
 
-def redvsblue():
-    try:
-        global red_led, blue_led
-        global start_redvsblue_game
-        global new_game_redvsblue
-        print('red vs blue')
-        while True:
-            if (start_redvsblue_game):
-                if (new_game_redvsblue):
-                    print('new game')
-                    for i in range(0, 4):
-                        client.publish(str(i), "off")
-                    list_leds = random_leds()
-                    print(list_leds)
-                    red_led = list_leds[0]
-                    blue_led = list_leds[1]
-                    client.publish(str(red_led), "0")
-                    client.publish(str(blue_led), "3")
-                    new_game_redvsblue = False
-    except Exception as e:
-        logger.error(e)
+
 #endregion
 
 #region zen
@@ -495,27 +475,7 @@ def analyse_buttons_zen(number):
     except Exception as e:
         logger.log(e)
 
-def zen_game():
-    global random_led_zen
-    global random_color_zen
-    global previous_time
-    global start_zen_game
-    global new_zen_game
-    try:
-        while True:
-            if (start_zen_game):
-                if (new_zen_game):
-                    for i in range(0, 4):
-                        client.publish(str(i), "off")
-                    random_led_zen = random.randint(0, 3)
-                    random_color_zen = random.randint(0, 3)
-                    print(
-                        f"random led: {random_led_zen} kleur: {random_color_zen}")
-                    client.publish(str(random_led_zen), str(random_color_zen))
-                    previous_time = time.time()
-                    new_zen_game = False
-    except Exception as e:
-        logger.log(e)
+
 #endregion
 
 #region MINESWEEPER
@@ -593,45 +553,7 @@ def sequence_mistake():
         logger.error(e)
 
 
-def minesweeper():
-    semaphore.acquire()
-    try:
-        print('start minesweeper')
-        global list_minesweeper
-        global index_minesweeper
-        global new_game_minesweeper
-        global start_minesweeper
-        global haswon
-        global haslost
-        global level_minesweeper
-        while True:
-            if (start_minesweeper):
-                if (new_game_minesweeper):
-                    list_minesweeper = random.sample(range(4), 4)
-                    print(f'list: {list_minesweeper}')
-                    index_minesweeper = 0
-                    print(f'level minesweeper: {level_minesweeper}')
-                    if level_minesweeper == 1 or level_minesweeper == 2:
-                        send_hint_function()
 
-                    new_game_minesweeper = False
-                else:
-                    if (haswon):
-                        print('Game has been won')
-                        sequence_off()
-                        haswon = False
-                        new_game_minesweeper = True
-                    elif (haslost):
-                        print('Game has been lost')
-                        sequence_mistake()
-                        if level_minesweeper == 2:
-                            send_hint_function()
-                        index_minesweeper = 0
-                        haslost = False
-    except Exception as e:
-        logger.error(e)
-    finally:
-        semaphore.release()
 #endregion
 
 #endregion
@@ -670,4 +592,4 @@ if __name__ == '__main__':
     print("Starting server")
     start_threads()
     app.run(debug=False)
-  
+   
