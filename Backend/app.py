@@ -7,21 +7,22 @@ import socket
 import logging
 
 #region SETUP
-# Set up app 
+
+# Flask setup
 app = Flask(__name__)
+# Logging setup
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR) # or logging.DEBUG or logging.WARNING, etc.
-
-# create a file handler
-handler = logging.FileHandler("app.log")
+handler = logging.FileHandler("app.log") # create a file handler
 handler.setLevel(logging.ERROR)
-
-# create a logging format
 formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 handler.setFormatter(formatter)
-
-# add the handlers to the logger
 logger.addHandler(handler)
+
+# MQTT setup
+ip = "192.168.220.1"
+port = 1883
+
 #endregion
 
 #region GLOBAL VARIABLES
@@ -180,6 +181,10 @@ def on_message(client, userdata, message): # Handels incomming messages
                 print("minesweeper button incomming")
                 analyse_buttons_minesweeper(message)
         if topic == "stop":
+            # Send off to all led's mqtt message to turn off
+            for i in range(0, 4):
+                client.publish(str(i), "off")
+
             if game == "memory":
                 start_memory_var = False
                 new_game = False
@@ -207,7 +212,7 @@ def on_message(client, userdata, message): # Handels incomming messages
 
 #region GAMES
 
-def start_memory(): #start memory game
+def handle_games(): 
     semaphore.acquire()
     try:
         # Global variables memory
@@ -475,7 +480,6 @@ def analyse_buttons_zen(number):
     except Exception as e:
         logger.log(e)
 
-
 #endregion
 
 #region MINESWEEPER
@@ -509,7 +513,6 @@ def analyse_buttons_minesweeper(message):
     except Exception as e:
         logger.error(e)
 
-
 def send_hint_function():
     global list_minesweeper
     global index_minesweeper
@@ -524,7 +527,6 @@ def send_hint_function():
     except Exception as e:
         logger.error(e)
 
-
 def sequence_off():
     global busy_minesweeper
     try:
@@ -536,7 +538,6 @@ def sequence_off():
         busy_minesweeper = False
     except Exception as e:
         logger.error(e)
-
 
 def sequence_mistake():
     global busy_minesweeper
@@ -552,8 +553,6 @@ def sequence_mistake():
     except Exception as e:
         logger.error(e)
 
-
-
 #endregion
 
 #endregion
@@ -561,8 +560,7 @@ def sequence_mistake():
 #region MQTT
 
 client = mqtt.Client()
-# client.connect("192.168.220.1", 1883)
-client.connect("localhost", 1883)
+client.connect(ip, port)
 client.on_connect=on_connect
 client.on_disconnect = on_disconnect
 
@@ -581,8 +579,8 @@ def start_threads():
     sub = threading.Thread(target=subscribeing)
     sub.start()  
     # Start memory thread
-    mem = threading.Thread(target=start_memory)
-    mem.start()
+    games = threading.Thread(target=handle_games)
+    games.start()
 
     
 #endregion
