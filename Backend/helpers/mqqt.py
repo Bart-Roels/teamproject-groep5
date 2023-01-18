@@ -98,11 +98,16 @@ class Mqqt:
 
     # Method to subscribe to a topic
     def subscribe(self, client, topic):
+        recived_messages = []
         def on_message(client, userdata, msg):
-            print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
+            bericht = msg.payload.decode()
+            recived_messages.append(bericht)
 
         client.subscribe(topic)
         client.on_message = on_message
+
+        # Return message
+        return recived_messages
         
 
         

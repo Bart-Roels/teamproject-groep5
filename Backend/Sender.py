@@ -6,9 +6,9 @@ import time
 from paho.mqtt import client as mqtt_client
 
 
-broker = '192.168.168.166'
+broker = '192.168.220.1'
 port = 1883
-topic = "testTopic"
+topic = "1"
 client_id = f'python-mqtt-{random.randint(0, 100)}'
 username = 'paaltje'
 password = 'pole'
@@ -32,10 +32,9 @@ def publish(client):
     while True:
         time.sleep(1)
 
-        # Random off or on for the led
-        msg = random.randint(0, 1)
+        # Send On to topic
+        msg = "on"
 
-        
 
         result = client.publish(topic, msg)
         # result: [0, 1]
@@ -45,6 +44,10 @@ def publish(client):
         else:
             print(f"Failed to send message to topic {topic}")
         msg_count += 1
+
+        # Send Off to topic
+        time.sleep(1)
+        client.publish(topic, "off")
 
 
 def run():
