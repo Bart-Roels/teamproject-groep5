@@ -30,6 +30,7 @@ button1 = "off"
 button2 = "off"
 button3 = "off"
 button4 = "off"
+unpauze = False
 
 # global variables for minesweeper
 
@@ -54,6 +55,8 @@ def on_connect(client, userdata, flags, rc):  # Handels connection
         client.subscribe("games")
         client.subscribe("buttons")
         client.subscribe("stop")
+        client.subscribe("pauze")
+        client.subscribe("unpauze")
     else:
         print("Bad connection Returned code=", rc)
 
@@ -74,6 +77,7 @@ def on_message(client, userdata, message):
         global new_game_minesweeper
         global level_minesweeper
         global score_minesweeper
+        global busy_minesweeper
         # print topic and message
         topic = message.topic
         message = message.payload.decode("utf-8")
@@ -110,20 +114,39 @@ def on_message(client, userdata, message):
             elif game == "minesweepr":
                 # Do read button stuff voor minesweepr
                 print("minesweeper button incomming")
-
                 analyse_buttons_minesweeper(message)
         if topic == "stop":
             if game == "memory":
                 print("stop memory")
             elif game == "redblue":
-                print("stop redblue")
+                print("stop redblue")   
+                game = None
             elif game == "zen":
                 print("stop zen")
             elif game == "minesweepr":
-                start_minesweeper = False
-                new_game_minesweeper = False
-
                 print("stop minesweepr")
+        if topic == "pauze":
+            if game == "memory":
+                print("pauze memory")
+            elif game == "redblue":
+                print("pauze redblue")
+            elif game == "zen":
+                print("pauze zen")
+            elif game == "minesweepr":
+                print("pauze minesweepr")
+                busy_minesweeper = True
+                client.publish("memorypoints", "NOW - PAUZE")
+                print(f"pauze: {unpauze}")
+        if topic == "unpauze":
+            if game == "memory":
+                print("unpauze memory")
+            elif game == "redblue":
+                print("unpauze redblue")
+            elif game == "zen":
+                print("unpauze zen")
+            elif game == "minesweepr":
+                print("unpauze minesweepr")
+                busy_minesweeper = False
     except Exception as e:
         logger.error(e)
 # Minesweeper
@@ -214,9 +237,10 @@ def minesweeper():
         global haswon
         global haslost
         global level_minesweeper
+        global unpauze
         while True:
             if (start_minesweeper):
-                if (new_game_minesweeper):
+                if (new_game_minesweeper and unpauze == False):
                     list_minesweeper = random.sample(range(4), 4)
                     print(f'list: {list_minesweeper}')
                     index_minesweeper = 0
@@ -224,6 +248,13 @@ def minesweeper():
                     if level_minesweeper == 1 or level_minesweeper == 2:
                         send_hint_function()
 
+                    new_game_minesweeper = False
+                elif unpauze == True:
+                    print(f'list: {list_minesweeper}')
+                    index_minesweeper = 0
+                    print(f'level minesweeper: {level_minesweeper}')
+                    if level_minesweeper == 1 or level_minesweeper == 2:
+                        send_hint_function()
                     new_game_minesweeper = False
                 else:
                     if (haswon):

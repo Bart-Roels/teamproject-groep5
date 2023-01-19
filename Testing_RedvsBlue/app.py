@@ -122,11 +122,10 @@ def on_message(client, userdata, message):
             if game == "memory":
                 print("stop memory")
             elif game == "redblue":
-                print("stop redblue")
+                print("stop redblue")   
                 start_redvsblue_game = False
                 new_game_redvsblue = False
                 game = None
-
             elif game == "zen":
                 print("stop zen")
             elif game == "minesweepr":
