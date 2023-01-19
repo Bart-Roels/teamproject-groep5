@@ -5,3 +5,9 @@
 2023-01-18 16:10:59,142 - __main__ - ERROR - list index out of range
 2023-01-19 09:01:51,556 - __main__ - ERROR - list index out of range
 2023-01-19 09:01:52,217 - __main__ - ERROR - list index out of range
+2023-01-19 14:27:51,998 - __main__ - ERROR - Sample larger than population or is negative
+2023-01-19 14:27:52,000 - __main__ - ERROR - 'NoneType' object is not iterable
+2023-01-19 14:30:56,206 - __main__ - ERROR - Sample larger than population or is negative
+2023-01-19 14:30:56,207 - __main__ - ERROR - 'NoneType' object is not iterable
+2023-01-19 14:36:21,687 - __main__ - ERROR - Sample larger than population or is negative
+2023-01-19 14:36:21,688 - __main__ - ERROR - 'NoneType' object is not iterable

@@ -10,6 +10,8 @@ client.on('connect', () => {
   client.subscribe('2');
   client.subscribe('3');
   client.subscribe('memorypoints');
+  client.subscribe('buttonspressed');
+  client.subscribe('totalbuttonspressed');
   // Handle messages received on the subscribed topic
   client.on('message', (topic, message) => {
     message = message.toString();
@@ -17,6 +19,9 @@ client.on('connect', () => {
     // Check the message
     if (topic === 'memorypoints') {
       document.getElementById('memorypoints').innerHTML = message;
+    }else if(topic === 'totalbuttonspressed'){
+      document.getElementById('totalbuttonspressed').innerHTML = message;
+
     } else {
       if (message === 'off') {
         if (topic === '0') {
@@ -63,7 +68,7 @@ const listen = () => {
     btn.addEventListener('click', () => {
       const message = btn.getAttribute('data-led-id');
       client.publish('button', message);
-      // console.log(`Button ${message} pressed`);
+      console.log(`Button ${message} pressed`);
     });
   });
   const buttons = document.querySelectorAll('.js-button-action');
