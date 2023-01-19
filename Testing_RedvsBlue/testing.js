@@ -68,31 +68,25 @@ const listen = () => {
   });
   let pauzeState = false;
   const buttons = document.querySelectorAll('.js-button-action');
-  buttons.forEach(button =>{
-    button.addEventListener('click', (event)=>{
+  buttons.forEach((button) => {
+    button.addEventListener('click', (event) => {
       const message = event.target.getAttribute('data-action-id');
       console.log(message);
       if (message === 'stop') {
-        client.publish('stop', "stop");
+        client.publish('stop', 'stop');
         // Refresh the page
         console.log('Stop game');
         location.reload();
-  
-      }else if(message==='pauze'){
-        if(pauzeState === false){
-          pauzeState = true;
-          client.publish('pauze', "pauze");
-          console.log('Pauze game');
-          location.reload();
-        }else{
-          pauzeState = false;
-          client.publish('unpauze', "unpauze");
-          console.log('Pauze game');
-          location.reload();
-        }
+      } else if (message === 'pauze') {
+        client.publish('pauze', 'pauze');
+        console.log('Pauze game');
+      } else if (message === 'unpauze') {
+        client.publish('unpauze', 'unpauze');
+        console.log('Pauze game');
       }
-    })
-  })
+    });
+  });
+
   /*btnAction.addEventListener('click', () => {
     const message = btnAction.getAttribute('data-action-id');
     console.log(message);

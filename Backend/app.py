@@ -31,6 +31,7 @@ port = 1883
 game = None
 pauze_state = False
 pause_flag = threading.Event()
+current_game = None
 
 # region memory variables
 bussy = False  # for memory
@@ -51,6 +52,7 @@ score_team_blue = 0
 score_team_red = 0
 start_redvsblue_game = False
 new_game_redvsblue = False
+list_leds = []
 # endregion
 
 # region zen variables
@@ -116,6 +118,7 @@ def on_message(client, userdata, message):  # Handels incomming messages
         # global variables
         global game
         global pauze_state
+        global current_game
 
         # Global variables memory
 
@@ -155,6 +158,7 @@ def on_message(client, userdata, message):  # Handels incomming messages
                 sequence_number = 1
                 start_memory_var = True
                 new_game = True
+                current_game = 'memorygame'
             elif message == "redblue":
                 game = "redblue"
                 print("redblue")
@@ -162,12 +166,14 @@ def on_message(client, userdata, message):  # Handels incomming messages
                 score_team_red = 0
                 start_redvsblue_game = True
                 new_game_redvsblue = True
+                current_game = 'redblue'
             elif message == "zen":
                 game = "zen"
                 print("zen")
                 total_score_zen = 0
                 start_zen_game = True
                 new_zen_game = True
+                current_game = 'zen'
                 # zen_game()
             elif message == "minesweepr":
                 game = "minesweepr"
@@ -175,6 +181,7 @@ def on_message(client, userdata, message):  # Handels incomming messages
                 print('1: easy level, 2: medium level, 3: hard level')
                 level_minesweeper = int(input('choose level: '))
                 print(f'chosen level {level_minesweeper}')
+                current_game = 'minesweeper'
                 score_minesweeper = 0
                 start_minesweeper = True
                 new_game_minesweeper = True
@@ -222,15 +229,19 @@ def on_message(client, userdata, message):  # Handels incomming messages
             if not pauze_state:
                 pauze_state = True
                 print("pauze")
-
+                client.publish("memorypoints", "pauze")
             else:
                 pauze_state = False
                 print("resume")
+                if current_game == 'redblue':
+                    handle_games()
+                    
 
     except Exception as e:
         print(e)
         logger.error(e)
 # endregion
+
 
 # region GAMES
 
@@ -253,6 +264,7 @@ def handle_games():
         global red_led, blue_led
         global start_redvsblue_game
         global new_game_redvsblue
+        global list_leds
 
         # Global variables zen
         global random_led_zen
@@ -297,12 +309,13 @@ def handle_games():
                         print('new game')
                         for i in range(0, 4):
                             client.publish(str(i), "off")
-                        list_leds = random_leds()
-                        print(list_leds)
-                        red_led = list_leds[0]
-                        blue_led = list_leds[1]
-                        client.publish(str(red_led), "0")
-                        client.publish(str(blue_led), "3")
+                        if (pauze_state == True):
+                            list_leds = random_leds()
+                            print(list_leds)
+                            red_led = list_leds[0]
+                            blue_led = list_leds[1]
+                            client.publish(str(red_led), "0")
+                            client.publish(str(blue_led), "3")
                         new_game_redvsblue = False
                 if (start_zen_game):
                     if (new_zen_game):
