@@ -17,7 +17,7 @@
     <script src="script/datahandler.js"></script>
     <script src="script/app.js"></script>
   </head>
-  <body>
+  <body class="js-ranking-page">
     <main>
       <!-- header -->
       <header class="o-row">
@@ -107,16 +107,18 @@
       <section class="o-row">
         <div class="o-container">
           <div class="c-ranking">
-            <span class="c-custom-select">
-              <select class="c-input c-custom-select__input js-dropdown" name="select1" id="select1">
-                <option value="3">3 min</option>
-                <option value="5">5 min</option>
-                <option value="10">10 min</option>
-              </select>
-              <svg class="c-custom-select__symbol" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M36 18L24 30L12 18" stroke="#333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-              </svg>
-            </span>
+            <div class="js-dropdown">
+              <div class="c-custom-select">
+                <select class="c-input c-custom-select__input" name="select1" id="select1">
+                  <option value="3">3 min</option>
+                  <option value="5">5 min</option>
+                  <option value="10">10 min</option>
+                </select>
+                <svg class="c-custom-select__symbol" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M36 18L24 30L12 18" stroke="#333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </div>
+            </div>
             <h1 class="c-title">Rangschikking &#129321;</h1>
             <div class="c-ranking__body">
               <ul class="o-list c-ranking__items js-rangschikking">

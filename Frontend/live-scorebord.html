@@ -17,19 +17,64 @@
     <script src="script/datahandler.js"></script>
     <script src="script/app.js"></script>
   </head>
-  <body>
-    <div class="c-live">
-      <div class="c-live--red">
-        <p class="c-live__score">0</p>
-      </div>
-      <div class="c-live--blue">
-        <p class="c-live__score">0</p>
-      </div>
+  <body class="js-live-page">
+     <section class="c-live">
+      <h1 class="c-live__start js-start-text">START</h1>
+      <h2 class="c-live__name">MEMORY GAME</h2>
       <div class="c-live__timer">
         <div class="c-timer">
-          <p class="c-timer__time">00:00</p>
+          <p class="c-timer__time js-time">00:00</p>
         </div>
       </div>
-    </div>
+      <div class="">
+        <p class="c-live__score js-score">0</p>
+      </div>
+      <div class="c-live__controls">
+        <div class="c-controls">
+          <button class="c-controls__button o-button-reset js-pause-btn">
+            <svg class="c-pause" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M16 12V36" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M32 12V36" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+          <button class="c-controls__button o-button-reset js-stop-btn">
+            <svg class="c-stop" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M14 14L34 34" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M14 34L34 14" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+    <!-- <section class="c-live">
+      <h1 class="c-live__start c-live__start--bluevsred js-start-text">START</h1>
+      <div class="c-live--red">
+        <p class="c-live__score c-live__score--bluevsred js-score-red">0</p>
+      </div>
+      <div class="c-live--blue">
+        <p class="c-live__score c-live__score--bluevsred js-score-blue">0</p>
+      </div>
+      <div class="c-live__timer c-live__timer--bluevsred">
+        <div class="c-timer">
+          <p class="c-timer__time js-time">00:00</p>
+        </div>
+      </div>
+      <div class="c-live__controls">
+        <div class="c-controls">
+          <button class="c-controls__button o-button-reset js-pause-btn">
+            <svg class="c-pause" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M16 12V36" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M32 12V36" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+          <button class="c-controls__button o-button-reset js-stop-btn">
+            <svg class="c-stop" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M14 14L34 34" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M14 34L34 14" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section> -->
   </body>
 </html>

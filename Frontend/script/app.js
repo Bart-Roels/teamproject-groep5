@@ -1,9 +1,16 @@
+let stop = false;
+let timeLeft = null;
+let timeInSeconds = null;
+
 const listener = () => {
   const body = document.querySelector('body');
   const infoBtns = document.querySelectorAll('.js-info-btn');
   const closeBtn = document.querySelector('.js-popup-close');
   const popupTitle = document.querySelector('.js-popup-title');
   const popupDisc = document.querySelector('.js-popup-discription');
+
+  const popup = document.querySelector('.js-popup');
+  const popupContent = document.querySelector('.js-popup-content');
   infoBtns.forEach((btn) => {
     btn.addEventListener('click', (event) => {
       body.classList.add('has-popup');
@@ -23,7 +30,12 @@ const listener = () => {
         popupDisc.textContent = 'Probeer de getoonde sequentie zo lang mogelijk na te doen door de juiste paaltjes aan te klikken. Er zal telkens een extra LED oplichten.';
       }
       closeBtn.addEventListener('click', () => {
-        body.classList.remove('has-popup');
+        console.log('close');
+        popup.classList.add('is-closing');
+        setTimeout(() => {
+          popup.classList.remove('is-closing');
+          body.classList.remove('has-popup');
+        }, 300);
       });
     });
   });
@@ -50,14 +62,39 @@ const listener = () => {
     btn.addEventListener('change', () => {
       const game = btn.id;
       if (game === 'minesweeper') {
-        dropdown.innerHTML = `<option value="makkelijk">makkelijk</option>
+        dropdown.innerHTML = `<div class="c-custom-select u-mb-md">
+                <select class="c-input c-custom-select__input" name="select1" id="select1">
+                  <option value="3">3 min</option>
+                  <option value="5">5 min</option>
+                  <option value="10">10 min</option>
+                </select>
+                <svg class="c-custom-select__symbol" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M36 18L24 30L12 18" stroke="#333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </div>
+              <div class="c-custom-select">
+                <select class="c-input c-custom-select__input" name="select2" id="select2">
+                  <option value="makkelijk">makkelijk</option>
                 <option value="normaal">normaal</option>
-                <option value="moeilijk">moeilijk</option>`;
+                <option value="moeilijk">moeilijk</option>
+                </select>
+                <svg class="c-custom-select__symbol" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M36 18L24 30L12 18" stroke="#333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </div>`;
       } else {
-        dropdown.innerHTML = `<option value="3">3 min</option>
-                <option value="5">5 min</option>
-                <option value="10">10 min</option>`;
+        dropdown.innerHTML = ` <div class="c-custom-select">
+                <select class="c-input c-custom-select__input" name="select1" id="select1">
+                  <option value="3">3 min</option>
+                  <option value="5">5 min</option>
+                  <option value="10">10 min</option>
+                </select>
+                <svg class="c-custom-select__symbol" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M36 18L24 30L12 18" stroke="#333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </div>`;
       }
+      // getTop10(game, time, difficulty);
     });
   });
 
@@ -68,6 +105,65 @@ const listener = () => {
       localStorage.setItem('selectedGameForm', selectedGameForm);
       window.location.href = 'form.html';
     });
+  });
+};
+
+const listenToControls = () => {
+  const stopBtn = document.querySelector('.js-stop-btn');
+  const pauseBtn = document.querySelector('.js-pause-btn') === null ? document.querySelector('.js-play-btn') : document.querySelector('.js-pause-btn');
+  const svgPlayBtn = `<svg class="c-pause" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 24V11.8756L25.5 17.9378L36 24L25.5 30.0622L15 36.1244V24Z" fill="none" stroke="#333" stroke-width="2" stroke-linejoin="round"/></svg>`;
+  const svgPausebtn = `<svg class="c-pause" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 12V36" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M32 12V36" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  stopBtn.addEventListener('click', () => {
+    stopBtn.classList.add('is-animated');
+    setTimeout(() => {
+      stop = true;
+      localStorage.setItem('startTimeGame', null);
+      stopBtn.classList.remove('is-animated');
+      let gameData = JSON.parse(localStorage.getItem('gameData'));
+      if (gameData.game === 'bluevsred') {
+        gameData.scoreRed = document.querySelector('.js-score-red').innerHTML;
+        gameData.scoreBlue = document.querySelector('.js-score-blue').innerHTML;
+      } else {
+        gameData.score = document.querySelector('.js-score').innerHTML;
+      }
+      localStorage.setItem('gameData', JSON.stringify(gameData));
+      console.log(gameData);
+      console.log('save score');
+      // sendStopGame();
+      // saveScore(gameData.game);
+
+      window.location.href = 'endscore.html';
+      window.location.replace('endscore.html');
+    }, 1000);
+  });
+  pauseBtn.addEventListener('click', () => {
+    // switch between play and pause
+    if (pauseBtn.classList.contains('js-pause-btn')) {
+      localStorage.setItem('pause', true);
+      localStorage.setItem('timeLeft', timeInSeconds);
+      pauseBtn.classList.remove('js-pause-btn');
+      pauseBtn.classList.add('js-play-btn');
+      pauseBtn.innerHTML = svgPlayBtn;
+      pauseBtn.classList.add('is-animated');
+      setTimeout(() => {
+        pauseBtn.classList.remove('is-animated');
+      }, 1000);
+      // sendPauseGame();
+    } else {
+      if (localStorage.getItem('timeLeft') != null) {
+        let time = localStorage.getItem('timeLeft');
+        timeInSeconds = time;
+      }
+      localStorage.setItem('pause', false);
+      pauseBtn.classList.remove('js-play-btn');
+      pauseBtn.classList.add('js-pause-btn');
+      pauseBtn.innerHTML = svgPausebtn;
+      pauseBtn.classList.add('is-animated');
+      setTimeout(() => {
+        pauseBtn.classList.remove('is-animated');
+      }, 1000);
+      // sendPlayGame();
+    }
   });
 };
 
@@ -99,8 +195,8 @@ const checkValidity = (arrField, arrInput, arrError) => {
             name: name,
             nameRed: nameRed,
             nameBlue: nameBlue,
-            selectedTime: selectedDropdown,
-            selectedDifficulty: selectedDifficulty,
+            time: selectedDropdown,
+            difficulty: selectedDifficulty,
           };
           // put object in localstorage
           localStorage.setItem('gameData', JSON.stringify(gameData));
@@ -132,6 +228,11 @@ const countDown3sec = () => {
 
   setTimeout(() => {
     countDown.innerHTML = '';
+    localStorage.setItem('startTimeGame', Date.now());
+    localStorage.setItem('pause', false);
+    localStorage.setItem('pauseTime', 0);
+    localStorage.setItem('timeLeft', null);
+    console.log(localStorage.getItem('startTimeGame'));
     window.location.href = 'live-scorebord.html';
   }, 3600);
 };
@@ -210,12 +311,107 @@ const isEmpty = function (fieldValue) {
   return !fieldValue || fieldValue.length < 1;
 };
 
+const showCountdown = () => {
+  const gameData = JSON.parse(localStorage.getItem('gameData'));
+  const time = gameData.time;
+  console.log(gameData);
+  setTimeout(() => {
+    document.querySelector('.js-start-text').innerHTML = '';
+  }, 1000);
+
+  timeInSeconds = time * 60 - timeLeft;
+  const counter = setInterval(() => {
+    if (localStorage.getItem('pause') == 'false') {
+      console.log(timeInSeconds);
+      const minutes = Math.floor(timeInSeconds / 60);
+      const seconds = timeInSeconds % 60;
+      // show time in html
+      document.querySelector('.js-time').innerHTML = `${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+      timeInSeconds--;
+      if (timeInSeconds < 0 || stop === true) {
+        clearInterval(counter);
+        document.querySelector('.js-time').innerHTML = '00:00';
+        document.querySelector('.js-start-text').innerHTML = 'Tijd is op!';
+        if (stop === false) {
+          setTimeout(() => {
+            if (gameData.game === 'bluevsred') {
+              gameData.scoreRed = document.querySelector('.js-score-red').innerHTML;
+              gameData.scoreBlue = document.querySelector('.js-score-blue').innerHTML;
+            } else {
+              gameData.score = document.querySelector('.js-score').innerHTML;
+            }
+            localStorage.setItem('gameData', JSON.stringify(gameData));
+            console.log('save score');
+            // saveScore(gameData.game);
+            window.location.href = 'endscore.html';
+            window.location.replace('endscore.html');
+          }, 2000);
+        }
+      }
+    }
+  }, 1000);
+};
+
+const timeFormat24Hours = (totalSeconds) => {
+  let minutes = Math.floor(totalSeconds / 60);
+  let seconds = totalSeconds % 60;
+  return `${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+};
+
+const showCountdownStart = () => {
+  let time;
+  if (localStorage.getItem('pause') == 'true') {
+    time = localStorage.getItem('timeLeft');
+    document.querySelector('.js-time').innerHTML = timeFormat24Hours(time);
+  } else {
+    const gameData = JSON.parse(localStorage.getItem('gameData'));
+    time = gameData.time;
+    console.log(gameData.time);
+    // if refresh page, get time from localstorage and calculate time left
+    timeLeft = Date.now() - localStorage.getItem('startTimeGame');
+    timeLeft = Math.floor(timeLeft / 1000);
+    let timeInSeconds = time * 60 - timeLeft;
+    document.querySelector('.js-time').innerHTML = timeFormat24Hours(timeInSeconds);
+  }
+};
+
+const checkPauseStatus = () => {
+  const pauseBtn = document.querySelector('.js-pause-btn');
+  const svgPlayBtn = `<svg class="c-pause" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 24V11.8756L25.5 17.9378L36 24L25.5 30.0622L15 36.1244V24Z" fill="none" stroke="#333" stroke-width="2" stroke-linejoin="round"/></svg>`;
+  if (localStorage.getItem('pause') === 'true') {
+    pauseBtn.classList.remove('js-pause-btn');
+    pauseBtn.classList.add('js-play-btn');
+    pauseBtn.innerHTML = svgPlayBtn;
+    pauseBtn.classList.add('is-animated');
+    setTimeout(() => {
+      pauseBtn.classList.remove('is-animated');
+    }, 1000);
+  }
+};
+
+const checkSelectedGame = () => {
+  const gameData = JSON.parse(localStorage.getItem('gameData'));
+  const game = gameData.game;
+  if (game != 'bluevsred') {
+    document.querySelector('body').innerHTML = `
+  `;
+  }
+};
+
 const init = () => {
   console.log('DOM loaded');
   listener();
 
   if (document.querySelector('.js-form-page')) {
     showFieldToForm();
+  } else if (document.querySelector('.js-ranking-page')) {
+    // getTop10(game, time, difficulty);
+  } else if (document.querySelector('.js-live-page')) {
+    checkSelectedGame();
+    listenToControls();
+    checkPauseStatus();
+    showCountdownStart();
+    showCountdown();
   }
 };
 
