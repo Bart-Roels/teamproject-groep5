@@ -53,7 +53,7 @@ def on_connect(client, userdata, flags, rc):  # Handels connection
     if rc == 0:
         print("Connected OK Returned code=", rc)
         client.subscribe("games")
-        client.subscribe("buttons")
+        client.subscribe("button")
         client.subscribe("stop")
         client.subscribe("pauze")
         client.subscribe("unpauze")
@@ -101,7 +101,7 @@ def on_message(client, userdata, message):
                 score_minesweeper = 0
                 start_minesweeper = True
                 new_game_minesweeper = True
-        if topic == "buttons":
+        if topic == "button":
             if game == "memory":
                 # Do read button stuff voor memory
                 print("memory button incomming")

@@ -5,13 +5,11 @@ client.on('connect', () => {
   console.log('Connected to the MQTT WebSocket');
   const colorsArray = ['red', 'yellow', 'green', 'blue'];
   // Subscribe to the topics
-  client.subscribe('0'); 
+  client.subscribe('0');
   client.subscribe('1');
   client.subscribe('2');
   client.subscribe('3');
   client.subscribe('memorypoints');
-  client.subscribe('buttonspressed');
-  client.subscribe('totalbuttonspressed');
   // Handle messages received on the subscribed topic
   client.on('message', (topic, message) => {
     message = message.toString();
@@ -19,9 +17,6 @@ client.on('connect', () => {
     // Check the message
     if (topic === 'memorypoints') {
       document.getElementById('memorypoints').innerHTML = message;
-    }else if(topic === 'totalbuttonspressed'){
-      document.getElementById('totalbuttonspressed').innerHTML = message;
-
     } else {
       if (message === 'off') {
         if (topic === '0') {
@@ -68,34 +63,39 @@ const listen = () => {
     btn.addEventListener('click', () => {
       const message = btn.getAttribute('data-led-id');
       client.publish('button', message);
-      console.log(`Button ${message} pressed`);
+      // console.log(`Button ${message} pressed`);
     });
   });
+  let pauzeState = false;
   const buttons = document.querySelectorAll('.js-button-action');
-  buttons.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const message = btn.getAttribute('data-action-id');
+  buttons.forEach((button) => {
+    button.addEventListener('click', (event) => {
+      const message = event.target.getAttribute('data-action-id');
+      console.log(message);
       if (message === 'stop') {
-        client.publish('stop', "stop");
+        client.publish('stop', 'stop');
         // Refresh the page
         console.log('Stop game');
         location.reload();
-      }else if (message === 'pauze'){
-        client.publish('pauze', "pauze");
+      } else if (message === 'pauze') {
+        client.publish('pauze', 'pauze');
         console.log('Pauze game');
-        location.reload();
+      } else if (message === 'unpauze') {
+        client.publish('unpauze', 'unpauze');
+        console.log('Pauze game');
       }
     });
   });
+
   /*btnAction.addEventListener('click', () => {
     const message = btnAction.getAttribute('data-action-id');
+    console.log(message);
     if (message === 'stop') {
       client.publish('stop', "stop");
       // Refresh the page
       console.log('Stop game');
       location.reload();
-
-    }else if (message === 'pauze'){
+    }else if(message==='pauze'){
       client.publish('pauze', "pauze");
       console.log('Pauze game');
       location.reload();

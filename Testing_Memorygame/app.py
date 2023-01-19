@@ -6,41 +6,49 @@ import paho.mqtt.client as mqtt
 import socket
 import logging
 
-# Set up app 
+# Set up app
 app = Flask(__name__)
 logging.basicConfig(filename='error.log', level=logging.ERROR)
 
-#region GLOBAL VARIABLES
-bussy = False # for memory
-new_game = False # for memory
-blink = True # for memory
-haswon = False # for memory
-haslost = False # for memory
-game = None # for memory
-start_memory_var = False # for memory
-counter = 0 # for memory
-sequence_number = 1 # for memory
-sequence = [] # for memory
-#endregion
+# region GLOBAL VARIABLES
+bussy = False  # for memory
+new_game = False  # for memory
+blink = True  # for memory
+haswon = False  # for memory
+haslost = False  # for memory
+game = None  # for memory
+start_memory_var = False  # for memory
+counter = 0  # for memory
+sequence_number = 1  # for memory
+sequence = []  # for memory
+unpauze = False  # for redblue
+# endregion
 
-#region MQTT FUNCTIONS
-def on_connect(client, userdata, flags, rc): # Handels connection
+# region MQTT FUNCTIONS
+
+
+def on_connect(client, userdata, flags, rc):  # Handels connection
     try:
-        if rc==0:
-            print("Connected OK Returned code=",rc)
+        if rc == 0:
+            print("Connected OK Returned code=", rc)
             client.subscribe("games")
             client.subscribe("button")
             client.subscribe("stop")
+            client.subscribe("pauze")
+            client.subscribe("unpauze")
+
         else:
-            raise Exception("Bad connection Returned code=",rc)
+            raise Exception("Bad connection Returned code=", rc)
     except Exception as e:
         print(e)
         logging.error(e)
 
-def on_disconnect(client, userdata, rc): # Handels disconnection
+
+def on_disconnect(client, userdata, rc):  # Handels disconnection
     try:
         if rc != 0:
-            raise Exception("Unexpected MQTT disconnection. Attempting to reconnect.")
+            raise Exception(
+                "Unexpected MQTT disconnection. Attempting to reconnect.")
     except Exception as e:
         print(e)
         logging.error(e)
@@ -48,15 +56,18 @@ def on_disconnect(client, userdata, rc): # Handels disconnection
         client.reconnect()
     except socket.error:
         raise Exception("Failed to reconnect. Exiting.")
-      
-def on_message(client, userdata, message): # Handels incomming messages
+
+
+def on_message(client, userdata, message):  # Handels incomming messages
     try:
         # Global variables
         global game
-        global start_memory_var 
+        global start_memory_var
         global new_game
         global sequence_number
         global sequence
+        global unpauze
+        global bussy
         # print topic and message
         topic = message.topic
         message = message.payload.decode("utf-8")
@@ -105,14 +116,40 @@ def on_message(client, userdata, message): # Handels incomming messages
                 print("stop zen")
             elif game == "minesweepr":
                 print("stop minesweepr")
+        if topic == "pauze":
+            if game == "memory":
+                print("pauze memory")
+                bussy = True
+                unpauze = True
+                client.publish("memorypoints", "NOW - PAUZE")
+                print(f"pauze: {unpauze}")
+            elif game == "redblue":
+                print("pauze redblue")
+            elif game == "zen":
+                print("pauze zen")
+            elif game == "minesweepr":
+                print("pauze minesweepr")
+        if topic == "unpauze":
+            if game == "memory":
+                print("unpauze memory")
+                bussy = False
+                unpauze = False
+            elif game == "redblue":
+                print("unpauze redblue")
+            elif game == "zen":
+                print("unpauze zen")
+            elif game == "minesweepr":
+                print("unpauze minesweepr")
     except Exception as e:
         print(e)
         logging.error(e)
-#endregion
+# endregion
 
-#region GAMES
+# region GAMES
 
-#region MEMORY
+# region MEMORY
+
+
 def generate_sequence(sequence_number):
     try:
         leds = [0, 1, 2]
@@ -126,14 +163,17 @@ def generate_sequence(sequence_number):
         print(e)
         logging.error(e)
 
-def send_sequence(sequence, blink=False): # Send sequence
+
+def send_sequence(sequence, blink=False):  # Send sequence
     try:
         # Global variables
-        global bussy 
+        global bussy
+        global unpauze
         # Set bussy
         bussy = True
         # Send sequence
-        if(blink == True):
+
+        if (blink == False):
             for item in sequence:
                 # Publish message
                 client.publish(str(item), str(item))
@@ -149,15 +189,16 @@ def send_sequence(sequence, blink=False): # Send sequence
             client.publish(str(3), str(sequence[3]))
             # TIME SLEEP
             time.sleep(3)
-            for i in range(0,5):
+            for i in range(0, 5):
                 client.publish(str(i), "off")
-        # Set bussy
+            # Set bussy
         bussy = False
     except Exception as e:
-        print(e) # to print the error
+        print(e)  # to print the error
         logging.error(e)
 
-def check_sequence(received_sequence): # Check sequence
+
+def check_sequence(received_sequence):  # Check sequence
     try:
         # Global variables
         global sequence_number
@@ -165,16 +206,16 @@ def check_sequence(received_sequence): # Check sequence
         global sequence
         global haswon
         global haslost
-        global bussy 
-
+        global bussy
+        global unpauze
         # Check if not bussy
-        if not bussy:
+        if not bussy or not unpauze:
             # check if the received sequence matches the current sequence
             if int(received_sequence) == sequence[counter]:
                 counter += 1
                 # check if the entire sequence has been matched
-                if counter == len(sequence): 
-                    # Resent counter en sequence 
+                if counter == len(sequence):
+                    # Resent counter en sequence
                     counter = 0
                     sequence = []
                     # You have won
@@ -183,16 +224,17 @@ def check_sequence(received_sequence): # Check sequence
                     # Higher sequence number
                     sequence_number += 1
                     # Has won
-                    haswon = True     
+                    haswon = True
             else:
                 counter = 0
                 # LOGIC
                 haslost = True
     except Exception as e:
-        print(e) # to print the error
+        print(e)  # to print the error
         logging.error(e)
 
-def start_memory(): #start memory game
+
+def start_memory():  # start memory game
     try:
         # Global variables
         global start_memory_var
@@ -200,75 +242,86 @@ def start_memory(): #start memory game
         global new_game
         global haswon
         global haslost
-        won = [2,2,2,2] 
-        lose = [0,0,0,0]
+        global unpauze
+        global bussy
+        global counter
+        won = [2, 2, 2, 2]
+        lose = [0, 0, 0, 0]
 
         # Start memory
         while True:
-            if(start_memory_var == True):
-                if(new_game == True):
+            if start_memory_var:
+                if new_game and not unpauze:
                     sequence = generate_sequence(sequence_number)
                     send_sequence(sequence, True)
                     new_game = False
+                elif unpauze == True:
+                    print('unpauze')
+                    counter = 0
+                    new_game = False
                 else:
-                    if(haswon == True):
+                    if (haswon == True):
                         # Play win sequence
                         send_sequence(won)
                         haswon = False
                         # Start new sequence
                         new_game = True
-                    elif(haslost == True):
+                    elif (haslost == True):
                         send_sequence(lose, False)
                         # Replay sequence
                         send_sequence(sequence, True)
                         haslost = False
                         print("You have lost replaying sequence")
     except Exception as e:
-        print(e) # to print the error
+        print(e)  # to print the error
         logging.error(e)
-#endregion
+# endregion
 
-#region REDBLUE
-#endregion
+# region REDBLUE
+# endregion
 
-#region ZEN
-#endregion
+# region ZEN
+# endregion
 
-#region MINESWEEPER
-#endregion
+# region MINESWEEPER
+# endregion
 
-#endregion
+# endregion
 
-#region MQTT
+# region MQTT
+
 
 client = mqtt.Client()
 # client.connect("192.168.220.1", 1883)
 client.connect("localhost", 1883)
-client.on_connect=on_connect
+client.on_connect = on_connect
 client.on_disconnect = on_disconnect
 
-#endregion
+# endregion
 
-#region FLASK ROUTES
-#endregion
+# region FLASK ROUTES
+# endregion
 
-#region THREADS
+# region THREADS
+
+
 def subscribeing():
-    client.on_message= on_message 
+    client.on_message = on_message
     client.loop_forever()
+
 
 def start_threads():
     # Start subscribeing thread
     sub = threading.Thread(target=subscribeing)
-    sub.start()  
+    sub.start()
     # Start memory thread
     mem = threading.Thread(target=start_memory)
     mem.start()
-#endregion
+# endregion
+
 
 # APP START
 if __name__ == '__main__':
     print("Starting server")
     start_threads()
     app.run(debug=False)
-  
