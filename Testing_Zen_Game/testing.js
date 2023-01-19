@@ -66,15 +66,21 @@ const listen = () => {
       // console.log(`Button ${message} pressed`);
     });
   });
-  const btnAction = document.querySelector('.js-button-action');
-  btnAction.addEventListener('click', () => {
-    const message = btnAction.getAttribute('data-action-id');
-    if (message === 'stop') {
-      client.publish('stop', 'stop');
-      // Refresh the page
-      console.log('Stop game');
-      location.reload();
-    }
+  const buttons = document.querySelectorAll('.js-button-action');
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const message = btn.getAttribute('data-action-id');
+      if (message === 'stop') {
+        client.publish('stop', 'stop');
+        // Refresh the page
+        console.log('Stop game');
+        location.reload();
+      } else if (message === 'pauze') {
+        client.publish('pauze', 'pauze');
+        console.log('Pauze game');
+        location.reload();
+      }
+    });
   });
 };
 
