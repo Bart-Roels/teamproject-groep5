@@ -4,11 +4,13 @@ Content-Type: application/json
 
 
 {
-	"name": "blauworanje gele",
-	"score": "1500",
+	"name": "blauworanje geelgeelgeel",
+	"score": "2000",
     "game": "memory",
 	"time": 3
 }
+
+
 
 ### GET
 GET http://127.0.0.1:5000/api/v1/score HTTP/1.1
