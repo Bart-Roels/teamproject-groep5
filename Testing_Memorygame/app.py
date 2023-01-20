@@ -21,7 +21,8 @@ start_memory_var = False  # for memory
 counter = 0  # for memory
 sequence_number = 1  # for memory
 sequence = []  # for memory
-unpauze = False  # for redblue
+pauze = False
+unpauze = False
 # endregion
 
 # region MQTT FUNCTIONS
@@ -36,7 +37,6 @@ def on_connect(client, userdata, flags, rc):  # Handels connection
             client.subscribe("stop")
             client.subscribe("pauze")
             client.subscribe("unpauze")
-
         else:
             raise Exception("Bad connection Returned code=", rc)
     except Exception as e:
@@ -66,6 +66,7 @@ def on_message(client, userdata, message):  # Handels incomming messages
         global new_game
         global sequence_number
         global sequence
+        global pauze
         global unpauze
         global bussy
         # print topic and message
@@ -119,21 +120,26 @@ def on_message(client, userdata, message):  # Handels incomming messages
         if topic == "pauze":
             if game == "memory":
                 print("pauze memory")
-                bussy = True
-                unpauze = True
-                client.publish("memorypoints", "NOW - PAUZE")
-                print(f"pauze: {unpauze}")
+                for i in range(4):
+                    client.publish(str(i), 'off')
+                pauze = True
+                unpauze = False
+                start_memory_var = False
+                new_game = False
+                bussy = False
+                client.publish("memorypoints", "NOW - PAUSE")
             elif game == "redblue":
-                print("pauze redblue")
+                print("unpauze redblue")
             elif game == "zen":
-                print("pauze zen")
+                print("unpauze zen")
             elif game == "minesweepr":
-                print("pauze minesweepr")
+                print("unpauze minesweepr")
         if topic == "unpauze":
             if game == "memory":
                 print("unpauze memory")
-                bussy = False
-                unpauze = False
+                pauze = False
+                unpauze = True
+                start_memory_var = True
             elif game == "redblue":
                 print("unpauze redblue")
             elif game == "zen":
@@ -155,6 +161,7 @@ def generate_sequence(sequence_number):
         leds = [0, 1, 2]
         global sequence
         # Generate sequence
+        print(f'Generating sequence of {sequence_number}')
         for i in range(sequence_number):
             led = leds[random.randint(0, len(leds)-1)]
             sequence.append(led)
@@ -168,30 +175,30 @@ def send_sequence(sequence, blink=False):  # Send sequence
     try:
         # Global variables
         global bussy
-        global unpauze
         # Set bussy
         bussy = True
         # Send sequence
 
-        if (blink == False):
-            for item in sequence:
-                # Publish message
-                client.publish(str(item), str(item))
-                print(f"Sending: {item}")
+        if(bussy):
+            if (blink == True):
+                for item in sequence:
+                    # Publish message
+                    client.publish(str(item), str(item))
+                    print(f"Sending: {item}")
+                    # TIME SLEEP
+                    time.sleep(2)
+                    print("Sending: off")
+                    client.publish(str(item), "off")
+            else:
+                client.publish(str(0), str(sequence[0]))
+                client.publish(str(1), str(sequence[1]))
+                client.publish(str(2), str(sequence[2]))
+                client.publish(str(3), str(sequence[3]))
                 # TIME SLEEP
                 time.sleep(3)
-                print("Sending: off")
-                client.publish(str(item), "off")
-        else:
-            client.publish(str(0), str(sequence[0]))
-            client.publish(str(1), str(sequence[1]))
-            client.publish(str(2), str(sequence[2]))
-            client.publish(str(3), str(sequence[3]))
-            # TIME SLEEP
-            time.sleep(3)
-            for i in range(0, 5):
-                client.publish(str(i), "off")
-            # Set bussy
+                for i in range(0, 5):
+                    client.publish(str(i), "off")
+        # Set bussy
         bussy = False
     except Exception as e:
         print(e)  # to print the error
@@ -207,9 +214,9 @@ def check_sequence(received_sequence):  # Check sequence
         global haswon
         global haslost
         global bussy
-        global unpauze
+        global pauze
         # Check if not bussy
-        if not bussy or not unpauze:
+        if not bussy or  pauze or not haswon or not haslost:
             # check if the received sequence matches the current sequence
             if int(received_sequence) == sequence[counter]:
                 counter += 1
@@ -242,36 +249,46 @@ def start_memory():  # start memory game
         global new_game
         global haswon
         global haslost
-        global unpauze
-        global bussy
+        global pauze
+        global sequence
         global counter
+        global unpauze
         won = [2, 2, 2, 2]
         lose = [0, 0, 0, 0]
 
         # Start memory
         while True:
             if start_memory_var:
-                if new_game and not unpauze:
+                if new_game and not pauze:
                     sequence = generate_sequence(sequence_number)
                     send_sequence(sequence, True)
                     new_game = False
-                elif unpauze == True:
-                    print('unpauze')
+                elif pauze:  
+                    print(f'pauze {pauze}, counter: {counter}, sequence: {sequence}')
                     counter = 0
                     new_game = False
-                else:
-                    if (haswon == True):
-                        # Play win sequence
-                        send_sequence(won)
-                        haswon = False
-                        # Start new sequence
-                        new_game = True
-                    elif (haslost == True):
-                        send_sequence(lose, False)
-                        # Replay sequence
+                    haslost= False
+                elif unpauze:
+                    print(f'unpauze {unpauze}, counter: {counter}, sequence: {sequence}')
+                    if len(sequence) > 0:
                         send_sequence(sequence, True)
-                        haslost = False
-                        print("You have lost replaying sequence")
+                    else:
+                        sequence = generate_sequence(sequence_number)
+                        send_sequence(sequence, True)
+                    unpauze = False
+                    new_game = False
+                elif haswon:
+                    # Play win sequence
+                    send_sequence(won)
+                    haswon = False
+                    # Start new sequence
+                    new_game = True
+                elif haslost:
+                    send_sequence(lose, False)
+                    # Replay sequence
+                    send_sequence(sequence, True)
+                    haslost = False
+                    print("You have lost replaying sequence")
     except Exception as e:
         print(e)  # to print the error
         logging.error(e)
