@@ -113,33 +113,25 @@ def on_disconnect(client, userdata, rc):  # Handels disconnection
 def on_message(client, userdata, message):  # Handels incomming messages
     try:
         # Global variables
-        global game
-        global total_buttons_pressed
-        global pause
+
+        global game, total_buttons_pressed, pause
 
         # Global variables memory
-        global start_memory_var
-        global new_game
-        global sequence_number
-        global sequence
+
+        global start_memory_var, new_game, sequence_number, sequence
 
         # Global variables redblue
-        global start_redvsblue_game
-        global new_game_redvsblue
-        global score_team_blue
-        global score_team_red
+
+        global start_redvsblue_game, new_game_redvsblue, score_team_blue, score_team_red
 
         # Global variables zen
-        global new_zen_game
-        global start_zen_game
-        global total_score_zen
+
+        global new_zen_game, start_zen_game, total_score_zen
 
         # Global variables minesweepr
-        global start_minesweeper
-        global new_game_minesweeper
-        global level_minesweeper
-        global score_minesweeper
-        global busy_minesweeper
+
+        global start_minesweeper, new_game_minesweeper, score_minesweeper, level_minesweeper, busy_minesweeper
+
         # print topic and message
         topic = message.topic
         message = message.payload.decode("utf-8")
@@ -260,35 +252,18 @@ def handle_games():
     semaphore.acquire()
     try:
         # Global variables memory
-        global start_memory_var
-        global sequence_number
-        global new_game
-        global haswon
-        global haslost
+        global start_memory_var, sequence_number, new_game, haswon, haslost
         won = [2, 2, 2, 2]
         lose = [0, 0, 0, 0]
 
         # Global variables redblue
-        global red_led, blue_led
-        global start_redvsblue_game
-        global new_game_redvsblue
-        global list_leds
+        global red_led, blue_led, start_redvsblue_game, new_game_redvsblue, list_leds
 
         # Global variables zen
-        global random_led_zen
-        global random_color_zen
-        global previous_time
-        global start_zen_game
-        global new_zen_game
+        global random_led_zen, random_color_zen, previous_time, start_zen_game, new_zen_game
 
         # Global variables minesweepr
-        global list_minesweeper
-        global index_minesweeper
-        global new_game_minesweeper
-        global start_minesweeper
-        global haswon
-        global haslost
-        global level_minesweeper
+        global list_minesweeper, index_minesweeper, new_game_minesweeper, start_minesweeper, haswon, haslost, level_minesweeper
 
         # Start memory
         while True:
@@ -343,7 +318,7 @@ def handle_games():
                     print(f'list: {list_minesweeper}')
                     index_minesweeper = 0
                     print(f'level minesweeper: {level_minesweeper}')
-                    if level_minesweeper == 1 or level_minesweeper == 2:
+                    if level_minesweeper == [1, 2]:
                         send_hint_function()
 
                     new_game_minesweeper = False
@@ -373,10 +348,7 @@ def generate_sequence(sequence_number):
     try:
         leds = [0, 1, 2]
         global sequence
-        # Generate sequence
-        for i in range(sequence_number):
-            led = leds[random.randint(0, len(leds)-1)]
-            sequence.append(led)
+        sequence = random.sample(leds, sequence_number)
         return sequence
     except Exception as e:
         print(e)
@@ -410,10 +382,16 @@ def send_sequence(sequence, blink=False):  # Send sequence
             client.publish(str(1), str(sequence[1]))
             client.publish(str(2), str(sequence[2]))
             client.publish(str(3), str(sequence[3]))
-            # TIME SLEEP
-            time.sleep(3)
-            for i in range(0, 5):
-                client.publish(str(i), "off")
+            time.sleep(1.5)
+            if (not pause):
+                for i in range(0, 5):
+                    client.publish(str(i), "off")
+            else:
+                while pause == True:
+                    print("Paused")
+                    time.sleep(1)
+                for i in range(0, 5):
+                    client.publish(str(i), "off")
         # Set bussy
         bussy = False
     except Exception as e:
@@ -424,13 +402,7 @@ def send_sequence(sequence, blink=False):  # Send sequence
 def check_sequence(received_sequence):  # Check sequence
     try:
         # Global variables
-        global sequence_number
-        global counter
-        global sequence
-        global haswon
-        global haslost
-        global bussy
-        global total_buttons_pressed
+        global sequence_number, counter, sequence, haswon, haslost, bussy, total_buttons_pressed
         # Check if not bussy
         if not bussy:
             total_buttons_pressed += 1
@@ -465,11 +437,7 @@ def check_sequence(received_sequence):  # Check sequence
 
 def analyse_pressed_buttons_redvsblue(number):
     try:
-        global game
-        global start_redvsblue_game
-        global new_game_redvsblue
-        global total_buttons_pressed
-        global pause
+        global game, start_redvsblue_game, new_game_redvsblue, total_buttons_pressed, pause
         total_buttons_pressed += 1
         print(f"total buttons pressed: {total_buttons_pressed}")
         print(f"red: {red_led} blue:{blue_led}")
@@ -542,13 +510,7 @@ def analyse_buttons_zen(number):
 
 
 def analyse_buttons_minesweeper(message):
-    global game
-    global index_minesweeper
-    global score_minesweeper
-    global haswon
-    global haslost
-    global busy_minesweeper
-    global total_buttons_pressed
+    global game, index_minesweeper, score_minesweeper, haswon, haslost, busy_minesweeper, total_buttons_pressed
     try:
         if not busy_minesweeper:
             total_buttons_pressed += 1
@@ -576,10 +538,7 @@ def analyse_buttons_minesweeper(message):
 
 
 def send_hint_function():
-    global list_minesweeper
-    global index_minesweeper
-    global level_minesweeper
-    global busy_minesweeper
+    global list_minesweeper, index_minesweeper, level_minesweeper, busy_minesweeper
     try:
         busy_minesweeper = True
         client.publish(str(list_minesweeper[0]), "1")

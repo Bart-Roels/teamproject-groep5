@@ -11,3 +11,5 @@
 2023-01-19 14:30:56,207 - __main__ - ERROR - 'NoneType' object is not iterable
 2023-01-19 14:36:21,687 - __main__ - ERROR - Sample larger than population or is negative
 2023-01-19 14:36:21,688 - __main__ - ERROR - 'NoneType' object is not iterable
+2023-01-20 16:12:10,527 - __main__ - ERROR - Sample larger than population or is negative
+2023-01-20 16:12:10,531 - __main__ - ERROR - 'NoneType' object is not iterable
