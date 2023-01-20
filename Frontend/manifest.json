@@ -1,0 +1,13 @@
+{
+  "name": "Interactieve palen",
+  "short_name": "",
+  "icons": [
+    {
+      "src": "/img/logos/google-touch-icon.png",
+      "sizes": "512x512"
+    }
+  ],
+  "theme_color": "#44C8F5",
+  "background_color": "#F5F9FA",
+  "display": "standalone"
+}

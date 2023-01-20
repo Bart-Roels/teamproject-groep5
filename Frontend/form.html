@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Form | Interactieve paaltjes</title>
+    <meta name="description" content="Speel onze interactieve paaltjes">
+
+    <link rel="icon" href="img/logos/favicon.svg" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+    <link rel="manifest" href="manifest.json" />
+
+    <link rel="stylesheet" href="css/normalize.css" />
+    <link rel="stylesheet" href="css/screen.css" />
+
+    <script src="script/datahandler.js"></script>
+    <script src="script/app.js"></script>
+  </head>
+<body>
+    <header>
+        <nav>
+            <div>
+                <svg id="navbar" xmlns="http://www.w3.org/2000/svg" width="360" height="56" viewBox="0 0 360 56">
+                    <rect id="Rectangle_2" data-name="Rectangle 2" width="360" height="56" fill="#f2f2f2" />
+                    <g id="Group_21" data-name="Group 21" transform="translate(-39 -31)">
+                        <rect id="Rectangle_25" data-name="Rectangle 25" width="24" height="24" transform="translate(55 47)"
+                            fill="none" />
+                        <g id="left-small" transform="translate(59.796 51.796)">
+                            <path id="Path_20" data-name="Path 20" d="M12,23.992H26.388" transform="translate(-12 -16.803)" fill="none"
+                                stroke="#333" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+                            <path id="Path_21" data-name="Path 21" d="M19.194,26.388,12,19.194,19.194,12" transform="translate(-12 -12)"
+                                fill="none" stroke="#333" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+                        </g>
+                    </g>
+                </svg>
+            </div>
+            <div>
+                <h1>Memory game</h1>
+            </div>
+        </nav>
+    </header>
+    <div>
+        <svg xmlns="http://www.w3.org/2000/svg" width="19.519" height="19.519" viewBox="0 0 19.519 19.519">
+            <g id="info" transform="translate(1 1)">
+                <path id="Path_14" data-name="Path 14"
+                    d="M12.76,21.519a8.76,8.76,0,1,0-6.194-2.566A8.732,8.732,0,0,0,12.76,21.519Z" transform="translate(-4 -4)"
+                    fill="none" stroke="#333" stroke-linejoin="round" stroke-width="2" />
+                <path id="Path_15" data-name="Path 15" d="M22.595,11A1.095,1.095,0,1,1,21.5,12.095,1.095,1.095,0,0,1,22.595,11Z"
+                    transform="translate(-13.835 -7.934)" fill="#333" fill-rule="evenodd" />
+                <path id="Path_16" data-name="Path 16" d="M23.376,26.132V20H22.5" transform="translate(-14.397 -12.992)"
+                    fill="none" stroke="#333" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+                <path id="Path_17" data-name="Path 17" d="M21,34h3.066" transform="translate(-13.554 -20.861)" fill="none"
+                    stroke="#333" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+            </g>
+        </svg>
+    </div>
+    <div>
+        <p>In 'memory game' is de bedoeling dat je de
+        getoonde sequentie van led's zo lang
+        mogelijk probeert na te doen door de juiste
+        paaltjes aan te klikken. Er zal telkens een
+        extra led toegevoegd worden.</p>
+    </div>
+    <form action="">
+        <label for="">Naam <input type="text" name="" id=""></label>
+        
+        <label for="tijd">Selecteer tijdslimiet</label>
+        <select id="tijd" name="tijd">
+            <option value="3">3 min</option>
+            <option value="4">4 min</option>
+            <option value="5">5 min</option>
+        </select>
+
+        <button>Start nu</button>
+
+    </form>
+</body>
+</html>
