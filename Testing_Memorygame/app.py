@@ -21,6 +21,7 @@ start_memory_var = False # for memory
 counter = 0 # for memory
 sequence_number = 1 # for memory
 sequence = [] # for memory
+pause = False # for memory
 #endregion
 
 #region MQTT FUNCTIONS
@@ -31,6 +32,8 @@ def on_connect(client, userdata, flags, rc): # Handels connection
             client.subscribe("games")
             client.subscribe("button")
             client.subscribe("stop")
+            client.subscribe("pauze")
+            client.subscribe("unpauze")
         else:
             raise Exception("Bad connection Returned code=",rc)
     except Exception as e:
@@ -57,6 +60,7 @@ def on_message(client, userdata, message): # Handels incomming messages
         global new_game
         global sequence_number
         global sequence
+        global pause
         # print topic and message
         topic = message.topic
         message = message.payload.decode("utf-8")
@@ -66,11 +70,11 @@ def on_message(client, userdata, message): # Handels incomming messages
             if message == "memory":
                 print("starting memory")
                 game = "memory"
-                # Start memory
                 sequence = []
                 sequence_number = 1
                 start_memory_var = True
                 new_game = True
+                pause = False
             elif message == "redblue":
                 game = "redblue"
                 print("redblue")
@@ -105,6 +109,26 @@ def on_message(client, userdata, message): # Handels incomming messages
                 print("stop zen")
             elif game == "minesweepr":
                 print("stop minesweepr")
+        if topic == "pauze":
+            if game == "memory":
+                print("pauze memory")
+                pause = True
+            elif game == "redblue":
+                print("pauze redblue")
+            elif game == "zen":
+                print("pauze zen")
+            elif game == "minesweepr":
+                print("pauze minesweepr")
+        if topic == "unpauze":
+            if game == "memory":
+                print("unpauze memory")
+                pause = False
+            elif game == "redblue":
+                print("unpauze redblue")
+            elif game == "zen":
+                print("unpauze zen")
+            elif game == "minesweepr":
+                print("unpauze minesweepr")
     except Exception as e:
         print(e)
         logging.error(e)
@@ -129,6 +153,7 @@ def generate_sequence(sequence_number):
 def send_sequence(sequence, blink=False): # Send sequence
     try:
         # Global variables
+        global pause
         global bussy 
         # Set bussy
         bussy = True
@@ -139,18 +164,31 @@ def send_sequence(sequence, blink=False): # Send sequence
                 client.publish(str(item), str(item))
                 print(f"Sending: {item}")
                 # TIME SLEEP
-                time.sleep(3)
-                print("Sending: off")
-                client.publish(str(item), "off")
+                time.sleep(1.5)
+
+                if(not pause):            
+                    print("Sending: off")
+                    client.publish(str(item), "off")
+                else:
+                    while pause == True:
+                        print("Paused")
+                        time.sleep(1)
+                    client.publish(str(item), "off")
         else:
             client.publish(str(0), str(sequence[0]))
             client.publish(str(1), str(sequence[1]))
             client.publish(str(2), str(sequence[2]))
             client.publish(str(3), str(sequence[3]))
-            # TIME SLEEP
-            time.sleep(3)
-            for i in range(0,5):
-                client.publish(str(i), "off")
+            time.sleep(1.5)
+            if(not pause):
+                for i in range(0,5):
+                    client.publish(str(i), "off")
+            else:
+                while pause == True:
+                    print("Paused")
+                    time.sleep(1)
+                for i in range(0,5):
+                    client.publish(str(i), "off")
         # Set bussy
         bussy = False
     except Exception as e:
@@ -166,9 +204,10 @@ def check_sequence(received_sequence): # Check sequence
         global haswon
         global haslost
         global bussy 
+        global pause
 
-        # Check if not bussy
-        if not bussy:
+        # Check if not bussy and not paused
+        if not bussy or not pause:
             # check if the received sequence matches the current sequence
             if int(received_sequence) == sequence[counter]:
                 counter += 1
