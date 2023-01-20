@@ -86,6 +86,21 @@ const listen = () => {
       }
     });
   });
+
+  /*btnAction.addEventListener('click', () => {
+    const message = btnAction.getAttribute('data-action-id');
+    console.log(message);
+    if (message === 'stop') {
+      client.publish('stop', "stop");
+      // Refresh the page
+      console.log('Stop game');
+      location.reload();
+    }else if(message==='pauze'){
+      client.publish('pauze', "pauze");
+      console.log('Pauze game');
+      location.reload();
+    }
+  });*/
 };
 
 // Dom loaded

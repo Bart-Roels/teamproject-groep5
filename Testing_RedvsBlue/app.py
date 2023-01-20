@@ -24,6 +24,8 @@ app = Flask(__name__)
 
 # GLOBAL VARIABLES
 game = "none"
+pauze_state = False
+unpauze = False
 
 # global variables for redblue
 red_led = -1
@@ -55,6 +57,7 @@ def on_connect(client, userdata, flags, rc):  # Handels connection
             client.subscribe("buttons")
             client.subscribe("stop")
             client.subscribe("pauze")
+            client.subscribe("unpauze")
         else:
             print("Bad connection Returned code=", rc)
     except socket.error as e:
@@ -78,6 +81,7 @@ def on_message(client, userdata, message):
         global new_game_redvsblue
         global score_team_blue
         global score_team_red
+        global unpauze
         # print topic and message
         topic = message.topic
         message = message.payload.decode("utf-8")
@@ -118,11 +122,10 @@ def on_message(client, userdata, message):
             if game == "memory":
                 print("stop memory")
             elif game == "redblue":
-                print("stop redblue")
+                print("stop redblue")   
                 start_redvsblue_game = False
                 new_game_redvsblue = False
                 game = None
-
             elif game == "zen":
                 print("stop zen")
             elif game == "minesweepr":
@@ -132,6 +135,9 @@ def on_message(client, userdata, message):
                 print("pauze memory")
             elif game == "redblue":
                 print("pauze redblue")
+                unpauze = True
+                client.publish("memorypoints", "NOW - PAUZE")
+                print(f"pauze: {unpauze}")
             elif game == "zen":
                 print("pauze zen")
             elif game == "minesweepr":
@@ -141,12 +147,14 @@ def on_message(client, userdata, message):
                 print("unpauze memory")
             elif game == "redblue":
                 print("unpauze redblue")
+                unpauze = False
             elif game == "zen":
                 print("unpauze zen")
             elif game == "minesweepr":
                 print("unpauze minesweepr")
     except socket.error as e:
         logger.error(e)
+        
 def analyse_pressed_buttons_redvsblue(number):
     try:
         global game
@@ -154,19 +162,22 @@ def analyse_pressed_buttons_redvsblue(number):
         global new_game_redvsblue
         print(f"red: {red_led} blue:{blue_led}")
         print(f"button pressed: {number}; {game}")
-        if number == red_led:
-            print("red wins")
-            global score_team_red
-            score_team_red += 1
-            print(f"score red: {score_team_red}")
-            new_game_redvsblue = True
+        if unpauze == False:
+            if number == red_led:
+                print(f"pauze: {unpauze}")
+                print("red wins")
+                global score_team_red
+                score_team_red += 1
+                print(f"score red: {score_team_red}")
+                new_game_redvsblue = True
 
-        elif number == blue_led:
-            print("blue wins")
-            global score_team_blue
-            score_team_blue += 1
-            print(f"score blue: {score_team_blue}")
-            new_game_redvsblue = True
+            elif number == blue_led:
+                print(f"pauze: {unpauze}")
+                print("blue wins")
+                global score_team_blue
+                score_team_blue += 1
+                print(f"score blue: {score_team_blue}")
+                new_game_redvsblue = True
 
         client.publish(
             "memorypoints", f"score red:{score_team_red} score blue:{score_team_blue}")
@@ -188,10 +199,12 @@ def redvsblue():
         global red_led, blue_led
         global start_redvsblue_game
         global new_game_redvsblue
+        global unpauze
         print('red vs blue')
         while True:
             if (start_redvsblue_game):
-                if (new_game_redvsblue):
+                if (new_game_redvsblue and unpauze == False):
+                    print(f"pauze: {unpauze}")
                     print('new game')
                     for i in range(0, 4):
                         client.publish(str(i), "off")
@@ -202,6 +215,12 @@ def redvsblue():
                     client.publish(str(red_led), "0")
                     client.publish(str(blue_led), "3")
                     new_game_redvsblue = False
+                elif unpauze == True:
+                    print(f"pauze: {unpauze}")
+                    client.publish(str(red_led), "0")
+                    client.publish(str(blue_led), "3")
+                    new_game_redvsblue = False
+                    
     except Exception as e:
         logger.error(e)
 

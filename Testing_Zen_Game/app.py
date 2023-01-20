@@ -27,10 +27,9 @@ logger.addHandler(handler)
 
 # GLOBAL VARIABLES
 game = "none"
-button1 = "off"
-button2 = "off"
-button3 = "off"
-button4 = "off"
+pauze_state = False
+unpauze = False
+
 
 # global variables for zen
 start_zen_game = False
@@ -64,6 +63,8 @@ def on_connect(client, userdata, flags, rc):  # Handels connection
             client.subscribe("games")
             client.subscribe("buttons")
             client.subscribe("stop")
+            client.subscribe("pauze")
+            client.subscribe("unpauze")
         else:
             print("Bad connection Returned code=", rc)
             raise ValueError("Bad connection Returned code=", rc)
@@ -87,6 +88,8 @@ def on_message(client, userdata, message):
         global new_zen_game
         global start_zen_game
         global total_score_zen
+        global pauze_state
+        global unpauze
         # print topic and message
         topic = message.topic
         message = message.payload.decode("utf-8")
@@ -136,6 +139,29 @@ def on_message(client, userdata, message):
                 game = None
             elif game == "minesweepr":
                 print("stop minesweepr")
+        if topic == "pauze":
+            if game == "memory":
+                print("pauze memory")
+            elif game == "redblue":
+                print("pauze redblue")
+            elif game == "zen":
+                print("pauze zen")
+                unpauze = True
+                client.publish("memorypoints", "NOW - PAUZE")
+                print(f"pauze: {unpauze}")
+            elif game == "minesweepr":
+                print("pauze minesweepr")
+        if topic == "unpauze":
+            if game == "memory":
+                print("unpauze memory")
+            elif game == "redblue":
+                print("unpauze redblue")
+            elif game == "zen":
+                print("unpauze zen")
+                unpauze = False
+            elif game == "minesweepr":
+                print("unpauze minesweepr")
+
     except Exception as e:
         logger.log(e)
 
@@ -165,20 +191,24 @@ def reward_response_time(response_time):
     except Exception as e:
         logger.log(e)
 
+
 def analyse_buttons_zen(number):
     global game
     global random_led_zen
     global previous_time
     global new_zen_game
+    global unpauze
     try:
-        print(f"button pressed: {number}; {game}")
-        if number == random_led_zen:
-            response_time = time.time() - previous_time
-            print(f"correct {response_time}")
-            reward_response_time(response_time)
-            new_zen_game = True
+        if unpauze == False:
+            print(f"button pressed: {number}; {game}")
+            if number == random_led_zen:
+                response_time = time.time() - previous_time
+                print(f"correct {response_time} seconds {unpauze}")
+                reward_response_time(response_time)
+                new_zen_game = True
     except Exception as e:
         logger.log(e)
+
 
 def zen_game():
     global random_led_zen
@@ -186,10 +216,12 @@ def zen_game():
     global previous_time
     global start_zen_game
     global new_zen_game
+    global unpauze
     try:
         while True:
+
             if (start_zen_game):
-                if (new_zen_game):
+                if new_zen_game and unpauze == False:
                     for i in range(0, 4):
                         client.publish(str(i), "off")
                     random_led_zen = random.randint(0, 3)
@@ -199,8 +231,13 @@ def zen_game():
                     client.publish(str(random_led_zen), str(random_color_zen))
                     previous_time = time.time()
                     new_zen_game = False
+                elif unpauze == True:
+                    previous_time = time.time()
+                    print(f"pauze: {unpauze}")
+                    new_zen_game = False
     except Exception as e:
         logger.log(e)
+
 
 # MQQT CLIENT
 client = mqtt.Client()
@@ -218,6 +255,7 @@ def subscribing():
     except Exception as e:
         logger.log(e)
 
+
 def start_threads():
     try:
         # Start subscribeing thread
@@ -228,6 +266,7 @@ def start_threads():
         mem.start()
     except Exception as e:
         logger.log(e)
+
 
 # APP START
 if __name__ == '__main__':
