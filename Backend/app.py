@@ -190,26 +190,25 @@ def on_message(client, userdata, message):  # Handels incomming messages
                 analyse_buttons_minesweeper(message)
         if topic == "stop":
             client.publish("totalbuttonspressed", str(total_buttons_pressed))
+            # If stop
+            game = None
+            pause = False
             # Send off to all led's mqtt message to turn off
             for i in range(0, 4):
                 client.publish(str(i), "off")
-
             if game == "memory":
                 start_memory_var = False
                 new_game = False
                 sequence_number = 1
-                game = None
                 print("stop memory")
             elif game == "redblue":
                 print("stop redblue")
                 start_redvsblue_game = False
                 new_game_redvsblue = False
-                game = None
             elif game == "zen":
                 print("stop zen")
                 start_zen_game = False
                 new_zen_game = False
-                game = None
             elif game == "minesweepr":
                 start_minesweeper = False
                 new_game_minesweeper = False
