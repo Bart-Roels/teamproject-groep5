@@ -324,6 +324,10 @@ input:disabled {
     padding: 0;
 }
 
+.o-row--endscore {
+    padding: 0;
+}
+
 .o-row--tags {
     padding: 0;
 }
@@ -665,6 +669,10 @@ input:disabled {
     border: 3px solid var(--global-color-neutral-xxxx-light);
 }
 
+.c-game__icon {
+    margin-bottom: 8px;
+}
+
 .c-game__body:hover {
     border: 3px solid var(--global-color-alpha);
 }
@@ -801,13 +809,19 @@ input:disabled {
     stroke: var(--global-color-neutral-xxx-light);
 }
 
-.is-active .c-tabbar__icon path {
+.c-tabbar__icon path,
+.c-tabbar__icon rect {
     stroke: var(--global-color-neutral-xxx-light);
     stroke-width: 3px;
 }
 
+.c-tabbar__icon circle,
 .c-tabbar__icon .fill-point {
     fill: var(--global-color-neutral-xxx-light);
+}
+
+.c-tabbar__icon .fill-point {
+    stroke-width: 0;
 }
 
 @media (min-width: 576px) {
@@ -1287,7 +1301,7 @@ input:disabled {
     display: flex;
     flex-direction: column;
     position: relative;
-    background-color: var(--global-color-alpha);
+    background-color: #80DEFF;
     height: 100vh;
     width: 100vw;
 }
@@ -1305,15 +1319,28 @@ input:disabled {
     line-height: 1;
 }
 
-.c-live__name{
+.c-live__game {
+    position: absolute;
+    top: 27%;
+    transform: translate(0, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+}
+
+.c-live__game .c-icon {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 1%;
+}
+
+.c-live__name {
     font-size: 24px;
     font-weight: var(--global-fontWeight-semibold);
     color: var(--global-color-neutral-xxx-light);
     margin: 0;
-    position: absolute;
-    top: 27%;
-    left: 50%;
-    transform: translate(-50%, -50%);
 }
 
 .c-live--red {
@@ -1338,7 +1365,7 @@ input:disabled {
 }
 
 .c-live__score--bluevsred {
-    position:relative;
+    position: relative;
     top: 0;
     left: 0;
     transform: translate(0, 0);
@@ -1446,6 +1473,19 @@ input:disabled {
         height: 40px;
         width: 40px;
     }
+
+    .c-live__game {
+        top: 25%;
+    }
+
+    .c-live__game .c-icon {
+        width: 32px;
+        height: 32px;
+    }
+
+    .c-live__name {
+        font-size: 32px;
+    }
 }
 
 @media (min-width: 768px) {
@@ -1489,6 +1529,14 @@ input:disabled {
         gap: 32px;
     }
 
+    .c-live__game .c-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .c-live__name {
+        font-size: 40px;
+    }
 
 }
 
@@ -1520,6 +1568,172 @@ input:disabled {
     }
 }
 
+/*
+    Components: endscore
+    ---
+    Component to show the score at the end of the game
+*/
+
+.c-endscore {}
+
+.c-endscore__score-header {
+    background-color: var(--global-color-alpha);
+    height: 45vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0 0 var(--global-borderRadius-lg) var(--global-borderRadius-lg);
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+}
+
+.c-score-header {
+    border-radius: 50%;
+    background-color: #3CB0D98F;
+    width: 160px;
+    height: 160px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 50px;
+}
+
+.c-score-header__ring {
+    border-radius: 50%;
+    background-color: var(--global-color-neutral-xxx-light);
+    width: 130px;
+    height: 130px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 10px solid var(--global-color-alpha-light);
+}
+
+.c-score-header__title {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1;
+    margin-bottom: 8px;
+}
+
+.c-score-header__score {
+    margin: 0;
+    font-size: 24px;
+    line-height: 1;
+}
+
+.c-endscore__card {
+    background-color: var(--global-color-neutral-xxx-light);
+    border-radius: var(--global-borderRadius-lg);
+    height: 100px;
+    padding: 0 24px;
+    margin-top: -50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+}
+
+.c-endscore__game {
+    margin: 0;
+    line-height: 1;
+    font-size: 24px;
+}
+
+.c-endscore__icon {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 1%;
+}
+
+.c-endscore__infos {
+    margin-top: 24px;
+}
+
+.c-endscore__list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.c-endscore__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 12px;
+    border-radius: var(--global-borderRadius-md);
+    box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
+}
+
+.c-endscore__item-title {
+    font-size: 16px;
+    margin: 0;
+}
+
+.c-endscore__item-text {
+    font-size: 16px;
+    margin: 0;
+}
+
+.c-endscore__buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+.c-endscore__button {
+    text-decoration: none;
+    color: var(--global-color-neutral-xxx-dark) !important;
+    outline: none;
+}
+
+.c-floating-btn {
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    background-color: var(--global-color-neutral-xxxx-light);
+    box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
+    border: 2px solid var(--global-color-neutral-xxxx-light);
+}
+
+.c-floating-btn .c-icon {
+    width: 32px;
+    height: 32px;
+}
+
+.c-floating-btn .c-icon path {
+    stroke: var(--global-color-neutral-xxx-dark);
+}
+
+.c-endscore__button:hover .c-floating-btn,
+.c-endscore__button:focus .c-floating-btn {
+    border: 2px solid var(--global-color-alpha);
+    box-shadow: var(--global-input-focus-boxShadowSpread) var(--global-input-focus-boxShadowColor);
+}
+
+.c-endscore__button:hover .c-floating-btn .c-icon path {
+    stroke: var(--global-color-alpha);
+}
+
+
+@media (min-width: 576px) {
+    .c-endscore__card {
+        margin-left: 24px;
+        margin-right: 24px;
+    }
+
+    .c-endscore__body {
+        padding: 0 56px;
+    }
+}
+
+
+
 /*------------------------------------*\
 #UTILITIES
 \*------------------------------------*/
@@ -1534,13 +1748,6 @@ input:disabled {
     Utility classes to put specific colors onto elements
 */
 
-.u-color-mine-sweeper {
-    stroke: #F24330;
-}
-
-.u-color-zen-game {
-    stroke: var(--global-color-secondary)
-}
 
 /*
     Utilities: spacing
