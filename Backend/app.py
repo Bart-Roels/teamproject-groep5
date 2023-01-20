@@ -29,6 +29,7 @@ port = 1883
 # region GLOBAL VARIABLES
 game = None
 total_buttons_pressed = 0
+pause = False
 # region memory variables
 bussy = False  # for memory
 new_game = False  # for memory
@@ -87,6 +88,7 @@ def on_connect(client, userdata, flags, rc):  # Handels connection
             client.subscribe("button")
             client.subscribe("stop")
             client.subscribe("pauze")
+            client.subscribe("unpauze")
         else:
             raise Exception("Bad connection Returned code=", rc)
     except Exception as e:
@@ -113,6 +115,7 @@ def on_message(client, userdata, message):  # Handels incomming messages
         # Global variables
         global game
         global total_buttons_pressed
+        global pause
 
         # Global variables memory
         global start_memory_var
@@ -136,7 +139,7 @@ def on_message(client, userdata, message):  # Handels incomming messages
         global new_game_minesweeper
         global level_minesweeper
         global score_minesweeper
-
+        global busy_minesweeper
         # print topic and message
         topic = message.topic
         message = message.payload.decode("utf-8")
@@ -151,7 +154,7 @@ def on_message(client, userdata, message):  # Handels incomming messages
                 sequence_number = 1
                 start_memory_var = True
                 new_game = True
-                current_game = 'memorygame'
+                pause = False
             elif message == "redblue":
                 game = "redblue"
                 print("redblue")
@@ -219,6 +222,32 @@ def on_message(client, userdata, message):  # Handels incomming messages
                 start_minesweeper = False
                 new_game_minesweeper = False
                 print("stop minesweepr")
+        if topic == "pauze":
+            if game == "memory":
+                print("pauze memory")
+                pause = True
+            elif game == "redblue":
+                print("pauze redblue")
+                pause = True
+            elif game == "zen":
+                print("pauze zen")
+                pause = True
+            elif game == "minesweepr":
+                busy_minesweeper = True
+                print("pauze minesweepr")
+        if topic == "unpauze":
+            if game == "memory":
+                print("unpauze memory")
+                pause = False
+            elif game == "redblue":
+                print("unpauze redblue")
+                pause = False
+            elif game == "zen":
+                print("unpauze zen")
+                pause = False
+            elif game == "minesweepr":
+                busy_minesweeper = False
+                print("unpauze minesweepr")
     except Exception as e:
         print(e)
         logger.error(e)
@@ -282,7 +311,7 @@ def handle_games():
                         haslost = False
                         print("You have lost replaying sequence")
             if (start_redvsblue_game):
-                if (new_game_redvsblue):
+                if new_game_redvsblue and not pause:
                     print('new game')
                     for i in range(0, 4):
                         client.publish(str(i), "off")
@@ -294,7 +323,7 @@ def handle_games():
                     client.publish(str(blue_led), "3")
                     new_game_redvsblue = False
             if (start_zen_game):
-                if (new_zen_game):
+                if new_zen_game and not pause:
                     for i in range(0, 4):
                         client.publish(str(i), "off")
                     random_led_zen = random.randint(0, 3)
@@ -303,6 +332,10 @@ def handle_games():
                         f"random led: {random_led_zen} kleur: {random_color_zen}")
                     client.publish(str(random_led_zen), str(random_color_zen))
                     previous_time = time.time()
+                    new_zen_game = False
+                elif pause:
+                    previous_time = time.time()
+                    print(f"pauze: {pause}")
                     new_zen_game = False
             if (start_minesweeper):
                 if (new_game_minesweeper):
@@ -363,9 +396,15 @@ def send_sequence(sequence, blink=False):  # Send sequence
                 client.publish(str(item), str(item))
                 print(f"Sending: {item}")
                 # TIME SLEEP
-                time.sleep(3)
-                print("Sending: off")
-                client.publish(str(item), "off")
+                time.sleep(1.5)
+                if not pause:
+                    print("Sending: off")
+                    client.publish(str(item), "off")
+                else:
+                    while pause == True:
+                        print("Paused")
+                        time.sleep(1)
+                    client.publish(str(item), "off")
         else:
             client.publish(str(0), str(sequence[0]))
             client.publish(str(1), str(sequence[1]))
@@ -430,23 +469,25 @@ def analyse_pressed_buttons_redvsblue(number):
         global start_redvsblue_game
         global new_game_redvsblue
         global total_buttons_pressed
+        global pause
         total_buttons_pressed += 1
         print(f"total buttons pressed: {total_buttons_pressed}")
         print(f"red: {red_led} blue:{blue_led}")
         print(f"button pressed: {number}; {game}")
-        if number == red_led:
-            print("red wins")
-            global score_team_red
-            score_team_red += 1
-            print(f"score red: {score_team_red}")
-            new_game_redvsblue = True
+        if not pause:
+            if number == red_led:
+                print("red wins")
+                global score_team_red
+                score_team_red += 1
+                print(f"score red: {score_team_red}")
+                new_game_redvsblue = True
 
-        elif number == blue_led:
-            print("blue wins")
-            global score_team_blue
-            score_team_blue += 1
-            print(f"score blue: {score_team_blue}")
-            new_game_redvsblue = True
+            elif number == blue_led:
+                print("blue wins")
+                global score_team_blue
+                score_team_blue += 1
+                print(f"score blue: {score_team_blue}")
+                new_game_redvsblue = True
 
         client.publish(
             "memorypoints", f"score red:{score_team_red} score blue:{score_team_blue}")
@@ -482,15 +523,16 @@ def reward_response_time(response_time):
 def analyse_buttons_zen(number):
 
     # write the global variables above on 1 line
-    global game, random_led_zen, previous_time, new_zen_game, total_buttons_pressed
+    global game, random_led_zen, previous_time, new_zen_game, total_buttons_pressed, pause
     try:
-        total_buttons_pressed += 1
-        print(f"Total buttons pressed: {total_buttons_pressed}")
-        if number == random_led_zen:
-            response_time = time.time() - previous_time
-            print(f"correct {response_time}")
-            reward_response_time(response_time)
-            new_zen_game = True
+        if not pause:
+            total_buttons_pressed += 1
+            print(f"Total buttons pressed: {total_buttons_pressed}")
+            if number == random_led_zen:
+                response_time = time.time() - previous_time
+                print(f"correct {response_time}")
+                reward_response_time(response_time)
+                new_zen_game = True
     except Exception as e:
         logger.log(e)
 
