@@ -9,10 +9,6 @@ import uuid
 import socket
 import logging
 
-
-
-
-
 # region SETUP
 
 # Flask setup
