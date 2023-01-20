@@ -69,6 +69,7 @@ def on_message(client, userdata, message):  # Handels incomming messages
         global pauze
         global unpauze
         global bussy
+        global counter
         # print topic and message
         topic = message.topic
         message = message.payload.decode("utf-8")
@@ -120,14 +121,18 @@ def on_message(client, userdata, message):  # Handels incomming messages
         if topic == "pauze":
             if game == "memory":
                 print("pauze memory")
-                for i in range(4):
-                    client.publish(str(i), 'off')
-                pauze = True
-                unpauze = False
+                print(f"pauze - counter: {counter} sequence_number: {sequence_number}")
+                client.publish("memorypoints", "NOW - PAUSE")
                 start_memory_var = False
                 new_game = False
-                bussy = False
-                client.publish("memorypoints", "NOW - PAUSE")
+                # for i in range(4):
+                #     client.publish(str(i), 'off')
+                # pauze = True
+                # unpauze = False
+                # start_memory_var = False
+                # new_game = False
+                # bussy = False
+                # client.publish("memorypoints", "NOW - PAUSE")
             elif game == "redblue":
                 print("unpauze redblue")
             elif game == "zen":
@@ -136,10 +141,15 @@ def on_message(client, userdata, message):  # Handels incomming messages
                 print("unpauze minesweepr")
         if topic == "unpauze":
             if game == "memory":
-                print("unpauze memory")
-                pauze = False
-                unpauze = True
+                print("unpauze memory")  
+                print(f"unpauze - counter: {counter} sequence_number: {sequence_number}")
+                client.publish("memorypoints", "NOW - UNPAUSE")
+                counter = 0
                 start_memory_var = True
+                unpauze = True           
+                # start_memory_var = True
+                # new_game = True
+                # unpauze = True
             elif game == "redblue":
                 print("unpauze redblue")
             elif game == "zen":
@@ -216,7 +226,7 @@ def check_sequence(received_sequence):  # Check sequence
         global bussy
         global pauze
         # Check if not bussy
-        if not bussy or  pauze or not haswon or not haslost:
+        if not bussy :
             # check if the received sequence matches the current sequence
             if int(received_sequence) == sequence[counter]:
                 counter += 1
@@ -259,24 +269,17 @@ def start_memory():  # start memory game
         # Start memory
         while True:
             if start_memory_var:
-                if new_game and not pauze:
+                if new_game  :
                     sequence = generate_sequence(sequence_number)
                     send_sequence(sequence, True)
                     new_game = False
-                elif pauze:  
-                    print(f'pauze {pauze}, counter: {counter}, sequence: {sequence}')
-                    counter = 0
-                    new_game = False
-                    haslost= False
                 elif unpauze:
-                    print(f'unpauze {unpauze}, counter: {counter}, sequence: {sequence}')
-                    if len(sequence) > 0:
-                        send_sequence(sequence, True)
-                    else:
+                    if len(sequence) == 0:
                         sequence = generate_sequence(sequence_number)
                         send_sequence(sequence, True)
+                    else:
+                        send_sequence(sequence, True)
                     unpauze = False
-                    new_game = False
                 elif haswon:
                     # Play win sequence
                     send_sequence(won)
