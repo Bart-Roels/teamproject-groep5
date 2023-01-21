@@ -998,7 +998,7 @@ input:disabled {
     color: var(--global-color-neutral-dark);
     overflow: auto;
     white-space: nowrap;
-    padding: 0 24px 16px 16px;
+    padding: 24px 16px;
 }
 
 .c-tags__list {
@@ -1809,6 +1809,10 @@ input:disabled {
 
 .u-mb-clear {
     margin-bottom: 0 !important;
+}
+
+.u-mt-md {
+    margin-top: var(--global-whitespace-md) !important;
 }
 
 .u-mb-xs {

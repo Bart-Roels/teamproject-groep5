@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="css/screen.css" />
 
     <script src="vendor/mqtt.js"></script>
+    <script src="vendor/bad-words.js"></script>
     <script src="script/datahandler.js"></script>
     <script src="script/app.js"></script>
 
@@ -61,6 +62,15 @@
                   </label>
                   <input class="c-input js-name-input" type="text" name="username" id="username" placeholder="bijv. Bart23" required />
                 </p>
+
+                <p class="c-form-field js-red-field u-hidden">
+                  <label class="c-label" for="red">Red team naam<span class="c-label__error-message js-red-error-message">Verplicht invullen</span></label
+                  ><input class="c-input js-red-input" type="text" name="red" id="red" placeholder="bijv. Duivels" required />
+                </p>
+                <p class="c-form-field js-blue-field u-hidden">
+                  <label class="c-label" for="blue">Blue team naam<span class="c-label__error-message js-blue-error-message">Verplicht invullen</span></label
+                  ><input class="c-input js-blue-input" type="text" name="blue" id="blue" placeholder="bijv. Spartanen" required />
+                </p>
               </div>
               <div class="js-form-select">
                 <p class="c-form-field c-custom-select">
@@ -69,6 +79,17 @@
                     <option value="3">3 min</option>
                     <option value="5">5 min</option>
                     <option value="10">10 min</option>
+                  </select>
+                  <svg class="c-custom-select__symbol" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M36 18L24 30L12 18" stroke="#333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </p>
+                <p class="c-form-field c-custom-select u-hidden">
+                  <label class="c-label js-dropdown-label" for="username"> Moeilijkheidsgraad </label>
+                  <select class="c-input c-custom-select__input--form js-dropdown-difficulty" name="select1" id="select1">
+                    <option value="makkelijk">makkelijk</option>
+                    <option value="normaal">normaal</option>
+                    <option value="moeilijk">moeilijk</option>
                   </select>
                   <svg class="c-custom-select__symbol" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M36 18L24 30L12 18" stroke="#333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
