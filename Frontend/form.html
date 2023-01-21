@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="css/normalize.css" />
     <link rel="stylesheet" href="css/screen.css" />
 
+    <script src="vendor/mqtt.js"></script>
     <script src="script/datahandler.js"></script>
     <script src="script/app.js"></script>
 
@@ -22,26 +23,28 @@
   <body class="js-form-page">
     <main>
       <!-- header -->
-      <header class="o-row">
+      <header class="o-row u-p-clear">
         <div class="o-container">
-          <div class="c-header">
+          <div class="c-header c-header--with-back-btn">
             <button class="c-header__back-btn js-back-btn o-button-reset">
               <svg class="c-icon--md" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12 23.9917H36" stroke="#333" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
                 <path d="M24 36L12 24L24 12" stroke="#333" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
               </svg>
             </button>
-            <div class="c-header__icon js-form-icon">
-              <svg class="c-icon" width="77" height="77" viewBox="0 0 77 77">
-                <g transform="translate(-286.5 -347.5)">
-                  <g transform="translate(288.308 349.308)">
-                    <path d="M37,0h0a0,0,0,0,1,0,0V74a0,0,0,0,1,0,0h0A37,37,0,0,1,0,37v0A37,37,0,0,1,37,0Z" transform="translate(-0.308 -0.308)" fill="#f33" stroke="#919799" stroke-width="3" />
-                    <path d="M0,0H0A37,37,0,0,1,37,37v0A37,37,0,0,1,0,74H0a0,0,0,0,1,0,0V0A0,0,0,0,1,0,0Z" transform="translate(36.692 -0.308)" fill="#44c8f5" stroke="#919799" stroke-width="3" />
+            <div class="c-header__title-icon">
+              <div class="c-header__icon js-form-icon">
+                <svg class="c-icon" width="77" height="77" viewBox="0 0 77 77">
+                  <g transform="translate(-286.5 -347.5)">
+                    <g transform="translate(288.308 349.308)">
+                      <path d="M37,0h0a0,0,0,0,1,0,0V74a0,0,0,0,1,0,0h0A37,37,0,0,1,0,37v0A37,37,0,0,1,37,0Z" transform="translate(-0.308 -0.308)" fill="#f33" stroke="#919799" stroke-width="3" />
+                      <path d="M0,0H0A37,37,0,0,1,37,37v0A37,37,0,0,1,0,74H0a0,0,0,0,1,0,0V0A0,0,0,0,1,0,0Z" transform="translate(36.692 -0.308)" fill="#44c8f5" stroke="#919799" stroke-width="3" />
+                    </g>
                   </g>
-                </g>
-              </svg>
+                </svg>
+              </div>
+              <h1 class="c-header__title js-form-title">Memory Game</h1>
             </div>
-            <h1 class="c-header__title js-form-title">Memory Game</h1>
           </div>
         </div>
       </header>
@@ -50,7 +53,6 @@
           <!-- make form -->
           <form action="#" class="c-form u-max-width-xs u-align-center">
             <div class="c-form__body">
-              <h2 class="c-title">Bijna klaar &#128540;</h2>
               <div class="js-form-fields">
                 <p class="c-form-field js-name-field">
                   <label class="c-label" for="username">
@@ -73,7 +75,7 @@
                   </svg>
                 </p>
               </div>
-              <button class="o-button-reset c-button js-form-start-btn">START NU</button>
+              <button class="o-button-reset c-button js-form-start-btn" type="submit">START NU</button>
               <div class="c-form__info u-mb-lg">
                 <div class="c-form__icon">
                   <svg class="c-icon" width="24" height="24" viewBox="0 0 48 48" fill="black" stroke="black">

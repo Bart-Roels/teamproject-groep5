@@ -2,6 +2,29 @@ let stop = false;
 let timeLeft = null;
 let timeInSeconds = null;
 
+const client = mqtt.connect('ws://localhost:9001');
+
+client.on('connect', () => {
+  console.log('Connected to the MQTT WebSocket');
+
+  client.subscribe('score');
+  client.subscribe('scoreRed');
+  client.subscribe('scoreBlue');
+
+  client.on('message', (topic, message) => {
+    console.log('Message received', topic, message.toString());
+    if (document.querySelector('.js-live-page')) {
+      if (topic === 'score') {
+        document.querySelector('.js-score').textContent = message.toString();
+      } else if (topic === 'scoreRed') {
+        document.querySelector('.js-score-red').textContent = message.toString();
+      } else if (topic === 'scoreBlue') {
+        document.querySelector('.js-score-blue').textContent = message.toString();
+      }
+    }
+  });
+});
+
 const listener = () => {
   const body = document.querySelector('body');
   const infoBtns = document.querySelectorAll('.js-info-btn');
@@ -127,7 +150,7 @@ const listenToControls = () => {
         gameData.score = document.querySelector('.js-score').innerHTML;
       }
       localStorage.setItem('gameData', JSON.stringify(gameData));
-      console.log(gameData);
+      // console.log(gameData);
       console.log('save score');
       // sendStopGame();
       // saveScore(gameData.game);
@@ -167,61 +190,20 @@ const listenToControls = () => {
   });
 };
 
-const checkValidity = (arrField, arrInput, arrError) => {
-  const formStartBtn = document.querySelector('.js-form-start-btn');
-  formStartBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    for (let i = 0; i < arrField.length; i++) {
-      if (!isEmpty(arrInput[i].value)) {
-        arrError[i].classList.remove('is-visible');
-        arrField[i].classList.remove('has-error');
-
-        let name, nameRed, nameBlue, selectedDropdown, selectedDifficulty;
-
-        if (i == arrField.length - 1) {
-          if (localStorage.getItem('selectedGameForm') == 'bluevsred') {
-            nameRed = arrInput[i].value;
-            nameBlue = arrInput[i - 1].value;
-          } else {
-            name = arrInput[i].value;
-          }
-          selectedDropdown = document.querySelector('.js-dropdown').value;
-          if (localStorage.getItem('selectedGameForm') == 'minesweeper') {
-            selectedDifficulty = document.querySelector('.js-dropdown-2').value;
-          }
-          // put all data in a object
-          let gameData = {
-            game: localStorage.getItem('selectedGameForm'),
-            name: name,
-            nameRed: nameRed,
-            nameBlue: nameBlue,
-            time: selectedDropdown,
-            difficulty: selectedDifficulty,
-          };
-          // put object in localstorage
-          localStorage.setItem('gameData', JSON.stringify(gameData));
-          console.log(localStorage.getItem('gameData'));
-
-          // count down timer 3 2 1
-          countDown3sec();
-        }
-      } else {
-        arrError[i].classList.add('is-visible');
-        arrField[i].classList.add('has-error');
-      }
-    }
-  });
-  for (let i = 0; i < arrField.length; i++) {
-    arrInput[i].addEventListener('input', (e) => {
-      if (!isEmpty(arrInput[i].value)) {
-        arrError[i].classList.remove('is-visible');
-        arrField[i].classList.remove('has-error');
-      }
-    });
+const isFormFieldValidity = (fieldElement, inputElement, errorElement) => {
+  // check if input is empty
+  if (!isEmpty(inputElement.value)) {
+    errorElement.classList.remove('is-visible');
+    fieldElement.classList.remove('has-error');
+    return true;
+  } else {
+    errorElement.classList.add('is-visible');
+    fieldElement.classList.add('has-error');
+    return false;
   }
 };
 
-const countDown3sec = () => {
+const showCountDown3sec = () => {
   const countDown = document.querySelector('.c-countdown');
   countDown.classList.add('is-visible');
   countDown.innerHTML = `<lottie-player class="c-countdown__animation" src="img/count.json" background="transparent"  speed="1"  style="width: 300px; height: 300px;" autoplay></lottie-player>`;
@@ -237,7 +219,64 @@ const countDown3sec = () => {
   }, 3600);
 };
 
-const showFieldToForm = () => {
+const listenToFormSubmit = (arrField, arrInput, arrError) => {
+  // listen to form start button
+  // check if all fields are filled in and if not show error message
+  // and add eventlistener to input field to remove error message when input is filled in
+  let arrFieldStatus = [];
+  const formStartBtn = document.querySelector('.js-form-start-btn');
+  formStartBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    for (let i = 0; i < arrField.length; i++) {
+      let fieldStatus = isFormFieldValidity(arrField[i], arrInput[i], arrError[i]);
+      arrFieldStatus.push(fieldStatus);
+      if (fieldStatus == false) {
+        arrInput[i].addEventListener('input', (e) => {
+          if (!isEmpty(arrInput[i].value)) {
+            arrError[i].classList.remove('is-visible');
+            arrField[i].classList.remove('has-error');
+          }
+        });
+      }
+    }
+    // console.log(arrFieldStatus);
+
+    // check if all fields are filled in
+    if (!arrFieldStatus.includes(false)) {
+      console.log('form is valid');
+      let name, nameRed, nameBlue, selectedDropdown, selectedDifficulty;
+      if (localStorage.getItem('selectedGameForm') == 'bluevsred') {
+        nameRed = arrInput[0].value;
+        nameBlue = arrInput[1].value;
+      } else {
+        name = arrInput[0].value;
+      }
+      selectedDropdown = document.querySelector('.js-dropdown').value;
+      if (localStorage.getItem('selectedGameForm') == 'minesweeper') {
+        selectedDifficulty = document.querySelector('.js-dropdown-difficulty').value;
+      }
+      // put all data in a object
+      let gameData = {
+        game: localStorage.getItem('selectedGameForm'),
+        name: name,
+        nameRed: nameRed,
+        nameBlue: nameBlue,
+        time: selectedDropdown,
+        difficulty: selectedDifficulty,
+      };
+
+      // put object in localstorage
+      localStorage.setItem('gameData', JSON.stringify(gameData));
+      console.log(localStorage.getItem('gameData'));
+
+      // count down timer 3 2 1
+      showCountDown3sec();
+    }
+    arrFieldStatus = [];
+  });
+};
+
+const showForm = () => {
   const selectedGameForm = localStorage.getItem('selectedGameForm');
   console.log(selectedGameForm);
   const title = document.querySelector('.js-form-title');
@@ -253,7 +292,7 @@ const showFieldToForm = () => {
 
   if (selectedGameForm === 'bluevsred') {
     title.textContent = 'Blue vs Red';
-    icon.innerHTML = `<svg class="c-icon" width="77" height="77" viewBox="0 0 77 77"><g transform="translate(-286.5 -347.5)"><g transform="translate(288.308 349.308)"><path d="M37,0h0a0,0,0,0,1,0,0V74a0,0,0,0,1,0,0h0A37,37,0,0,1,0,37v0A37,37,0,0,1,37,0Z" transform="translate(-0.308 -0.308)" fill="#f33" stroke="#919799" stroke-width="3" /><path d="M0,0H0A37,37,0,0,1,37,37v0A37,37,0,0,1,0,74H0a0,0,0,0,1,0,0V0A0,0,0,0,1,0,0Z" transform="translate(36.692 -0.308)" fill="#44c8f5" stroke="#919799" stroke-width="3" /></g></g></svg>`;
+    icon.innerHTML = `<svg class="c-icon" xmlns="http://www.w3.org/2000/svg" width="74" height="74" viewBox="0 0 74 74"><g transform="translate(-288 -349)"><g transform="translate(288.308 349.308)"><path d="M37,0h0a0,0,0,0,1,0,0V74a0,0,0,0,1,0,0h0A37,37,0,0,1,0,37v0A37,37,0,0,1,37,0Z" transform="translate(-0.308 -0.308)" fill="#f33"/><path d="M0,0H0A37,37,0,0,1,37,37v0A37,37,0,0,1,0,74H0a0,0,0,0,1,0,0V0A0,0,0,0,1,0,0Z" transform="translate(36.692 -0.308)" fill="#3cb0d9"/></g></g></svg>`;
     formFields.innerHTML = `<p class="c-form-field js-red-field"><label class="c-label" for="red">Red team naam<span class="c-label__error-message js-red-error-message">Verplicht invullen</span></label><input class="c-input js-red-input" type="text" name="red" id="red" placeholder="bijv. Duivels" required /></p> <p class="c-form-field js-blue-field"><label class="c-label" for="blue">Blue team naam<span class="c-label__error-message js-blue-error-message">Verplicht invullen</span></label><input class="c-input js-blue-input" type="text" name="blue" id="blue" placeholder="bijv. Spartanen" required /></p> `;
     formInfoText.innerHTML = `Het rode en het blauwe team strijden tegen elkaar. Het team dat in 30 seconden het meeste LED-lichtjes van zijn kleur uittikt, wint het spel.`;
     const formRedInput = document.querySelector('.js-red-input');
@@ -262,15 +301,15 @@ const showFieldToForm = () => {
     const formBlueInput = document.querySelector('.js-blue-input');
     const formBlueField = document.querySelector('.js-blue-field');
     const formBlueError = document.querySelector('.js-blue-error-message');
-    checkValidity([formRedField, formBlueField], [formRedInput, formBlueInput], [formRedError, formBlueError]);
+    listenToFormSubmit([formRedField, formBlueField], [formRedInput, formBlueInput], [formRedError, formBlueError]);
   } else if (selectedGameForm === 'zengame') {
     title.textContent = 'Zen Game';
-    icon.innerHTML = `<svg class="c-icon u-color-zen-game" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="28" r="16" fill="none"  stroke-width="3"/><path d="M28 4L20 4"  stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 4V12"  stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M35 16L38 13"  stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 28V22"  stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 28H18"  stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+    icon.innerHTML = `<svg class="c-icon" xmlns="http://www.w3.org/2000/svg" width="74" height="74" viewBox="0 0 74 74"><g transform="translate(-117 -401)"><path d="M37,0A37,37,0,1,1,0,37,37,37,0,0,1,37,0Z" transform="translate(117 401)" fill="#f56331"/><g transform="translate(130 414)"><path d="M24,44.333A18.333,18.333,0,1,0,5.667,26,18.333,18.333,0,0,0,24,44.333Z" fill="none" stroke="#fff" stroke-linejoin="round" stroke-width="3"/><path d="M23.759,15.354V26.362l7.772,7.772" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/><path d="M4,9l7-5" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/><path d="M44,9,37,4" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/></g></g></svg>`;
     formInfoText.innerHTML = `Probeer de opgelichte LED zo snel mogelijk uit te tikken. De reactie-snelheid waarmee de speler reageert bepaald de score.`;
-    checkValidity([formNameField], [formNameInput], [formNameError]);
+    listenToFormSubmit([formNameField], [formNameInput], [formNameError]);
   } else if (selectedGameForm === 'minesweeper') {
     title.textContent = 'Mine sweeper';
-    icon.innerHTML = `<svg class="c-icon u-color-mine-sweeper" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.2632 44L14.6271 35.6852C10.031 32.5934 7 27.2927 7 21.2727C7 11.7333 14.6112 4 24 4C33.3888 4 41 11.7333 41 21.2727C41 27.2927 37.969 32.5934 33.3729 35.6852L36.7368 44H11.2632Z" fill="none"  stroke-width="3" stroke-linejoin="round"/><path d="M20 38V44"  stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M28 38V44"  stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 23C18.6569 23 20 21.6569 20 20C20 18.3431 18.6569 17 17 17C15.3431 17 14 18.3431 14 20C14 21.6569 15.3431 23 17 23Z" fill="none"  stroke-width="3" stroke-linejoin="round"/><path d="M31 23C32.6569 23 34 21.6569 34 20C34 18.3431 32.6569 17 31 17C29.3431 17 28 18.3431 28 20C28 21.6569 29.3431 23 31 23Z" fill="none"  stroke-width="3" stroke-linejoin="round"/><path d="M32 44H24"  stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 44H16"  stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+    icon.innerHTML = `<svg class="c-icon" xmlns="http://www.w3.org/2000/svg" width="74" height="74" viewBox="0 0 74 74"><g transform="translate(-104 -463)"><path d="M37,0A37,37,0,1,1,0,37,37,37,0,0,1,37,0Z" transform="translate(104 463)" fill="#f24330"/><g transform="translate(124 480)"><path d="M11.306,43.49l3.4-8.209A17.1,17.1,0,1,1,41.339,21.052a17.007,17.007,0,0,1-7.7,14.229l3.4,8.209Z" transform="translate(-7 -4)" fill="none" stroke="#fff" stroke-linejoin="round" stroke-width="3"/><path d="M20,38v5.976" transform="translate(-6.87 -4.486)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/><path d="M28,38v5.976" transform="translate(-6.791 -4.486)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/><path d="M16.988,22.976A2.988,2.988,0,1,0,14,19.988,2.988,2.988,0,0,0,16.988,22.976Z" transform="translate(-6.909 -4.186)" fill="none" stroke="#fff" stroke-linejoin="round" stroke-width="3"/><path d="M30.988,22.976A2.988,2.988,0,1,0,28,19.988,2.988,2.988,0,0,0,30.988,22.976Z" transform="translate(-6.727 -4.186)" fill="none" stroke="#fff" stroke-linejoin="round" stroke-width="3"/><path d="M31.968,44H24" transform="translate(-6.757 -4.51)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/><path d="M23.968,44H16" transform="translate(-6.871 -4.51)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/></g></g></svg>`;
     formInfoText.innerHTML = `Er wordt 1 knop als hint gegeven. Daarna moeten de juiste knoppen gevonden worden. Indien op de foute knop geklikt wordt moet opnieuw begonnen worden. Indien op de juiste knoppen aangeklikt worden, blijven de LED's opgelicht.`;
     document.querySelector('.js-form-select').innerHTML = `
     <p class="c-form-field c-custom-select">
@@ -286,19 +325,19 @@ const showFieldToForm = () => {
                 </p>
                 <p class="c-form-field c-custom-select">
                   <label class="c-label js-dropdown-label" for="username"> Moeilijkheidsgraad </label>
-                  <select class="c-input c-custom-select__input--form js-dropdown-2" name="select1" id="select1">
-                   <option value="easy">Makkelijk</option><option value="medium">Normaal</option><option value="hard">Moeilijk</option>
+                  <select class="c-input c-custom-select__input--form js-dropdown-difficulty" name="select1" id="select1">
+                   <option value="makkelijk">makkelijk</option><option value="normaal">normaal</option><option value="moeilijk">moeilijk</option>
                   </select>
                   <svg class="c-custom-select__symbol" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M36 18L24 30L12 18" stroke="#333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
                   </svg>
                 </p>`;
-    checkValidity([formNameField], [formNameInput], [formNameError]);
+    listenToFormSubmit([formNameField], [formNameInput], [formNameError]);
   } else if (selectedGameForm === 'memorygame') {
     title.textContent = 'Memory Game';
-    icon.innerHTML = `<svg class="c-icon" width="75" height="75" viewBox="0 0 75 75"><g transform="translate(-254.5 -305.5)"><g transform="translate(256 307)"><path d="M36,0h0a0,0,0,0,1,0,0V36a0,0,0,0,1,0,0H0a0,0,0,0,1,0,0v0A36,36,0,0,1,36,0Z" fill="#f33" stroke="#919799" stroke-width="3"/><path d="M0,0H0A36,36,0,0,1,36,36v0a0,0,0,0,1,0,0H0a0,0,0,0,1,0,0V0A0,0,0,0,1,0,0Z" transform="translate(36)" fill="#44c8f5" stroke="#919799" stroke-width="3"/><path d="M0,0H36a0,0,0,0,1,0,0V36a0,0,0,0,1,0,0h0A36,36,0,0,1,0,0V0A0,0,0,0,1,0,0Z" transform="translate(0 36)" fill="#e5ea49" stroke="#919799" stroke-width="3"/><path d="M0,0H36a0,0,0,0,1,0,0V0A36,36,0,0,1,0,36H0a0,0,0,0,1,0,0V0A0,0,0,0,1,0,0Z" transform="translate(36 36)" fill="#5ed540" stroke="#919799" stroke-width="3"/></g></g></svg>`;
+    icon.innerHTML = `<svg class="c-icon" xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 72 72"><g transform="translate(-256 -307)"><g transform="translate(256 307)"><path d="M36,0h0a0,0,0,0,1,0,0V36a0,0,0,0,1,0,0H0a0,0,0,0,1,0,0v0A36,36,0,0,1,36,0Z" fill="#f33"/><path d="M0,0H0A36,36,0,0,1,36,36v0a0,0,0,0,1,0,0H0a0,0,0,0,1,0,0V0A0,0,0,0,1,0,0Z" transform="translate(36)" fill="#3cb0d9"/><path d="M0,0H36a0,0,0,0,1,0,0V36a0,0,0,0,1,0,0h0A36,36,0,0,1,0,0V0A0,0,0,0,1,0,0Z" transform="translate(0 36)" fill="#e5ea49"/><path d="M0,0H36a0,0,0,0,1,0,0V0A36,36,0,0,1,0,36H0a0,0,0,0,1,0,0V0A0,0,0,0,1,0,0Z" transform="translate(36 36)" fill="#5ed540"/></g></g></svg>`;
     formInfoText.innerHTML = `Probeer de getoonde sequentie zo lang mogelijk na te doen door de juiste paaltjes aan te klikken. Er zal telkens een extra LED oplichten.`;
-    checkValidity([formNameField], [formNameInput], [formNameError]);
+    listenToFormSubmit([formNameField], [formNameInput], [formNameError]);
   }
 
   const backBtn = document.querySelector('.js-back-btn');
@@ -389,20 +428,24 @@ const checkPauseStatus = () => {
   }
 };
 
-const checkSelectedGame = () => {
+const showLiveScoreBoard = () => {
   const gameData = JSON.parse(localStorage.getItem('gameData'));
+  if (gameData === null) {
+    window.location.href = 'index.html';
+  }
   const game = gameData.game;
+
   let name, svg;
   if (game != 'bluevsred') {
     if (game === 'minesweeper') {
       name = 'Mine Sweeper';
-      svg = `<svg class="c-icon u-color-mine-sweeper" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.2632 44L14.6271 35.6852C10.031 32.5934 7 27.2927 7 21.2727C7 11.7333 14.6112 4 24 4C33.3888 4 41 11.7333 41 21.2727C41 27.2927 37.969 32.5934 33.3729 35.6852L36.7368 44H11.2632Z" fill="none"  stroke-width="3" stroke-linejoin="round"/><path d="M20 38V44"  stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M28 38V44"  stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 23C18.6569 23 20 21.6569 20 20C20 18.3431 18.6569 17 17 17C15.3431 17 14 18.3431 14 20C14 21.6569 15.3431 23 17 23Z" fill="none"  stroke-width="3" stroke-linejoin="round"/><path d="M31 23C32.6569 23 34 21.6569 34 20C34 18.3431 32.6569 17 31 17C29.3431 17 28 18.3431 28 20C28 21.6569 29.3431 23 31 23Z" fill="none"  stroke-width="3" stroke-linejoin="round"/><path d="M32 44H24"  stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 44H16"  stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+      svg = `<svg class="c-icon" xmlns="http://www.w3.org/2000/svg" width="74" height="74" viewBox="0 0 74 74"><g transform="translate(-104 -463)"><path d="M37,0A37,37,0,1,1,0,37,37,37,0,0,1,37,0Z" transform="translate(104 463)" fill="#f24330"/><g transform="translate(124 480)"><path d="M11.306,43.49l3.4-8.209A17.1,17.1,0,1,1,41.339,21.052a17.007,17.007,0,0,1-7.7,14.229l3.4,8.209Z" transform="translate(-7 -4)" fill="none" stroke="#fff" stroke-linejoin="round" stroke-width="3"/><path d="M20,38v5.976" transform="translate(-6.87 -4.486)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/><path d="M28,38v5.976" transform="translate(-6.791 -4.486)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/><path d="M16.988,22.976A2.988,2.988,0,1,0,14,19.988,2.988,2.988,0,0,0,16.988,22.976Z" transform="translate(-6.909 -4.186)" fill="none" stroke="#fff" stroke-linejoin="round" stroke-width="3"/><path d="M30.988,22.976A2.988,2.988,0,1,0,28,19.988,2.988,2.988,0,0,0,30.988,22.976Z" transform="translate(-6.727 -4.186)" fill="none" stroke="#fff" stroke-linejoin="round" stroke-width="3"/><path d="M31.968,44H24" transform="translate(-6.757 -4.51)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/><path d="M23.968,44H16" transform="translate(-6.871 -4.51)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/></g></g></svg>`;
     } else if (game === 'memorygame') {
       name = 'Memory Game';
-      svg = `<svg class="c-icon" width="75" height="75" viewBox="0 0 75 75"><g transform="translate(-254.5 -305.5)"><g transform="translate(256 307)"><path d="M36,0h0a0,0,0,0,1,0,0V36a0,0,0,0,1,0,0H0a0,0,0,0,1,0,0v0A36,36,0,0,1,36,0Z" fill="#f33" stroke="#919799" stroke-width="3"/><path d="M0,0H0A36,36,0,0,1,36,36v0a0,0,0,0,1,0,0H0a0,0,0,0,1,0,0V0A0,0,0,0,1,0,0Z" transform="translate(36)" fill="#44c8f5" stroke="#919799" stroke-width="3"/><path d="M0,0H36a0,0,0,0,1,0,0V36a0,0,0,0,1,0,0h0A36,36,0,0,1,0,0V0A0,0,0,0,1,0,0Z" transform="translate(0 36)" fill="#e5ea49" stroke="#919799" stroke-width="3"/><path d="M0,0H36a0,0,0,0,1,0,0V0A36,36,0,0,1,0,36H0a0,0,0,0,1,0,0V0A0,0,0,0,1,0,0Z" transform="translate(36 36)" fill="#5ed540" stroke="#919799" stroke-width="3"/></g></g></svg>`;
+      svg = `<svg class="c-icon" xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 72 72"><g transform="translate(-256 -307)"><g transform="translate(256 307)"><path d="M36,0h0a0,0,0,0,1,0,0V36a0,0,0,0,1,0,0H0a0,0,0,0,1,0,0v0A36,36,0,0,1,36,0Z" fill="#f33"/><path d="M0,0H0A36,36,0,0,1,36,36v0a0,0,0,0,1,0,0H0a0,0,0,0,1,0,0V0A0,0,0,0,1,0,0Z" transform="translate(36)" fill="#3cb0d9"/><path d="M0,0H36a0,0,0,0,1,0,0V36a0,0,0,0,1,0,0h0A36,36,0,0,1,0,0V0A0,0,0,0,1,0,0Z" transform="translate(0 36)" fill="#e5ea49"/><path d="M0,0H36a0,0,0,0,1,0,0V0A36,36,0,0,1,0,36H0a0,0,0,0,1,0,0V0A0,0,0,0,1,0,0Z" transform="translate(36 36)" fill="#5ed540"/></g></g></svg>`;
     } else if (game === 'zengame') {
       name = 'Zen Game';
-      svg = `<svg class="c-icon u-color-zen-game" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="28" r="16" fill="none"  stroke-width="3"/><path d="M28 4L20 4"  stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 4V12"  stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M35 16L38 13"  stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 28V22"  stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 28H18"  stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+      svg = `<svg class="c-icon" xmlns="http://www.w3.org/2000/svg" width="74" height="74" viewBox="0 0 74 74"><g transform="translate(-117 -401)"><path d="M37,0A37,37,0,1,1,0,37,37,37,0,0,1,37,0Z" transform="translate(117 401)" fill="#f56331"/><g transform="translate(130 414)"><path d="M24,44.333A18.333,18.333,0,1,0,5.667,26,18.333,18.333,0,0,0,24,44.333Z" fill="none" stroke="#fff" stroke-linejoin="round" stroke-width="3"/><path d="M23.759,15.354V26.362l7.772,7.772" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/><path d="M4,9l7-5" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/><path d="M44,9,37,4" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/></g></g></svg>`;
     }
     document.querySelector('body').innerHTML = `
     <section class="c-live">
@@ -441,25 +484,60 @@ const checkSelectedGame = () => {
 };
 
 const showScore = () => {
+  let score = 0;
+  console.log('showScore');
+  console.log(localStorage.getItem('gameData'));
+  const gameData = JSON.parse(localStorage.getItem('gameData'));
+  const cardElement = document.querySelector('.js-card');
+  const scoreElement = document.querySelector('.js-score');
+  const svgMemoryGame = `<svg class="c-endscore__icon" xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 72 72"><g transform="translate(-256 -307)"><g transform="translate(256 307)"><path d="M36,0h0a0,0,0,0,1,0,0V36a0,0,0,0,1,0,0H0a0,0,0,0,1,0,0v0A36,36,0,0,1,36,0Z" fill="#f33"/><path d="M0,0H0A36,36,0,0,1,36,36v0a0,0,0,0,1,0,0H0a0,0,0,0,1,0,0V0A0,0,0,0,1,0,0Z" transform="translate(36)" fill="#3cb0d9"/><path d="M0,0H36a0,0,0,0,1,0,0V36a0,0,0,0,1,0,0h0A36,36,0,0,1,0,0V0A0,0,0,0,1,0,0Z" transform="translate(0 36)" fill="#e5ea49"/><path d="M0,0H36a0,0,0,0,1,0,0V0A36,36,0,0,1,0,36H0a0,0,0,0,1,0,0V0A0,0,0,0,1,0,0Z" transform="translate(36 36)" fill="#5ed540"/></g></g></svg>`;
+  const svgBlueVsRed = `<svg class="c-endscore__icon" xmlns="http://www.w3.org/2000/svg" width="74" height="74" viewBox="0 0 74 74"><g transform="translate(-288 -349)"><g transform="translate(288.308 349.308)"><path d="M37,0h0a0,0,0,0,1,0,0V74a0,0,0,0,1,0,0h0A37,37,0,0,1,0,37v0A37,37,0,0,1,37,0Z" transform="translate(-0.308 -0.308)" fill="#f33"/><path d="M0,0H0A37,37,0,0,1,37,37v0A37,37,0,0,1,0,74H0a0,0,0,0,1,0,0V0A0,0,0,0,1,0,0Z" transform="translate(36.692 -0.308)" fill="#3cb0d9"/></g></g></svg>`;
+  const svgMineSweeper = `<svg class="c-endscore__icon" xmlns="http://www.w3.org/2000/svg" width="74" height="74" viewBox="0 0 74 74"><g transform="translate(-104 -463)"><path d="M37,0A37,37,0,1,1,0,37,37,37,0,0,1,37,0Z" transform="translate(104 463)" fill="#f24330"/><g transform="translate(124 480)"><path d="M11.306,43.49l3.4-8.209A17.1,17.1,0,1,1,41.339,21.052a17.007,17.007,0,0,1-7.7,14.229l3.4,8.209Z" transform="translate(-7 -4)" fill="none" stroke="#fff" stroke-linejoin="round" stroke-width="3"/><path d="M20,38v5.976" transform="translate(-6.87 -4.486)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/><path d="M28,38v5.976" transform="translate(-6.791 -4.486)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/><path d="M16.988,22.976A2.988,2.988,0,1,0,14,19.988,2.988,2.988,0,0,0,16.988,22.976Z" transform="translate(-6.909 -4.186)" fill="none" stroke="#fff" stroke-linejoin="round" stroke-width="3"/><path d="M30.988,22.976A2.988,2.988,0,1,0,28,19.988,2.988,2.988,0,0,0,30.988,22.976Z" transform="translate(-6.727 -4.186)" fill="none" stroke="#fff" stroke-linejoin="round" stroke-width="3"/><path d="M31.968,44H24" transform="translate(-6.757 -4.51)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/><path d="M23.968,44H16" transform="translate(-6.871 -4.51)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/></g></g></svg>`;
+  const svgZenGame = `<svg class="c-endscore__icon" xmlns="http://www.w3.org/2000/svg" width="74" height="74" viewBox="0 0 74 74"><g transform="translate(-117 -401)"><path d="M37,0A37,37,0,1,1,0,37,37,37,0,0,1,37,0Z" transform="translate(117 401)" fill="#f56331"/><g transform="translate(130 414)"><path d="M24,44.333A18.333,18.333,0,1,0,5.667,26,18.333,18.333,0,0,0,24,44.333Z" fill="none" stroke="#fff" stroke-linejoin="round" stroke-width="3"/><path d="M23.759,15.354V26.362l7.772,7.772" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/><path d="M4,9l7-5" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/><path d="M44,9,37,4" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/></g></g></svg>`;
+  if (gameData.game == 'bluevsred') {
+    let winner = 'Gelijkspel!';
+    console.log(gameData);
+    if (gameData.scoreBlue != gameData.scoreRed) {
+      score = Math.max(gameData.scoreBlue, gameData.scoreRed);
+      if (score == gameData.scoreBlue) {
+        winner = 'Blue team wint!';
+      }
+      winner = 'Red team wint!';
+    }
+    cardElement.innerHTML = `${svgBlueVsRed} <h2 class="c-endscore__game">${winner}</h2>`;
+  } else if (gameData.game == 'memorygame') {
+    cardElement.innerHTML = `${svgMemoryGame} <h2 class="c-endscore__game">Memory Game</h2>`;
+    score = gameData.score;
+  } else if (gameData.game == 'minesweeper') {
+    cardElement.innerHTML = `${svgMineSweeper} <h2 class="c-endscore__game">Mine Sweeper</h2>`;
+    score = gameData.score;
+  } else if (gameData.game == 'zengame') {
+    cardElement.innerHTML = `${svgZenGame} <h2 class="c-endscore__game">Zen Game</h2>`;
+    score = gameData.score;
+  }
 
+  scoreElement.textContent = score;
 };
 
 const init = () => {
   console.log('DOM loaded');
   listener();
-
-  if (document.querySelector('.js-form-page')) {
-    showFieldToForm();
+  if (document.querySelector('.js-index-page')) {
+    localStorage.removeItem('gameData');
+    localStorage.removeItem('selectedGameForm');
+  } else if (document.querySelector('.js-form-page')) {
+    localStorage.removeItem('gameData');
+    showForm();
   } else if (document.querySelector('.js-ranking-page')) {
     // getTop10(game, time, difficulty);
   } else if (document.querySelector('.js-live-page')) {
-    checkSelectedGame();
+    showLiveScoreBoard();
     listenToControls();
     checkPauseStatus();
     showCountdownStart();
     showCountdown();
-  }else if (document.querySelector('.js-endscore-page')) {
-    // showScore();
+  } else if (document.querySelector('.js-endscore-page')) {
+    showScore();
   }
 };
 

@@ -591,26 +591,46 @@ input:disabled {
 .c-header {
     display: flex;
     align-items: center;
+    justify-content: center;
     height: 56px;
+    background-color: var(--global-color-alpha);
+    margin-bottom: 24px;
+    padding: 0 24px;
+}
+
+.c-header--with-back-btn {
+    justify-content: normal;
+}
+
+.c-header__title-icon {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+    justify-content: center;
+
 }
 
 .c-header__title {
-    font-size: 20px;
+    font-size: 28px;
     font-weight: var(--global-fontWeight-medium);
     line-height: 1;
-    padding-left: 6px;
     margin: 0;
+    color: var(--global-color-neutral-xxx-light);
 }
 
 .c-header__icon {
-    padding-left: 8px;
     display: flex;
     align-items: center;
+    margin-bottom: 1%;
 }
 
 .c-header__back-btn {
     display: flex;
     align-items: center;
+}
+
+.c-header__back-btn path {
+    stroke: var(--global-color-neutral-xxx-light);
 }
 
 .c-header__back-btn:focus-visible {
@@ -623,18 +643,20 @@ input:disabled {
     stroke: var(--global-color-neutral-xxxx-dark);
 }
 
+@media (min-width: 576px) {
+    .c-header {
+        border-radius: 0 0 10px 10px;
+    }
 
-/*
-    Component: title
-    ---
-    Main title of the website
-*/
+    .c-header__title {
+        font-size: 32px;
+    }
 
-.c-title {
-    font-size: 32px;
-    font-weight: var(--global-fontWeight-medium);
-    padding-top: 16px;
-    margin-bottom: 16px;
+    .c-header__icon {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5%;
+    }
 }
 
 /*
@@ -929,6 +951,12 @@ input:disabled {
     margin-bottom: 72px;
 }
 
+.c-about__title {
+    font-size: 24px;
+    font-weight: var(--global-fontWeight-medium);
+    margin-bottom: 16px;
+}
+
 .c-about__text {
     font-size: 14px;
     font-weight: var(--global-fontWeight-regular);
@@ -946,6 +974,10 @@ input:disabled {
 @media (min-width: 576px) {
     .c-about {
         padding: 0 24px;
+    }
+
+    .c-about__title {
+        font-size: 28px;
     }
 
     .c-about__text {
@@ -966,8 +998,7 @@ input:disabled {
     color: var(--global-color-neutral-dark);
     overflow: auto;
     white-space: nowrap;
-    padding: 16px 0;
-    padding-left: 24px;
+    padding: 0 24px 16px 16px;
 }
 
 .c-tags__list {
@@ -1129,6 +1160,10 @@ input:disabled {
 
 .c-ranking {
     padding-bottom: 56px;
+}
+
+.c-ranking__body {
+    margin-top: 24px;
 }
 
 .c-ranking__items {
@@ -1725,13 +1760,22 @@ input:disabled {
     .c-endscore__card {
         margin-left: 24px;
         margin-right: 24px;
+        gap: 16px;
     }
 
     .c-endscore__body {
         padding: 0 56px;
     }
-}
 
+    .c-endscore__game {
+        font-size: 32px;
+    }
+
+    .c-endscore__icon {
+        width: 32px;
+        height: 32px;
+    }
+}
 
 
 /*------------------------------------*\
@@ -1754,6 +1798,10 @@ input:disabled {
     ---
     Utility classes to put specific margins and paddings onto elements
 */
+
+.u-p-clear {
+    padding: 0 !important;
+}
 
 .u-pt-clear {
     padding-top: 0 !important;
