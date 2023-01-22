@@ -567,8 +567,8 @@ input:disabled {
 }
 
 .c-logo__symbol {
-    height: 100%;
-    width: 100%;
+    height: 60px;
+    width: 120px;
 }
 
 .c-logo__symbol {
@@ -579,6 +579,11 @@ input:disabled {
     .c-logo {
         height: 56px;
         width: 112px;
+    }
+
+    .c-logo__symbol {
+        height: 80px;
+        width: 160px;
     }
 }
 
@@ -607,7 +612,6 @@ input:disabled {
     gap: 8px;
     width: 100%;
     justify-content: center;
-
 }
 
 .c-header__title {
@@ -634,8 +638,7 @@ input:disabled {
 }
 
 .c-header__back-btn:focus-visible {
-    outline: 2px solid var(--global-color-alpha);
-    outline-offset: -5px;
+    outline: 2px solid var(--global-color-neutral-xxx-light);
     border-radius: var(--global-borderRadius-md);
 }
 
@@ -656,6 +659,14 @@ input:disabled {
         display: flex;
         align-items: center;
         margin-bottom: 0.5%;
+    }
+
+    .c-header__title-icon {
+        display: flex;
+        gap: 8px;
+        width: 100%;
+        justify-content: center;
+        margin-right: 32px;
     }
 }
 
@@ -1777,6 +1788,25 @@ input:disabled {
     }
 }
 
+/*
+    Components: splash screen
+    ---
+    Splash screen component
+*/
+
+.c-splashscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--global-color-neutral-xxx-light);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.1s ease-in-out;
+}
 
 /*------------------------------------*\
 #UTILITIES
