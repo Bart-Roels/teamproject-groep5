@@ -20,8 +20,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR)  # or logging.DEBUG or logging.WARNING, etc.
 handler = logging.FileHandler("app.log")  # create a file handler
 handler.setLevel(logging.ERROR)
-formatter = logging.Formatter(
-    "%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
