@@ -40,7 +40,11 @@ client.on('connect', () => {
   client.subscribe('scoreRed');
   client.subscribe('scoreBlue');
 
+  client.subscribe('totalbuttonspressed');
+  client.subscribe('niveau');
+
   client.on('message', (topic, message) => {
+    let gameData = JSON.parse(localStorage.getItem('gameData'));
     console.log('Message received', topic, message.toString());
     if (document.querySelector('.js-live-page')) {
       if (topic === 'score') {
@@ -49,6 +53,28 @@ client.on('connect', () => {
         document.querySelector('.js-score-red').textContent = message.toString();
       } else if (topic === 'scoreBlue') {
         document.querySelector('.js-score-blue').textContent = message.toString();
+      }
+      if (document.querySelector('.js-endscore-page')) {
+        const extraInfo = document.querySelector('.js-infos');
+        if (topic === 'totalbuttonspressed') {
+          if (gameData.game != 'bluevsred') {
+            extraInfo.innerHTML += `
+                <li class="c-endscore__item">
+                  <h3 class="c-endscore__item-title">Ingedrukte knoppen</h3>
+                  <p class="c-endscore__item-text">${message.toString()}</p>
+                </li>
+      `;
+          }
+        } else if (topic === 'niveau') {
+          if (gameData.game != 'bluevsred') {
+            extraInfo.innerHTML += `
+                <li class="c-endscore__item">
+                  <h3 class="c-endscore__item-title">Niveau</h3>
+                  <p class="c-endscore__item-text">${message.toString()}</p>
+                </li>
+      `;
+          }
+        }
       }
     }
   });
@@ -149,7 +175,7 @@ const listenToControls = () => {
       localStorage.setItem('gameData', JSON.stringify(gameData));
       // console.log(gameData);
       console.log('save score');
-      // sendStopGame();
+      sendStopGame();
       // saveScore(gameData.game);
 
       window.location.href = 'endscore.html';
@@ -168,7 +194,7 @@ const listenToControls = () => {
       setTimeout(() => {
         pauseBtn.classList.remove('is-animated');
       }, 1000);
-      // sendPauseGame();
+      sendPauseGame();
     } else {
       if (localStorage.getItem('timeLeft') != null) {
         let time = localStorage.getItem('timeLeft');
@@ -182,9 +208,26 @@ const listenToControls = () => {
       setTimeout(() => {
         pauseBtn.classList.remove('is-animated');
       }, 1000);
-      // sendPlayGame();
+      sendUnpauseGame();
     }
   });
+};
+
+const sendPlayGame = () => {
+  let gameData = JSON.parse(localStorage.getItem('gameData'));
+  client.publish('games', gameData.game);
+};
+
+const sendPauseGame = () => {
+  client.publish('pauze', 'x');
+};
+
+const sendUnpauseGame = () => {
+  client.publish('unpauze', 'x');
+};
+
+const sendStopGame = () => {
+  client.publish('stop', 'x');
 };
 
 const isFormFieldValidity = (fieldElement, inputElement, errorElement) => {
@@ -223,6 +266,7 @@ const showCountDown3sec = () => {
     localStorage.setItem('pauseTime', 0);
     localStorage.setItem('timeLeft', null);
     console.log(localStorage.getItem('startTimeGame'));
+    sendPlayGame();
     window.location.href = 'live-scorebord.html';
   }, 3600);
 };
@@ -363,6 +407,7 @@ const showCountdown = () => {
             }
             localStorage.setItem('gameData', JSON.stringify(gameData));
             console.log('save score');
+            sendStopGame();
             // saveScore(gameData.game);
             window.location.href = 'endscore.html';
             window.location.replace('endscore.html');
@@ -469,6 +514,7 @@ const showScore = () => {
   let score = 0;
   console.log('showScore');
   console.log(localStorage.getItem('gameData'));
+  const extraInfo = document.querySelector('.js-infos');
   const gameData = JSON.parse(localStorage.getItem('gameData'));
   const cardElement = document.querySelector('.js-card');
   const scoreElement = document.querySelector('.js-score');
@@ -479,23 +525,58 @@ const showScore = () => {
   if (gameData.game == 'bluevsred') {
     let winner = 'Gelijkspel!';
     console.log(gameData);
+    score = Math.max(gameData.scoreBlue, gameData.scoreRed);
     if (gameData.scoreBlue != gameData.scoreRed) {
-      score = Math.max(gameData.scoreBlue, gameData.scoreRed);
       if (score == gameData.scoreBlue) {
         winner = 'Blue team wint!';
+        score = gameData.scoreBlue;
+      } else {
+        winner = 'Red team wint!';
+        score = gameData.scoreRed;
       }
-      winner = 'Red team wint!';
     }
+    extraInfo.innerHTML = `
+                <li class="c-endscore__item">
+                  <h3 class="c-endscore__item-title">Gekozen tijd</h3>
+                  <p class="c-endscore__item-text">${gameData.time} min</p>
+                </li>
+                <li class="c-endscore__item">
+                  <h3 class="c-endscore__item-title">Red team</h3>
+                  <p class="c-endscore__item-text">${gameData.scoreRed}p</p>
+                </li>
+                <li class="c-endscore__item">
+                  <h3 class="c-endscore__item-title">Blue team</h3>
+                  <p class="c-endscore__item-text">${gameData.scoreBlue}p</p>
+                </li>
+      `;
     cardElement.innerHTML = `${svgBlueVsRed} <h2 class="c-endscore__game">${winner}</h2>`;
   } else if (gameData.game == 'memorygame') {
     cardElement.innerHTML = `${svgMemoryGame} <h2 class="c-endscore__game">Memory Game</h2>`;
     score = gameData.score;
+    extraInfo.innerHTML = `
+                <li class="c-endscore__item">
+                  <h3 class="c-endscore__item-title">Gekozen tijd</h3>
+                  <p class="c-endscore__item-text">${gameData.time} min</p>
+                </li>
+      `;
   } else if (gameData.game == 'minesweeper') {
     cardElement.innerHTML = `${svgMineSweeper} <h2 class="c-endscore__game">Mine Sweeper</h2>`;
     score = gameData.score;
+    extraInfo.innerHTML = `
+                <li class="c-endscore__item">
+                  <h3 class="c-endscore__item-title">Gekozen tijd</h3>
+                  <p class="c-endscore__item-text">${gameData.time} min</p>
+                </li>
+      `;
   } else if (gameData.game == 'zengame') {
     cardElement.innerHTML = `${svgZenGame} <h2 class="c-endscore__game">Zen Game</h2>`;
     score = gameData.score;
+    extraInfo.innerHTML = `
+                <li class="c-endscore__item">
+                  <h3 class="c-endscore__item-title">Gekozen tijd</h3>
+                  <p class="c-endscore__item-text">${gameData.time} min</p>
+                </li>
+      `;
   }
 
   scoreElement.textContent = score;
@@ -525,7 +606,6 @@ const showSplashScreen = () => {
 
     sessionStorage.setItem('splashScreen', true);
   }
-  
 };
 
 const init = () => {
