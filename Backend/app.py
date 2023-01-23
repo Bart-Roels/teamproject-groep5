@@ -658,6 +658,8 @@ def post_score():
 @app.route(endpoint + '/score/<game>/<time>/<dificulty>', methods=['GET'])
 def get_score(game, time, dificulty):
 
+    time = int(time)
+    
     # Get all scores from database
     scores = db.all()
 
@@ -669,12 +671,13 @@ def get_score(game, time, dificulty):
         # Filter based on time and dificulty and game
         data_scores = list(filter(lambda x: x['game'] == game and x['time'] == time and x['dificulty'] == dificulty, scores))
 
-    # Filter 10 best scores
-    data_scores = data_scores[:10]
     # Sort scores based on score
-    data_scores = sorted(scores, key=lambda k: k['score'])
+    data_scores.sort(key=lambda x: x['score'], reverse=True)
+    # Get top 10 scores
+    data_scores = data_scores[:10]
     # Return data
     return jsonify(data_scores)
+
     
 
 #endregion
