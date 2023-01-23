@@ -207,6 +207,9 @@ def on_message(client, userdata, message):  # Handels incomming messages
                 start_memory_var = False
                 new_game = False
                 sequence_number = 1
+                # Send sequence number to mqtt
+                client.publish("niveau", str(sequence_number))
+                # Print stop memory
                 print("stop memory")
             elif game == "redblue":
                 print("stop redblue")
