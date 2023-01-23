@@ -102,7 +102,6 @@ def on_connect(client, userdata, flags, rc):  # Handels connection
         print(e)
         logger.error(e)
 
-
 def on_disconnect(client, userdata, rc):  # Handels disconnection
     try:
         if rc != 0:
@@ -115,7 +114,6 @@ def on_disconnect(client, userdata, rc):  # Handels disconnection
         client.reconnect()
     except socket.error:
         raise Exception("Failed to reconnect. Exiting.")
-
 
 def on_message(client, userdata, message):  # Handels incomming messages
     try:
@@ -206,9 +204,9 @@ def on_message(client, userdata, message):  # Handels incomming messages
             if game == "memory":
                 start_memory_var = False
                 new_game = False
-                sequence_number = 1
                 # Send sequence number to mqtt
                 client.publish("niveau", str(sequence_number))
+                sequence_number = 1
                 # Print stop memory
                 print("stop memory")
             elif game == "redblue":
@@ -255,7 +253,6 @@ def on_message(client, userdata, message):  # Handels incomming messages
 # endregion
 
 # region GAMES
-
 
 def handle_games():
     semaphore.acquire()
@@ -352,7 +349,6 @@ def handle_games():
 
 # region memory
 
-
 def generate_sequence(sequence_number):
     try:
         leds = [0, 1, 2]
@@ -362,7 +358,6 @@ def generate_sequence(sequence_number):
     except Exception as e:
         print(e)
         logger.error(e)
-
 
 def send_sequence(sequence, blink=False):  # Send sequence
     try:
@@ -407,7 +402,6 @@ def send_sequence(sequence, blink=False):  # Send sequence
         print(e)  # to print the error
         logger.error(e)
 
-
 def check_sequence(received_sequence):  # Check sequence
     try:
         # Global variables
@@ -442,8 +436,6 @@ def check_sequence(received_sequence):  # Check sequence
 # endregion
 
 # region redvsblue
-
-
 def analyse_pressed_buttons_redvsblue(number):
     try:
         global game, start_redvsblue_game, new_game_redvsblue, total_buttons_pressed, pause
