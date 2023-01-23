@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Home | Interactieve paaltjes</title>
-    <meta name="description" content="Speel onze interactieve paaltjes">
+    <meta name="description" content="Speel onze interactieve paaltjes" />
 
     <link rel="icon" href="img/logos/favicon.svg" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png" />
@@ -13,28 +13,230 @@
 
     <link rel="stylesheet" href="css/normalize.css" />
     <link rel="stylesheet" href="css/screen.css" />
-
+    
+    <script src="vendor/mqtt.js"></script>
     <script src="script/datahandler.js"></script>
     <script src="script/app.js"></script>
   </head>
-  <body>
+  <body class="js-index-page">
     <main>
-      <div class="o-container-home">
-        <div class="o-margin-top-home">
-          <h1>Kies hier jouw spel om te beginnen.</h1>
+      <!-- header -->
+      <header class="o-row u-p-clear">
+        <div class="o-container">
+          <div class="c-header">
+              <h1 class="c-header__title">Games</h1>
+          </div>
+        </div>
+      </header>
+      <!-- games -->
+      <section class="o-row">
+        <div class="o-container">
+          <div class="c-games">
+            <div class="c-game">
+              <button class="c-game__body o-button-reset js-selected-game" data-game="bluevsred">
+                <div class="c-game__icon">
+                  <svg class="c-icon--lg" xmlns="http://www.w3.org/2000/svg" width="74" height="74" viewBox="0 0 74 74">
+                    <g transform="translate(-288 -349)">
+                      <g transform="translate(288.308 349.308)">
+                        <path d="M37,0h0a0,0,0,0,1,0,0V74a0,0,0,0,1,0,0h0A37,37,0,0,1,0,37v0A37,37,0,0,1,37,0Z" transform="translate(-0.308 -0.308)" fill="#f33" />
+                        <path d="M0,0H0A37,37,0,0,1,37,37v0A37,37,0,0,1,0,74H0a0,0,0,0,1,0,0V0A0,0,0,0,1,0,0Z" transform="translate(36.692 -0.308)" fill="#3cb0d9" />
+                      </g>
+                    </g>
+                  </svg>
+                </div>
+                <div class="c-game__title">BLUE VS RED</div>
+              </button>
+              <button class="c-game__info-btn js-info-btn o-button-reset" data-game="bluevsred">
+                <svg class="c-icon" width="24" height="24" viewBox="0 0 48 48" fill="black" stroke="black">
+                  <path
+                    d="M24 44C29.5228 44 34.5228 41.7614 38.1421 38.1421C41.7614 34.5228 44 29.5228 44 24C44 18.4772 41.7614 13.4772 38.1421 9.85786C34.5228 6.23858 29.5228 4 24 4C18.4772 4 13.4772 6.23858 9.85786 9.85786C6.23858 13.4772 4 18.4772 4 24C4 29.5228 6.23858 34.5228 9.85786 38.1421C13.4772 41.7614 18.4772 44 24 44Z"
+                    fill="none"
+                    stroke-width="4"
+                    stroke-linejoin="round"
+                  />
+                  <path fill-rule="evenodd" stroke-width="0" clip-rule="evenodd" d="M24 11C25.3807 11 26.5 12.1193 26.5 13.5C26.5 14.8807 25.3807 16 24 16C22.6193 16 21.5 14.8807 21.5 13.5C21.5 12.1193 22.6193 11 24 11Z" />
+                  <path d="M24.5 34V20H23.5H22.5" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+                  <path d="M21 34H28" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </button>
+            </div>
+            <div class="c-game">
+              <button class="c-game__body o-button-reset js-selected-game" data-game="zengame">
+                <div class="c-game__icon">
+                  <svg class="c-icon--lg" xmlns="http://www.w3.org/2000/svg" width="74" height="74" viewBox="0 0 74 74">
+                    <g transform="translate(-117 -401)">
+                      <path d="M37,0A37,37,0,1,1,0,37,37,37,0,0,1,37,0Z" transform="translate(117 401)" fill="#f56331" />
+                      <g transform="translate(130 414)">
+                        <path d="M24,44.333A18.333,18.333,0,1,0,5.667,26,18.333,18.333,0,0,0,24,44.333Z" fill="none" stroke="#fff" stroke-linejoin="round" stroke-width="3" />
+                        <path d="M23.759,15.354V26.362l7.772,7.772" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" />
+                        <path d="M4,9l7-5" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" />
+                        <path d="M44,9,37,4" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" />
+                      </g>
+                    </g>
+                  </svg>
+                </div>
+                <div class="c-game__title">ZEN GAME</div>
+              </button>
+              <button class="c-game__info-btn js-info-btn o-button-reset" data-game="zengame">
+                <svg class="c-icon" width="24" height="24" viewBox="0 0 48 48" fill="black" stroke="black">
+                  <path
+                    d="M24 44C29.5228 44 34.5228 41.7614 38.1421 38.1421C41.7614 34.5228 44 29.5228 44 24C44 18.4772 41.7614 13.4772 38.1421 9.85786C34.5228 6.23858 29.5228 4 24 4C18.4772 4 13.4772 6.23858 9.85786 9.85786C6.23858 13.4772 4 18.4772 4 24C4 29.5228 6.23858 34.5228 9.85786 38.1421C13.4772 41.7614 18.4772 44 24 44Z"
+                    fill="none"
+                    stroke-width="4"
+                    stroke-linejoin="round"
+                  />
+                  <path fill-rule="evenodd" stroke-width="0" clip-rule="evenodd" d="M24 11C25.3807 11 26.5 12.1193 26.5 13.5C26.5 14.8807 25.3807 16 24 16C22.6193 16 21.5 14.8807 21.5 13.5C21.5 12.1193 22.6193 11 24 11Z" />
+                  <path d="M24.5 34V20H23.5H22.5" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+                  <path d="M21 34H28" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </button>
+            </div>
+            <div class="c-game">
+              <button class="c-game__body o-button-reset js-selected-game" data-game="minesweeper">
+                <div class="c-game__icon">
+                  <svg class="c-icon--lg" xmlns="http://www.w3.org/2000/svg" width="74" height="74" viewBox="0 0 74 74">
+                    <g transform="translate(-104 -463)">
+                      <path d="M37,0A37,37,0,1,1,0,37,37,37,0,0,1,37,0Z" transform="translate(104 463)" fill="#f24330" />
+                      <g transform="translate(124 480)">
+                        <path d="M11.306,43.49l3.4-8.209A17.1,17.1,0,1,1,41.339,21.052a17.007,17.007,0,0,1-7.7,14.229l3.4,8.209Z" transform="translate(-7 -4)" fill="none" stroke="#fff" stroke-linejoin="round" stroke-width="3" />
+                        <path d="M20,38v5.976" transform="translate(-6.87 -4.486)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" />
+                        <path d="M28,38v5.976" transform="translate(-6.791 -4.486)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" />
+                        <path d="M16.988,22.976A2.988,2.988,0,1,0,14,19.988,2.988,2.988,0,0,0,16.988,22.976Z" transform="translate(-6.909 -4.186)" fill="none" stroke="#fff" stroke-linejoin="round" stroke-width="3" />
+                        <path d="M30.988,22.976A2.988,2.988,0,1,0,28,19.988,2.988,2.988,0,0,0,30.988,22.976Z" transform="translate(-6.727 -4.186)" fill="none" stroke="#fff" stroke-linejoin="round" stroke-width="3" />
+                        <path d="M31.968,44H24" transform="translate(-6.757 -4.51)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" />
+                        <path d="M23.968,44H16" transform="translate(-6.871 -4.51)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" />
+                      </g>
+                    </g>
+                  </svg>
+                </div>
+                <div class="c-game__title">MINE SWEEPER</div>
+              </button>
+              <button class="c-game__info-btn js-info-btn o-button-reset" data-game="minesweeper">
+                <svg class="c-icon" width="24" height="24" viewBox="0 0 48 48" fill="black" stroke="black">
+                  <path
+                    d="M24 44C29.5228 44 34.5228 41.7614 38.1421 38.1421C41.7614 34.5228 44 29.5228 44 24C44 18.4772 41.7614 13.4772 38.1421 9.85786C34.5228 6.23858 29.5228 4 24 4C18.4772 4 13.4772 6.23858 9.85786 9.85786C6.23858 13.4772 4 18.4772 4 24C4 29.5228 6.23858 34.5228 9.85786 38.1421C13.4772 41.7614 18.4772 44 24 44Z"
+                    fill="none"
+                    stroke-width="4"
+                    stroke-linejoin="round"
+                  />
+                  <path fill-rule="evenodd" stroke-width="0" clip-rule="evenodd" d="M24 11C25.3807 11 26.5 12.1193 26.5 13.5C26.5 14.8807 25.3807 16 24 16C22.6193 16 21.5 14.8807 21.5 13.5C21.5 12.1193 22.6193 11 24 11Z" />
+                  <path d="M24.5 34V20H23.5H22.5" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+                  <path d="M21 34H28" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </button>
+            </div>
+            <div class="c-game">
+              <button class="c-game__body o-button-reset js-selected-game" data-game="memorygame">
+                <div class="c-game__icon">
+                  <svg class="c-icon--lg" xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 72 72">
+                    <g transform="translate(-256 -307)">
+                      <g transform="translate(256 307)">
+                        <path d="M36,0h0a0,0,0,0,1,0,0V36a0,0,0,0,1,0,0H0a0,0,0,0,1,0,0v0A36,36,0,0,1,36,0Z" fill="#f33" />
+                        <path d="M0,0H0A36,36,0,0,1,36,36v0a0,0,0,0,1,0,0H0a0,0,0,0,1,0,0V0A0,0,0,0,1,0,0Z" transform="translate(36)" fill="#3cb0d9" />
+                        <path d="M0,0H36a0,0,0,0,1,0,0V36a0,0,0,0,1,0,0h0A36,36,0,0,1,0,0V0A0,0,0,0,1,0,0Z" transform="translate(0 36)" fill="#e5ea49" />
+                        <path d="M0,0H36a0,0,0,0,1,0,0V0A36,36,0,0,1,0,36H0a0,0,0,0,1,0,0V0A0,0,0,0,1,0,0Z" transform="translate(36 36)" fill="#5ed540" />
+                      </g>
+                    </g>
+                  </svg>
+                </div>
+                <div class="c-game__title">MEMORY GAME</div>
+              </button>
+              <button class="c-game__info-btn js-info-btn o-button-reset" data-game="memorygame">
+                <svg class="c-icon" width="24" height="24" viewBox="0 0 48 48" fill="black" stroke="black">
+                  <path
+                    d="M24 44C29.5228 44 34.5228 41.7614 38.1421 38.1421C41.7614 34.5228 44 29.5228 44 24C44 18.4772 41.7614 13.4772 38.1421 9.85786C34.5228 6.23858 29.5228 4 24 4C18.4772 4 13.4772 6.23858 9.85786 9.85786C6.23858 13.4772 4 18.4772 4 24C4 29.5228 6.23858 34.5228 9.85786 38.1421C13.4772 41.7614 18.4772 44 24 44Z"
+                    fill="none"
+                    stroke-width="4"
+                    stroke-linejoin="round"
+                  />
+                  <path fill-rule="evenodd" stroke-width="0" clip-rule="evenodd" d="M24 11C25.3807 11 26.5 12.1193 26.5 13.5C26.5 14.8807 25.3807 16 24 16C22.6193 16 21.5 14.8807 21.5 13.5C21.5 12.1193 22.6193 11 24 11Z" />
+                  <path d="M24.5 34V20H23.5H22.5" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+                  <path d="M21 34H28" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- navigation bar -->
+      <section class="o-row o-row-tabbar">
+        <div class="o-container">
+          <nav class="c-tabbar">
+            <ul class="o-list c-tabbar__items">
+              <li class="c-tabbar__item">
+                <button class="c-tabbar__btn o-button-reset is-active js-tabs" data-page="home">
+                  <div class="c-tabbar__symbol">
+                    <svg class="c-tabbar__icon" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <rect x="4" y="13" width="40" height="28" rx="14" fill="none" stroke="#333" stroke-width="3" stroke-linejoin="round" />
+                      <circle cx="31" cy="22" r="2" fill="#333" />
+                      <circle cx="35" cy="27" r="2" fill="#333" />
+                      <path d="M12 27H22M12 27H22" stroke="#333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                      <path d="M24 7V13M24 7V13" stroke="#333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                      <path d="M17 22V32" stroke="#333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </div>
+                </button>
+                <span class="c-tabbar__text">Games</span>
+              </li>
+              <li class="c-tabbar__item">
+                <button class="c-tabbar__btn o-button-reset js-tabs" data-page="rangschikking">
+                  <div class="c-tabbar__symbol">
+                    <svg class="c-tabbar__icon" width="24" height="24" viewBox="0 0 48 48" fill="none" stroke="black">
+                      <path d="M17 18H4V42H17V18Z" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                      <path d="M30 6H17V42H30V6Z" stroke-width="3" stroke-linejoin="round" />
+                      <path d="M43 26H30V42H43V26Z" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </div>
+                </button>
+                <!-- <span class="c-tabbar__text">Rangschikking</span> -->
+              </li>
+              <li class="c-tabbar__item">
+                <button class="c-tabbar__btn o-button-reset js-tabs" data-page="overons">
+                  <div class="c-tabbar__symbol">
+                    <svg class="c-tabbar__icon" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M24 44C29.5228 44 34.5228 41.7614 38.1421 38.1421C41.7614 34.5228 44 29.5228 44 24C44 18.4772 41.7614 13.4772 38.1421 9.85786C34.5228 6.23858 29.5228 4 24 4C18.4772 4 13.4772 6.23858 9.85786 9.85786C6.23858 13.4772 4 18.4772 4 24C4 29.5228 6.23858 34.5228 9.85786 38.1421C13.4772 41.7614 18.4772 44 24 44Z"
+                        fill="none"
+                        stroke="#333"
+                        stroke-width="3"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        class="fill-point"
+                        fill-rule="evenodd"
+                        stroke-width="0"
+                        clip-rule="evenodd"
+                        d="M24 11C25.3807 11 26.5 12.1193 26.5 13.5C26.5 14.8807 25.3807 16 24 16C22.6193 16 21.5 14.8807 21.5 13.5C21.5 12.1193 22.6193 11 24 11Z"
+                        fill="#333"
+                      />
+                      <path d="M24.5 34V20H23.5H22.5" stroke="#333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                      <path d="M21 34H28" stroke="#333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </div>
+                </button>
+                <!-- <span class="c-tabbar__text">Over ons</span> -->
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </section>
+    </main>
+    <!-- popup -->
+    <div class="c-popup js-popup">
+      <div class="c-popup__content js-popup-content">
+        <div class="c-popup__header">
+          <div class="o-layout o-layout--justify-space-between o-layout--align-baseline">
+            <h2 class="c-popup__title js-popup-title">Memory Game</h2>
+            <button class="c-popup__close o-button-reset js-popup-close">
+              <svg class="c-icon--sm" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 8L40 40" stroke="#333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M8 40L40 8" stroke="#333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+          </div>
+          <p class="c-popup__discription js-popup-discription">Probeer de getoonde sequentie zo lang mogelijk na te doen door de juiste paaltjes aan te klikken. Er zal telkens een extra LED oplichten.</p>
         </div>
       </div>
-      <div class="grid-container">
-        <div class="grid-item">1</div>
-        <div class="grid-item">2</div>
-        <div class="grid-item">3</div>
-        <div class="grid-item">4</div>
-      </div>
-    </main>
-    <footer class="o-footer">
-      <div><p>Home</p></div>
-      <div><p>Scoreboard</p></div>
-      <div><p>over ons</p></div>
-    </footer>
+    </div>
   </body>
 </html>

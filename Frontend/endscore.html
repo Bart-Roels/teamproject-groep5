@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Behaalde score | Interactieve paaltjes</title>
+    <meta name="description" content="Speel onze interactieve paaltjes" />
+
+    <link rel="icon" href="img/logos/favicon.svg" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+    <link rel="manifest" href="manifest.json" />
+
+    <link rel="stylesheet" href="css/normalize.css" />
+    <link rel="stylesheet" href="css/screen.css" />
+
+    <script src="vendor/mqtt.js"></script>
+    <script src="script/datahandler.js"></script>
+    <script src="script/app.js"></script>
+  </head>
+  <body class="js-endscore-page">
+    <main>
+      <section class="o-row o-row--endscore">
+        <div class="o-container">
+          <div class="c-endscore__score-header">
+            <div class="c-score-header">
+              <div class="c-score-header__ring">
+                <p class="c-score-header__title">score</p>
+                <p class="c-score-header__score js-score">0</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="o-row">
+        <div class="o-container">
+          <div class="c-endscore__card js-card">
+            <svg class="c-endscore__icon" width="75" height="75" viewBox="0 0 75 75">
+              <g transform="translate(-254.5 -305.5)">
+                <g transform="translate(256 307)">
+                  <path d="M36,0h0a0,0,0,0,1,0,0V36a0,0,0,0,1,0,0H0a0,0,0,0,1,0,0v0A36,36,0,0,1,36,0Z" fill="#f33" stroke="#919799" stroke-width="3" />
+                  <path d="M0,0H0A36,36,0,0,1,36,36v0a0,0,0,0,1,0,0H0a0,0,0,0,1,0,0V0A0,0,0,0,1,0,0Z" transform="translate(36)" fill="#44c8f5" stroke="#919799" stroke-width="3" />
+                  <path d="M0,0H36a0,0,0,0,1,0,0V36a0,0,0,0,1,0,0h0A36,36,0,0,1,0,0V0A0,0,0,0,1,0,0Z" transform="translate(0 36)" fill="#e5ea49" stroke="#919799" stroke-width="3" />
+                  <path d="M0,0H36a0,0,0,0,1,0,0V0A36,36,0,0,1,0,36H0a0,0,0,0,1,0,0V0A0,0,0,0,1,0,0Z" transform="translate(36 36)" fill="#5ed540" stroke="#919799" stroke-width="3" />
+                </g>
+              </g>
+            </svg>
+            <h2 class="c-endscore__game">Memory game</h2>
+          </div>
+          <div class="c-endscore__body">
+            <div class="c-endscore__infos">
+              <ul class="o-list c-endscore__list js-infos">
+                <li class="c-endscore__item">
+                  <h3 class="c-endscore__item-title">Ingedrukte knoppen</h3>
+                  <p class="c-endscore__item-text">12</p>
+                </li>
+                <li class="c-endscore__item">
+                  <h3 class="c-endscore__item-title">Gekozen tijd</h3>
+                  <p class="c-endscore__item-text">5 min</p>
+                </li>
+                <li class="c-endscore__item">
+                  <h3 class="c-endscore__item-title">Niveau</h3>
+                  <p class="c-endscore__item-text">7</p>
+                </li>
+              </ul>
+            </div>
+            <div class="c-endscore__buttons">
+              <a href="index.html" class="c-endscore__button"
+                ><div class="c-floating-btn">
+                  <svg class="c-icon" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="4" y="13" width="40" height="28" rx="14" fill="none" stroke="#333" stroke-width="3" stroke-linejoin="round" />
+                    <circle cx="31" cy="22" r="2" fill="#333" />
+                    <circle cx="35" cy="27" r="2" fill="#333" />
+                    <path d="M12 27H22M12 27H22" stroke="#333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M24 7V13M24 7V13" stroke="#333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M17 22V32" stroke="#333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </div>
+                Games</a
+              >
+              <a href="rangschikking.html" class="c-endscore__button"
+                ><div class="c-floating-btn">
+                  <svg class="c-icon" width="24" height="24" viewBox="0 0 48 48" fill="none" stroke="black">
+                    <path d="M17 18H4V42H17V18Z" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M30 6H17V42H30V6Z" stroke-width="3" stroke-linejoin="round" />
+                    <path d="M43 26H30V42H43V26Z" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </div>
+                Rangschikking</a
+              >
+              <a href="form.html" class="c-endscore__button"
+                ><div class="c-floating-btn">
+                  <svg class="c-icon" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M42 8V24" stroke="#333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M6 24L6 40" stroke="#333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                    <path
+                      d="M42 24C42 14.0589 33.9411 6 24 6C18.9145 6 14.3216 8.10896 11.0481 11.5M6 24C6 33.9411 14.0589 42 24 42C28.8556 42 33.2622 40.0774 36.5 36.9519"
+                      stroke="#333"
+                      stroke-width="3"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </div>
+                Opnieuw</a
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
