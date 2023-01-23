@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Over ons | Interactieve paaltjes</title>
+    <title>Ranking | Interactieve paaltjes</title>
     <meta name="description" content="Speel onze interactieve paaltjes" />
 
     <link rel="icon" href="img/logos/favicon.svg" />
@@ -18,31 +18,62 @@
     <script src="script/datahandler.js"></script>
     <script src="script/app.js"></script>
   </head>
-  <body>
+  <body class="js-ranking-page">
     <main>
       <!-- header -->
       <header class="o-row u-p-clear">
         <div class="o-container">
-          <div class="c-header">
-            <h1 class="c-header__title">Over ons</h1>
+          <div class="c-header u-mb-clear">
+            <h1 class="c-header__title">Rangschikking</h1>
           </div>
         </div>
       </header>
+      <section class="o-row o-row--tags">
+        <div class="o-container">
+          <div class="c-tags">
+            <ul class="o-list c-tags__list">
+              <li class="c-tag"><input class="o-hide-accessible js-game-btn" type="radio" name="game" id="memorygame" checked /><label for="memorygame">Memory Game</label></li>
+              <li class="c-tag"><input class="o-hide-accessible js-game-btn" type="radio" name="game" id="redvsblue" /><label for="redvsblue">Red vs Blue</label></li>
+              <li class="c-tag"><input class="o-hide-accessible js-game-btn" type="radio" name="game" id="zengame" /><label for="zengame">Zen Game</label></li>
+              <li class="c-tag"><input class="o-hide-accessible js-game-btn" type="radio" name="game" id="minesweeper" /><label for="minesweeper">Mine Sweeper</label></li>
+            </ul>
+          </div>
+        </div>
+      </section>
       <section class="o-row">
         <div class="o-container">
-          <div class="c-about u-max-width-sm">
-            <h2 class="c-about__title">Ons verhaal</h2>
-            <p class="c-about__text">
-              Dit project werd gemaakt door <span class="u-fw-bold">5 MCT studenten</span> aan de Howest in Kortrijk. Het project werd gemaakt door <span class="u-fw-bold">Lei Jin, Bart Roels, Jens Lagae, Ilias Es-Sahili en Ruben Pattyn.</span>
-            </p>
-            <p class="c-about__text">
-              Voor ons team project maakten we <span class="u-fw-bold">4 verschillende spellen</span> met behulp van interactieve paaltjes. De paaltjes zijn verbonden met een webapp. Zo kunnen de spellen gestart worden via de smartphone of pc. Voor ieder spel is er een scorebord
-              beschikbaar. Dit doen we met de doelstelling om kinderen aan te zetten tot beweging.
-            </p>
-            <p class="c-about__text">Dit team project doen we in opdracht van de <span class="u-fw-bold">sportinnovatiecampus Brugge van de Howest</span>.</p>
-            <div class="c-about__logos">
-              <img class="c-logo" src="img/logos/main_logo.svg" alt="logo sportinnovatiecampus howest" />
-              <img class="c-logo" src="img/logos/howest.png" alt="logo howest" />
+          <div class="c-ranking">
+            <div class="js-dropdown">
+              <div class="c-custom-select">
+                <select class="c-input c-custom-select__input" name="select1" id="select1">
+                  <option value="3">3 min</option>
+                  <option value="5">5 min</option>
+                  <option value="10">10 min</option>
+                </select>
+                <svg class="c-custom-select__symbol" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M36 18L24 30L12 18" stroke="#333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </div>
+            </div>
+            <div class="c-ranking__body">
+              <ul class="o-list c-ranking__items js-rangschikking">
+                <li class="c-ranking__item c-ranking__item--first">
+                  <span><img src="img/icons/first_place.svg" alt="eerste plaat badge" /></span><span>Lei</span><span class="c-ranking__score">1420p</span>
+                </li>
+                <li class="c-ranking__item c-ranking__item--second">
+                  <span><img src="img/icons/second_place.svg" alt="eerste plaat badge" /></span><span>Bard</span><span class="c-ranking__score">1133p</span>
+                </li>
+                <li class="c-ranking__item c-ranking__item--third">
+                  <span><img src="img/icons/thrid_place.svg" alt="eerste plaat badge" /></span><span>Ruben</span><span class="c-ranking__score">1000p</span>
+                </li>
+                <li class="c-ranking__item"><span>4</span><span>Boy33</span><span class="c-ranking__score">900p</span></li>
+                <li class="c-ranking__item"><span>5</span><span>DCDF</span><span class="c-ranking__score">843p</span></li>
+                <li class="c-ranking__item"><span>6</span><span>Jens</span><span class="c-ranking__score">732p</span></li>
+                <li class="c-ranking__item"><span>7</span><span>Arnoux</span><span class="c-ranking__score">632p</span></li>
+                <li class="c-ranking__item"><span>8</span><span>Arnuad</span><span class="c-ranking__score">532p</span></li>
+                <li class="c-ranking__item"><span>9</span><span>Kobe</span><span class="c-ranking__score">242p</span></li>
+                <li class="c-ranking__item"><span>10</span><span>Bjarne</span><span class="c-ranking__score">132p</span></li>
+              </ul>
             </div>
           </div>
         </div>
@@ -55,7 +86,7 @@
               <li class="c-tabbar__item">
                 <button class="c-tabbar__btn o-button-reset js-tabs" data-page="home">
                   <div class="c-tabbar__symbol">
-                     <svg class="c-tabbar__icon" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg class="c-tabbar__icon" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <rect x="4" y="13" width="40" height="28" rx="14" fill="none" stroke="#333" stroke-width="3" stroke-linejoin="round" />
                       <circle cx="31" cy="22" r="2" fill="#333" />
                       <circle cx="35" cy="27" r="2" fill="#333" />
@@ -68,7 +99,7 @@
                 <!-- <p class="c-tabbar__text">Home</p> -->
               </li>
               <li class="c-tabbar__item">
-                <button class="c-tabbar__btn o-button-reset js-tabs" data-page="rangschikking">
+                <button class="c-tabbar__btn o-button-reset is-active js-tabs" data-page="rangschikking">
                   <div class="c-tabbar__symbol">
                     <svg class="c-tabbar__icon" width="24" height="24" viewBox="0 0 48 48" fill="none" stroke="black">
                       <path d="M17 18H4V42H17V18Z" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
@@ -77,10 +108,10 @@
                     </svg>
                   </div>
                 </button>
-                <!-- <p class="c-tabbar__text">Rangschikking</p> -->
+                <p class="c-tabbar__text">Rangschikking</p>
               </li>
               <li class="c-tabbar__item">
-                <button class="c-tabbar__btn o-button-reset is-active js-tabs" data-page="overons">
+                <button class="c-tabbar__btn o-button-reset js-tabs" data-page="overons">
                   <div class="c-tabbar__symbol">
                     <svg class="c-tabbar__icon" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path
@@ -103,7 +134,7 @@
                     </svg>
                   </div>
                 </button>
-                <p class="c-tabbar__text">Over ons</p>
+                <!-- <p class="c-tabbar__text">Over ons</p> -->
               </li>
             </ul>
           </nav>
