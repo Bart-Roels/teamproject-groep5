@@ -655,13 +655,8 @@ def post_score():
     return jsonify({'id': str(guid), 'game': game, 'name': name, 'score': score, 'time': time, 'dificulty': dificulty, 'nameRed': nameteamred, 'nameBlue': nameteamblue, 'scoreRed': scoreRed, 'scoreBlue': scoreBlue})
 
 # GET score route
-@app.route(endpoint + '/score', methods=['GET'])
-def get_score():
-    # Get data from request
-    data = request.get_json()
-    game = data.get('game')
-    time = data.get('time')
-    dificulty = data.get('dificulty')
+@app.route(endpoint + '/score/<game>/<time>/<dificulty>', methods=['GET'])
+def get_score(game, time, dificulty):
 
     # Get all scores from database
     scores = db.all()
