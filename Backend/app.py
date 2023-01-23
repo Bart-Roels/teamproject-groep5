@@ -1,8 +1,11 @@
 import random
 import threading
 import time
-from flask import Flask, request
+from flask import Flask, jsonify, request
+from flask_cors import CORS
 import paho.mqtt.client as mqtt
+from tinydb import TinyDB, Query
+import uuid
 import socket
 import logging
 
@@ -10,19 +13,23 @@ import logging
 
 # Flask setup
 app = Flask(__name__)
+CORS(app)
+endpoint = '/api/v1'
 # Logging setup
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR)  # or logging.DEBUG or logging.WARNING, etc.
 handler = logging.FileHandler("app.log")  # create a file handler
 handler.setLevel(logging.ERROR)
-formatter = logging.Formatter(
-    "%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 # MQTT setup
 ip = "127.0.0.1"
 port = 1883
+
+# Database
+db = TinyDB('Backend/Database/db.json')
 
 # endregion
 
@@ -95,7 +102,6 @@ def on_connect(client, userdata, flags, rc):  # Handels connection
         print(e)
         logger.error(e)
 
-
 def on_disconnect(client, userdata, rc):  # Handels disconnection
     try:
         if rc != 0:
@@ -108,7 +114,6 @@ def on_disconnect(client, userdata, rc):  # Handels disconnection
         client.reconnect()
     except socket.error:
         raise Exception("Failed to reconnect. Exiting.")
-
 
 def on_message(client, userdata, message):  # Handels incomming messages
     try:
@@ -190,26 +195,28 @@ def on_message(client, userdata, message):  # Handels incomming messages
                 analyse_buttons_minesweeper(message)
         if topic == "stop":
             client.publish("totalbuttonspressed", str(total_buttons_pressed))
+            # If stop
+            game = None
+            pause = False
             # Send off to all led's mqtt message to turn off
             for i in range(0, 4):
                 client.publish(str(i), "off")
-
             if game == "memory":
                 start_memory_var = False
                 new_game = False
+                # Send sequence number to mqtt
+                client.publish("niveau", str(sequence_number))
                 sequence_number = 1
-                game = None
+                # Print stop memory
                 print("stop memory")
             elif game == "redblue":
                 print("stop redblue")
                 start_redvsblue_game = False
                 new_game_redvsblue = False
-                game = None
             elif game == "zen":
                 print("stop zen")
                 start_zen_game = False
                 new_zen_game = False
-                game = None
             elif game == "minesweepr":
                 start_minesweeper = False
                 new_game_minesweeper = False
@@ -246,7 +253,6 @@ def on_message(client, userdata, message):  # Handels incomming messages
 # endregion
 
 # region GAMES
-
 
 def handle_games():
     semaphore.acquire()
@@ -343,7 +349,6 @@ def handle_games():
 
 # region memory
 
-
 def generate_sequence(sequence_number):
     try:
         leds = [0, 1, 2]
@@ -353,7 +358,6 @@ def generate_sequence(sequence_number):
     except Exception as e:
         print(e)
         logger.error(e)
-
 
 def send_sequence(sequence, blink=False):  # Send sequence
     try:
@@ -398,7 +402,6 @@ def send_sequence(sequence, blink=False):  # Send sequence
         print(e)  # to print the error
         logger.error(e)
 
-
 def check_sequence(received_sequence):  # Check sequence
     try:
         # Global variables
@@ -417,7 +420,7 @@ def check_sequence(received_sequence):  # Check sequence
                     sequence = []
                     # You have won
                     print(f"You have won! your points: {sequence_number}")
-                    client.publish("memorypoints", str(sequence_number))
+                    client.publish("score", str(sequence_number))
                     # Higher sequence number
                     sequence_number += 1
                     # Has won
@@ -433,8 +436,6 @@ def check_sequence(received_sequence):  # Check sequence
 # endregion
 
 # region redvsblue
-
-
 def analyse_pressed_buttons_redvsblue(number):
     try:
         global game, start_redvsblue_game, new_game_redvsblue, total_buttons_pressed, pause
@@ -448,6 +449,7 @@ def analyse_pressed_buttons_redvsblue(number):
                 global score_team_red
                 score_team_red += 1
                 print(f"score red: {score_team_red}")
+                client.publish("scoreRed", str(score_team_red))
                 new_game_redvsblue = True
 
             elif number == blue_led:
@@ -455,6 +457,7 @@ def analyse_pressed_buttons_redvsblue(number):
                 global score_team_blue
                 score_team_blue += 1
                 print(f"score blue: {score_team_blue}")
+                client.publish("scoreBlue", str(score_team_blue))
                 new_game_redvsblue = True
 
         client.publish(
@@ -590,12 +593,98 @@ client.on_disconnect = on_disconnect
 
 # endregion
 
-# region FLASK ROUTES
-# endregion
+#region ROUTES
+
+# POST score route
+@app.route(endpoint + '/score', methods=['POST'])
+def post_score():
+    # Get data from request
+    data = request.get_json()
+    name = data.get('name')
+    score = data.get('score')
+    game = data.get('game')
+    time = data.get('time')
+    nameteamred = data.get('nameRed')
+    nameteamblue = data.get('nameBlue')
+    scoreRed = data.get('scoreRed')
+    scoreBlue = data.get('scoreBlue')
+    # Dificulty can be null
+    dificulty = data.get('dificulty')
+
+    # If memory or memory game then name, score, game and time are required
+    if game == 'memorygame' or game == 'zengame':
+        if not all([name, score, game, time]):
+            return jsonify({'error': 'Missing required fields: name, score, game and time'}), 400
+    # If red vs blue game then nameRed, nameBlue, scoreRed, scoreBlue, game and time are required
+    elif game == 'bluevsred':
+        if not all([nameteamred, nameteamblue, scoreRed, scoreBlue, game, time]):
+            return jsonify({'error': 'Missing required fields: nameRed, nameBlue, scoreRed, scoreBlue, game and time'}), 400
+    # If mine sweeper game then score, game, time and dificulty are required
+    elif game == 'minesweeper':
+        if not all([score, game, time, dificulty]):
+            return jsonify({'error': 'Missing required fields: score, game, time and dificulty'}), 400
+
+    # Convert time and score to int or float
+    try:
+        time = int(time)
+        score = int(score)
+    except ValueError:
+        return jsonify({'error': 'Error in converting'}), 400
+    
+
+    # Check if score is int or float
+    try:
+        score = int(score)
+    except ValueError:
+        try:
+            score = float(score)
+        except ValueError:
+            return jsonify({'error': 'Invalid score'}), 400
+
+    # Generate guid 
+    guid = uuid.uuid4()
+
+    # Insert data into database
+    try:
+        # Insert evrything into database
+        db.insert({'id': str(guid), 'game': game, 'name': name, 'score': score, 'time': time, 'dificulty': dificulty, 'nameRed': nameteamred, 'nameBlue': nameteamblue, 'scoreRed': scoreRed, 'scoreBlue': scoreBlue})
+    except:
+        return jsonify({'error': 'An error occurred while inserting data into the database'}), 500
+
+    # Return data
+    return jsonify({'id': str(guid), 'game': game, 'name': name, 'score': score, 'time': time, 'dificulty': dificulty, 'nameRed': nameteamred, 'nameBlue': nameteamblue, 'scoreRed': scoreRed, 'scoreBlue': scoreBlue})
+
+# GET score route
+@app.route(endpoint + '/score', methods=['GET'])
+def get_score():
+    # Get data from request
+    data = request.get_json()
+    game = data.get('game')
+    time = data.get('time')
+    dificulty = data.get('dificulty')
+
+    # Get all scores from database
+    scores = db.all()
+
+    # Filter scores based on game
+    if game != 'minesweeper':
+        # Filter game based on game and time
+        data_scores = list(filter(lambda x: x['game'] == game and x['time'] == time, scores))
+    elif game == 'minesweeper':
+        # Filter based on time and dificulty and game
+        data_scores = list(filter(lambda x: x['game'] == game and x['time'] == time and x['dificulty'] == dificulty, scores))
+
+    # Filter 10 best scores
+    data_scores = data_scores[:10]
+    # Sort scores based on score
+    data_scores = sorted(scores, key=lambda k: k['score'])
+    # Return data
+    return jsonify(data_scores)
+    
+
+#endregion
 
 # region THREADS
-
-
 def subscribeing():
     client.on_message = on_message
     client.loop_forever()
@@ -608,7 +697,6 @@ def start_threads():
     # Start memory thread
     games = threading.Thread(target=handle_games)
     games.start()
-
 
 # endregion
 

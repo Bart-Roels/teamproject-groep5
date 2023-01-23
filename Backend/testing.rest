@@ -5,7 +5,7 @@ Content-Type: application/json
 
 {
 	"name": "blauworanje geelgeelgeel",
-	"score": "2000",
+	"score": "50000000",
     "game": "memory",
 	"time": 3
 }
