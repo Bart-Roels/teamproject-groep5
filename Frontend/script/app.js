@@ -140,7 +140,7 @@ const listener = () => {
         dropdown.innerHTML = dropdownRanking.time;
         time = document.querySelector('#select1').value;
       }
-      // getTop10(gameName, time, difficulty);
+      getTop10(gameName, time, difficulty);
     });
   });
 
@@ -176,7 +176,7 @@ const listenToControls = () => {
       // console.log(gameData);
       console.log('save score');
       sendStopGame();
-      // saveScore(gameData.game);
+      saveScore(gameData.game);
 
       window.location.href = 'endscore.html';
       window.location.replace('endscore.html');
@@ -211,6 +211,32 @@ const listenToControls = () => {
       sendUnpauseGame();
     }
   });
+};
+
+const saveScore = (gameName) => {};
+
+const getTop10 = (gameName, time, difficulty) => {
+  const url = `http://127.0.0.1:5000/api/v1/score`;
+  const body = JSON.stringify({
+    game: gameName,
+    time: time,
+    difficulty: difficulty,
+  });
+  console.log(body);
+  // handleData(url, showTop10, null, 'GET', body);
+  fetch(url, {
+    method: 'GET',
+    headers: { 'content-type': 'application/json' },
+    body: body,
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+    });
+};
+
+const showTop10 = (data) => {
+  console.log(data);
 };
 
 const sendPlayGame = () => {
@@ -621,7 +647,7 @@ const init = () => {
     localStorage.removeItem('gameData');
     showForm();
   } else if (document.querySelector('.js-ranking-page')) {
-    // getTop10(game, time, difficulty);
+    getTop10('memorygame', '3', null);
   } else if (document.querySelector('.js-live-page')) {
     showLiveScoreBoard();
     listenToControls();
