@@ -108,7 +108,30 @@ const listenToPopup = () => {
   });
 };
 
-// listen to selected dropdown
+// listen to selected game btn on ranking page
+const listenToGameBtns = () => {
+  const gameBtns = document.querySelectorAll('.js-game-btn');
+  const dropdown = document.querySelector('.js-dropdown');
+  gameBtns.forEach((btn) => {
+    btn.addEventListener('change', () => {
+      const gameName = btn.id;
+      let time, difficulty;
+      // console.log(dropdown);
+      if (gameName === 'minesweeper') {
+        dropdown.innerHTML += dropdownRanking.difficulty;
+        time = document.querySelector('#select1').value;
+        difficulty = document.querySelector('#select2').value;
+      } else {
+        dropdown.innerHTML = dropdownRanking.time;
+        time = document.querySelector('#select1').value;
+      }
+      getTop10(gameName, time, difficulty);
+      listenToDropdown();
+    });
+  });
+};
+
+// listen to selected dropdown time and difficulty on ranking page
 const listenToDropdown = () => {
   const dropdowns = document.querySelectorAll('.c-custom-select__input');
   dropdowns.forEach((dropdown) => {
@@ -141,26 +164,6 @@ const listener = () => {
       } else if (tabName === 'overons') {
         window.location.href = 'over-ons.html';
       }
-    });
-  });
-
-  const gameBtns = document.querySelectorAll('.js-game-btn');
-  const dropdown = document.querySelector('.js-dropdown');
-  gameBtns.forEach((btn) => {
-    btn.addEventListener('change', () => {
-      const gameName = btn.id;
-      let time, difficulty;
-      // console.log(dropdown);
-      if (gameName === 'minesweeper') {
-        dropdown.innerHTML += dropdownRanking.difficulty;
-        time = document.querySelector('#select1').value;
-        difficulty = document.querySelector('#select2').value;
-      } else {
-        dropdown.innerHTML = dropdownRanking.time;
-        time = document.querySelector('#select1').value;
-      }
-      getTop10(gameName, time, difficulty);
-      listenToDropdown();
     });
   });
 
@@ -239,7 +242,7 @@ const saveScore = () => {
   const url = `http://127.0.0.1:5000/api/v1/score`;
   console.log('show end page');
   const body = JSON.stringify(gameData);
-  handleData(url, goToEndScore(), null, 'POST', body);
+  handleData(url, goToEndScore, null, 'POST', body);
 };
 
 const goToEndScore = () => {
@@ -698,6 +701,47 @@ const showSplashScreen = () => {
   }
 };
 
+const setToggleAndFilter = (game, time, difficulty) => {
+  const toggle = document.querySelectorAll('.js-game-btn');
+  const dropdownTime = document.querySelectorAll('.c-custom-select__input')[0];
+  if (game != null) {
+    if (game == 'memorygame') {
+      toggle[0].checked = true;
+    } else if (game == 'bluevsred') {
+      toggle[1].checked = true;
+    } else if (game == 'zengame') {
+      toggle[2].checked = true;
+    } else if (game == 'minesweeper') {
+      console.log(toggle[3]);
+      toggle[3].checked = true;
+    }
+
+    if (time == '3') {
+      dropdownTime.value = '3';
+    } else if (time == '5') {
+      dropdownTime.value = '5';
+    } else if (time == '10') {
+      dropdownTime.value = '10';
+    }
+
+    if (difficulty != null) {
+      document.querySelector('.js-dropdown').innerHTML += dropdownRanking.difficulty;
+      const dropdownDifficulty = document.querySelectorAll('.c-custom-select__input')[1];
+      console.log(dropdownDifficulty);
+      if (difficulty == 'makkelijk') {
+        dropdownDifficulty.value = 'makkelijk';
+      } else if (difficulty == 'normaal') {
+        dropdownDifficulty.value = 'normaal';
+      } else if (difficulty == 'moeilijk') {
+        dropdownDifficulty.value = 'moeilijk';
+      }
+    }
+  } else {
+    toggle[0].checked = true;
+    dropdownTime.value = '3';
+  }
+};
+
 const init = () => {
   console.log('DOM loaded');
   listener();
@@ -711,7 +755,14 @@ const init = () => {
     localStorage.removeItem('gameData');
     showForm();
   } else if (document.querySelector('.js-ranking-page')) {
-    getTop10('memorygame', '3', null);
+    const gameData = JSON.parse(localStorage.getItem('gameData'));
+    if (gameData != null) {
+      setToggleAndFilter(gameData.game, gameData.time, gameData.difficulty);
+      getTop10(gameData.game, gameData.time, gameData.difficulty);
+    } else {
+      getTop10('memorygame', '3', null);
+    }
+    listenToGameBtns();
     listenToDropdown();
   } else if (document.querySelector('.js-live-page')) {
     showLiveScoreBoard();
