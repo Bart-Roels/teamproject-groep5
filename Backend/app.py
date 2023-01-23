@@ -423,7 +423,7 @@ def check_sequence(received_sequence):  # Check sequence
                     sequence = []
                     # You have won
                     print(f"You have won! your points: {sequence_number}")
-                    client.publish("memorypoints", str(sequence_number))
+                    client.publish("score", str(sequence_number))
                     # Higher sequence number
                     sequence_number += 1
                     # Has won
@@ -454,6 +454,7 @@ def analyse_pressed_buttons_redvsblue(number):
                 global score_team_red
                 score_team_red += 1
                 print(f"score red: {score_team_red}")
+                client.publish("scoreRed", str(score_team_red))
                 new_game_redvsblue = True
 
             elif number == blue_led:
@@ -461,6 +462,7 @@ def analyse_pressed_buttons_redvsblue(number):
                 global score_team_blue
                 score_team_blue += 1
                 print(f"score blue: {score_team_blue}")
+                client.publish("scoreBlue", str(score_team_blue))
                 new_game_redvsblue = True
 
         client.publish(
