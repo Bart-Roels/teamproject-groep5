@@ -600,16 +600,15 @@ client.on_disconnect = on_disconnect
 def post_score():
     # Get data from request
     data = request.get_json()
-    name = data.get('name')
-    score = data.get('score')
     game = data.get('game')
-    time = data.get('time')
-    nameteamred = data.get('nameRed')
-    nameteamblue = data.get('nameBlue')
+    score = data.get('score')
+    name = data.get('name')
     scoreRed = data.get('scoreRed')
     scoreBlue = data.get('scoreBlue')
-    # Dificulty can be null
-    dificulty = data.get('dificulty')
+    nameteamred = data.get('nameRed')
+    nameteamblue = data.get('nameBlue')
+    time = data.get('time')
+    difficulty = data.get('difficulty')
 
     # If memory or memory game then name, score, game and time are required
     if game == 'memorygame' or game == 'zengame':
@@ -621,25 +620,19 @@ def post_score():
             return jsonify({'error': 'Missing required fields: nameRed, nameBlue, scoreRed, scoreBlue, game and time'}), 400
     # If mine sweeper game then score, game, time and dificulty are required
     elif game == 'minesweeper':
-        if not all([score, game, time, dificulty]):
+        print('minesweeper')
+        if not all([score, game, time, difficulty]):
             return jsonify({'error': 'Missing required fields: score, game, time and dificulty'}), 400
 
     # Convert time and score to int or float
     try:
         time = int(time)
-        score = int(score)
+        # If score is not null
+        if(not score == None):
+            score = int(score)
     except ValueError:
         return jsonify({'error': 'Error in converting'}), 400
     
-
-    # Check if score is int or float
-    try:
-        score = int(score)
-    except ValueError:
-        try:
-            score = float(score)
-        except ValueError:
-            return jsonify({'error': 'Invalid score'}), 400
 
     # Generate guid 
     guid = uuid.uuid4()
@@ -647,12 +640,13 @@ def post_score():
     # Insert data into database
     try:
         # Insert evrything into database
-        db.insert({'id': str(guid), 'game': game, 'name': name, 'score': score, 'time': time, 'dificulty': dificulty, 'nameRed': nameteamred, 'nameBlue': nameteamblue, 'scoreRed': scoreRed, 'scoreBlue': scoreBlue})
+        db.insert({'id': str(guid), 'game': game, 'name': name, 'score': score, 'time': time, 'dificulty': difficulty, 'nameRed': nameteamred, 'nameBlue': nameteamblue, 'scoreRed': scoreRed, 'scoreBlue': scoreBlue})
     except:
         return jsonify({'error': 'An error occurred while inserting data into the database'}), 500
 
     # Return data
-    return jsonify({'id': str(guid), 'game': game, 'name': name, 'score': score, 'time': time, 'dificulty': dificulty, 'nameRed': nameteamred, 'nameBlue': nameteamblue, 'scoreRed': scoreRed, 'scoreBlue': scoreBlue})
+    print('return data')
+    return jsonify({'id': str(guid), 'game': game, 'name': name, 'score': score, 'time': time, 'dificulty': difficulty, 'nameRed': nameteamred, 'nameBlue': nameteamblue, 'scoreRed': scoreRed, 'scoreBlue': scoreBlue})
 
 # GET score route
 @app.route(endpoint + '/score/<game>/<time>/<dificulty>', methods=['GET'])
@@ -662,17 +656,25 @@ def get_score(game, time, dificulty):
     
     # Get all scores from database
     scores = db.all()
-
     # Filter scores based on game
-    if game != 'minesweeper':
+    if game == 'memorygame' or game == 'zengame':
         # Filter game based on game and time
         data_scores = list(filter(lambda x: x['game'] == game and x['time'] == time, scores))
     elif game == 'minesweeper':
         # Filter based on time and dificulty and game
         data_scores = list(filter(lambda x: x['game'] == game and x['time'] == time and x['dificulty'] == dificulty, scores))
+    elif game == 'bluevsred':
+        # Get all games match with redvsblue and time
+        data_scores = list(filter(lambda x: x['game'] == game and x['time'] == time, scores))
+
+        print(data_scores)
 
     # Sort scores based on score
-    data_scores.sort(key=lambda x: x['score'], reverse=True)
+    if(game == 'bluevsred'):
+        data_scores.sort(key=lambda x: x['scoreRed'], reverse=True)
+        data_scores.sort(key=lambda x: x['scoreBlue'], reverse=True)
+    else:
+        data_scores.sort(key=lambda x: x['score'], reverse=True)
     # Get top 10 scores
     data_scores = data_scores[:10]
     # Return data
