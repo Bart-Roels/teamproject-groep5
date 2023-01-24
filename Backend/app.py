@@ -16,21 +16,26 @@ import logging
 app = Flask(__name__)
 CORS(app)
 endpoint = '/api/v1'
-# Logging setup
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.ERROR)  # or logging.DEBUG or logging.WARNING, etc.
-handler = logging.FileHandler("app.log")  # create a file handler
-handler.setLevel(logging.ERROR)
-formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-handler.setFormatter(formatter)
-logger.addHandler(handler)
 
 # MQTT setup
 ip = "127.0.0.1"
 port = 1883
 
+# Log path main directory
+log_path = "Backend/Logs/app.log"
+
 # Database
 db = TinyDB('Backend/Database/db.json')
+
+
+# Logging setup
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.ERROR)  # or logging.DEBUG or logging.WARNING, etc.
+handler = logging.FileHandler(log_path)  # create a file handler
+handler.setLevel(logging.ERROR)
+formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 
 # endregion
 
@@ -692,8 +697,9 @@ def get_score(game, time, dificulty):
 
 @app.route(endpoint + '/logs', methods=['GET'])
 def get_logs():
+    global log_path
     # Get end set line per line in json
-    with open('app.log', 'r') as f:
+    with open(log_path, 'r') as f:
         data = f.readlines()
         # Remove \n
         data = list(map(lambda x: x.replace('\n', ''), data))
