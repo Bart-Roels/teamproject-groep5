@@ -93,7 +93,7 @@ def on_connect(client, userdata, flags, rc):  # Handels connection
         if rc == 0:
             print("Connected OK Returned code=", rc)
             client.subscribe("games")
-            client.subscribe("minesweepr")
+            client.subscribe("minesweeper")
             client.subscribe("button")
             client.subscribe("stop")
             client.subscribe("pauze")
@@ -163,19 +163,26 @@ def on_message(client, userdata, message):  # Handels incomming messages
                 start_redvsblue_game = True
                 new_game_redvsblue = True
             elif message == "zengame":
-                game = "zen"
+                game = "zengame"
                 print("zen")
                 total_score_zen = 0
                 start_zen_game = True
                 new_zen_game = True
                 # zen_game()
-        if topic == "minesweepr":
+        if topic == "minesweeper":
             # Parse json
             data = json.loads(message)
             # Game 
-            game = "minesweepr"
+            game = "minesweeper"
             # Get level out of json
-            level_minesweeper = data["difficulty"]
+            if data['difficulty'] == "makkelijk":
+                level_minesweeper = 1
+            elif data['difficulty'] == "normaal":
+                level_minesweeper = 2
+            elif data['difficulty'] == "moeilijk":
+                level_minesweeper = 3
+            print(f'level: {level_minesweeper} {data["difficulty"]}')
+            #level_minesweeper = data["difficulty"]
             # Variables
             score_minesweeper = 0
             start_minesweeper = True
@@ -489,7 +496,7 @@ def reward_response_time(response_time):
         total_score_zen += reward
         print(f"response time: {response_time}, reward: {reward}")
         client.publish(
-            "memorypoints", f"score zen:{total_score_zen} - response time:{response_time}")
+            "score", str(total_score_zen))
     except Exception as e:
         logger.log(e)
 
@@ -532,7 +539,7 @@ def analyse_buttons_minesweeper(message):
                 if index_minesweeper == 4:
                     print('game won')
                     score_minesweeper += 1
-                    client.publish('memorypoints', str(score_minesweeper))
+                    client.publish('score', str(score_minesweeper))
                     haswon = True
             else:
                 print('wrong')

@@ -317,11 +317,10 @@ const showTop10 = (data) => {
 const sendPlayGame = () => {
   let gameData = JSON.parse(localStorage.getItem('gameData'));
   if (gameData.game == 'minesweeper') {
-    client.publish('games', JSON.stringify({ game: gameData.game, difficulty: gameData.difficulty}));
+    client.publish('minesweeper', JSON.stringify({ game: gameData.game, difficulty: gameData.difficulty}));
   } else {
     client.publish('games', gameData.game);
   }
-  console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxx' + gameData.game);
 };
 
 const sendPauseGame = () => {
