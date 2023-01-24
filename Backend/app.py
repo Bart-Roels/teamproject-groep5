@@ -98,6 +98,7 @@ def on_connect(client, userdata, flags, rc):  # Handels connection
             client.subscribe("stop")
             client.subscribe("pauze")
             client.subscribe("unpauze")
+            client.subscribe("niveau")
         else:
             raise Exception("Bad connection Returned code=", rc)
     except Exception as e:
@@ -145,17 +146,17 @@ def on_message(client, userdata, message):  # Handels incomming messages
         print(f"Topic: {topic}, Message: {message}")
         # Logic
         if topic == "games":
-            if message == "memory":
+            if message == "memorygame":
                 print("starting memory")
-                game = "memory"
+                game = "memorygame"
                 # Start memory
                 sequence = []
                 sequence_number = 1
                 start_memory_var = True
                 new_game = True
                 pause = False
-            elif message == "redblue":
-                game = "redblue"
+            elif message == "bluevsred":
+                game = "bluevsred"
                 print("redblue")
                 score_team_blue = 0
                 score_team_red = 0
@@ -180,72 +181,73 @@ def on_message(client, userdata, message):  # Handels incomming messages
             start_minesweeper = True
             new_game_minesweeper = True
         if topic == "button":
-            if game == "memory":
+            if game == "memorygame":
                 check_sequence(message)
-            elif game == "redblue":
+            elif game == "bluevsred":
                 # Do read button stuff voor redblue
                 print("red vs blue button incomming")
                 analyse_pressed_buttons_redvsblue(int(message))
-            elif game == "zen":
+            elif game == "zengame":
                 # Do read button stuff voor zen
                 print("zen button incomming")
                 analyse_buttons_zen(int(message))
-            elif game == "minesweepr":
+            elif game == "minesweeper":
                 # Do read button stuff voor minesweepr
                 print("minesweeper button incomming")
                 analyse_buttons_minesweeper(message)
         if topic == "stop":
             client.publish("totalbuttonspressed", str(total_buttons_pressed))
             # If stop
-            game = None
             pause = False
             # Send off to all led's mqtt message to turn off
             for i in range(0, 4):
                 client.publish(str(i), "off")
-            if game == "memory":
+            if game == "memorygame":
                 start_memory_var = False
                 new_game = False
                 # Send sequence number to mqtt
                 client.publish("niveau", str(sequence_number))
                 sequence_number = 1
                 # Print stop memory
+                game = None
                 print("stop memory")
-            elif game == "redblue":
+            elif game == "bluevsred":
                 print("stop redblue")
                 start_redvsblue_game = False
                 new_game_redvsblue = False
-            elif game == "zen":
+            elif game == "zengame":
                 print("stop zen")
                 start_zen_game = False
                 new_zen_game = False
-            elif game == "minesweepr":
+            elif game == "minesweeper":
                 start_minesweeper = False
                 new_game_minesweeper = False
+                client.publish("niveau", str(level_minesweeper))
                 print("stop minesweepr")
         if topic == "pauze":
-            if game == "memory":
+            if game == "memorygame":
                 print("pauze memory")
                 pause = True
-            elif game == "redblue":
+            elif game == "bluevsred":
                 print("pauze redblue")
                 pause = True
-            elif game == "zen":
+            elif game == "zengame":
                 print("pauze zen")
                 pause = True
-            elif game == "minesweepr":
+            elif game == "minesweeper":
                 busy_minesweeper = True
                 print("pauze minesweepr")
         if topic == "unpauze":
-            if game == "memory":
+            if game == "memorygame":
                 print("unpauze memory")
                 pause = False
-            elif game == "redblue":
+            elif game == "bluevsred":
                 print("unpauze redblue")
                 pause = False
-            elif game == "zen":
+            elif game == "zengame":
                 print("unpauze zen")
                 pause = False
-            elif game == "minesweepr":
+            elif game == "minesweeper":
                 busy_minesweeper = False
                 print("unpauze minesweepr")
     except Exception as e:
@@ -601,16 +603,15 @@ client.on_disconnect = on_disconnect
 def post_score():
     # Get data from request
     data = request.get_json()
-    name = data.get('name')
-    score = data.get('score')
     game = data.get('game')
-    time = data.get('time')
-    nameteamred = data.get('nameRed')
-    nameteamblue = data.get('nameBlue')
+    score = data.get('score')
+    name = data.get('name')
     scoreRed = data.get('scoreRed')
     scoreBlue = data.get('scoreBlue')
-    # Dificulty can be null
-    dificulty = data.get('dificulty')
+    nameteamred = data.get('nameRed')
+    nameteamblue = data.get('nameBlue')
+    time = data.get('time')
+    difficulty = data.get('difficulty')
 
     # If memory or memory game then name, score, game and time are required
     if game == 'memorygame' or game == 'zengame':
@@ -622,25 +623,19 @@ def post_score():
             return jsonify({'error': 'Missing required fields: nameRed, nameBlue, scoreRed, scoreBlue, game and time'}), 400
     # If mine sweeper game then score, game, time and dificulty are required
     elif game == 'minesweeper':
-        if not all([score, game, time, dificulty]):
+        print('minesweeper')
+        if not all([score, game, time, difficulty]):
             return jsonify({'error': 'Missing required fields: score, game, time and dificulty'}), 400
 
     # Convert time and score to int or float
     try:
         time = int(time)
-        score = int(score)
+        # If score is not null
+        if(not score == None):
+            score = int(score)
     except ValueError:
         return jsonify({'error': 'Error in converting'}), 400
     
-
-    # Check if score is int or float
-    try:
-        score = int(score)
-    except ValueError:
-        try:
-            score = float(score)
-        except ValueError:
-            return jsonify({'error': 'Invalid score'}), 400
 
     # Generate guid 
     guid = uuid.uuid4()
@@ -648,12 +643,13 @@ def post_score():
     # Insert data into database
     try:
         # Insert evrything into database
-        db.insert({'id': str(guid), 'game': game, 'name': name, 'score': score, 'time': time, 'dificulty': dificulty, 'nameRed': nameteamred, 'nameBlue': nameteamblue, 'scoreRed': scoreRed, 'scoreBlue': scoreBlue})
+        db.insert({'id': str(guid), 'game': game, 'name': name, 'score': score, 'time': time, 'dificulty': difficulty, 'nameRed': nameteamred, 'nameBlue': nameteamblue, 'scoreRed': scoreRed, 'scoreBlue': scoreBlue})
     except:
         return jsonify({'error': 'An error occurred while inserting data into the database'}), 500
 
     # Return data
-    return jsonify({'id': str(guid), 'game': game, 'name': name, 'score': score, 'time': time, 'dificulty': dificulty, 'nameRed': nameteamred, 'nameBlue': nameteamblue, 'scoreRed': scoreRed, 'scoreBlue': scoreBlue})
+    print('return data')
+    return jsonify({'id': str(guid), 'game': game, 'name': name, 'score': score, 'time': time, 'dificulty': difficulty, 'nameRed': nameteamred, 'nameBlue': nameteamblue, 'scoreRed': scoreRed, 'scoreBlue': scoreBlue})
 
 # GET score route
 @app.route(endpoint + '/score/<game>/<time>/<dificulty>', methods=['GET'])
@@ -663,17 +659,25 @@ def get_score(game, time, dificulty):
     
     # Get all scores from database
     scores = db.all()
-
     # Filter scores based on game
-    if game != 'minesweeper':
+    if game == 'memorygame' or game == 'zengame':
         # Filter game based on game and time
         data_scores = list(filter(lambda x: x['game'] == game and x['time'] == time, scores))
     elif game == 'minesweeper':
         # Filter based on time and dificulty and game
         data_scores = list(filter(lambda x: x['game'] == game and x['time'] == time and x['dificulty'] == dificulty, scores))
+    elif game == 'bluevsred':
+        # Get all games match with redvsblue and time
+        data_scores = list(filter(lambda x: x['game'] == game and x['time'] == time, scores))
+
+        print(data_scores)
 
     # Sort scores based on score
-    data_scores.sort(key=lambda x: x['score'], reverse=True)
+    if(game == 'bluevsred'):
+        data_scores.sort(key=lambda x: x['scoreRed'], reverse=True)
+        data_scores.sort(key=lambda x: x['scoreBlue'], reverse=True)
+    else:
+        data_scores.sort(key=lambda x: x['score'], reverse=True)
     # Get top 10 scores
     data_scores = data_scores[:10]
     # Return data
