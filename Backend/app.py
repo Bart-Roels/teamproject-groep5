@@ -690,6 +690,17 @@ def get_score(game, time, dificulty):
     # Return data
     return jsonify(data_scores)
 
+@app.route(endpoint + '/logs', methods=['GET'])
+def get_logs():
+    # Get end set line per line in json
+    with open('app.log', 'r') as f:
+        data = f.readlines()
+        # Remove \n
+        data = list(map(lambda x: x.replace('\n', ''), data))
+    return jsonify(data)
+
+
+
     
 
 #endregion

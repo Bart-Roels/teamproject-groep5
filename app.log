@@ -1,0 +1,18 @@
+2022-01-01 00:00:01,000 - __main__ - ERROR - Error occurred while connecting to database
+2022-01-01 00:01:05,000 - __main__ - ERROR - Invalid input provided by user
+2022-01-01 00:02:10,000 - __main__ - ERROR - Unable to retrieve data from API
+2022-01-01 00:03:15,000 - __main__ - ERROR - File not found
+2022-01-01 00:04:20,000 - __main__ - ERROR - Permission denied
+2022-01-01 00:05:25,000 - __main__ - ERROR - Error in processing data
+2022-01-01 00:06:30,000 - __main__ - ERROR - Failed to send email
+2022-01-01 00:07:35,000 - __main__ - ERROR - Error in creating thread
+2022-01-01 00:08:40,000 - __main__ - ERROR - Exception occurred in function
+2022-01-01 00:09:45,000 - __main__ - ERROR - Error while reading from file
+2022-01-01 00:10:50,000 - __main__ - ERROR - Error in execution
+2022-01-01 00:11:55,000 - __main__ - ERROR - Error in creating object
+2022-01-01 00:13:00,000 - __main__ - ERROR - Error in loading module
+2022-01-01 00:14:05,000 - __main__ - ERROR - Error in creating process
+2022-01-01 00:15:10,000 - __main__ - ERROR - Error in parsing data
+2022-01-01 00:16:15,000 - __main__ - ERROR - Error in accessing resource
+2022-01-01 00:17:20,000 - __main__ - ERROR - Error in creating instance
+2022-01-01 00:18:25,000 - __main__ - ERROR - Error in allocating memory
