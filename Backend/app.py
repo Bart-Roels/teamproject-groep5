@@ -701,16 +701,11 @@ def get_logs():
     # Get end set line per line in json
     with open(log_path, 'r') as f:
         data = f.readlines()
-        # Remove - 
-        data = list(map(lambda x: x.replace('-', ''), data))
-        # Split each line in items
-        data = list(map(lambda x: x.split(' '), data))
-        # Remove empty items
-        data = list(filter(lambda x: len(x) > 0, data))
-        # Remove \n from each item
-        data = list(map(lambda x: list(map(lambda y: y.replace('\n', ''), x)), data))
-        # Convert to json time, function, eror, message
-        data = list(map(lambda x: {'time': x[0], 'function': x[1], 'error': x[2], 'message': x[3]}, data))
+        #print(data)
+        #split each line of the log file
+        data = [line.split(' - ') for line in data]
+        # make a list of dictionaries with the data
+        data = [{'tijd': line[0], 'functie': line[1], 'type': line[2], 'message':line[3]} for line in data]
 
     # Return data
     return jsonify(data)

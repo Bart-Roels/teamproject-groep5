@@ -1,33 +1,30 @@
-const showData = function (data) {
-  // initialize the datatable
-  var table = new DataTable('#example', {
-    data: data,
-    bInfo: false,
-    responsive: true,
-    bDestroy: true,
-    layout: {
-      top: '{search}',
-      bottom: '{info}{pager}',
-    },
-    pagination: {
-      limit: 10,
-    },
-    labels: {
-      placeholder: 'Search...',
-      perPage: '{select} entries per page',
-      noRows: 'No entries found',
-      info: 'Showing {start} to {end} of {rows} entries',
-    },
-  });
+const showData = function (jsonObject) {
+  console.log(jsonObject);
+  // write code to add the data to the data table
+  const table = document.querySelector('table');
+  const tbody = table.querySelector('tbody');
+  for (let i = 0; i < jsonObject.length; i++) {
+    const tr = document.createElement('tr');
+    const tdDate = document.createElement('td');
+    tdDate.textContent = jsonObject[i].tijd;
+    tr.appendChild(tdDate);
+    const tdTime = document.createElement('td');
+    tdTime.textContent = jsonObject[i].functie;
+    tr.appendChild(tdTime);
+    const tdLevel = document.createElement('td');
+    tdLevel.textContent = jsonObject[i].type;
+    tr.appendChild(tdLevel);
+    const tdMessage = document.createElement('td');
+    tdMessage.textContent = jsonObject[i].message;
+    tr.appendChild(tdMessage);
+    tbody.appendChild(tr);
+  }
 };
 
 const getData = function () {
   console.log('getData');
   const url = 'http://127.0.0.1:5000/api/v1/logs';
-
-  fetch(url)
-    .then((response) => response.json())
-    .then((data) => showData(data));
+  handleData(url, showData);
 };
 
 document.addEventListener('DOMContentLoaded', function () {
