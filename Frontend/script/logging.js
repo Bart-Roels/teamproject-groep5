@@ -4,6 +4,10 @@ const showData = function (data) {
 };
 
 const handleDataErrors = function(url){
+  console.log('handleDataErrors');
+
+
+
   fetch(url)
     .then(response => response.json())
     .then(data => {
@@ -42,6 +46,32 @@ const getData = function () {
 };
 document.addEventListener('DOMContentLoaded', function () {
   console.info('DOM geladen');
-  //var table = new DataTable('#example');
+  // initialize the datatable 
+  var table = new DataTable('#logTable', {
+    data: { 
+      headings: ['Date', 'Name', 'Type', 'Error'],
+      data: []
+    },
+    columns: [
+      { select: 0, type: 'date', format: 'DD/MM/YYYY' },
+      { select: 1, type: 'text' },
+      { select: 2, type: 'text' },
+      { select: 3, type: 'text' }
+    ],
+    layout: {
+      top: '{search}',
+      bottom: '{info}{pager}'
+    },
+    pagination: {
+      limit: 10
+    },
+    labels: {
+      placeholder: 'Search...',
+      perPage: '{select} entries per page',
+      noRows: 'No entries found',
+      info: 'Showing {start} to {end} of {rows} entries'
+    }
+  });
+
   getData();
 });
