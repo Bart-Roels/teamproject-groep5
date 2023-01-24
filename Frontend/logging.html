@@ -16,12 +16,10 @@
 
     <link rel="stylesheet" type="text/css" href="DataTables/datatables.min.css" />
     <script type="text/javascript" src="DataTables/datatables.min.js"></script>
-    <script type="text/javascript" src="script/log.js"></script>
-    <!--<script>
-        document.addEventListener('DOMContentLoaded', function () {
-            let table = new DataTable('#example');
-        });
-    </script>-->
+    
+    <script type="text/javascript" src="script/datahandler.js"></script>
+    <script type="text/javascript" src="script/logging.js"></script>
+    
   </head>
 
   <body>
@@ -35,7 +33,7 @@
       </header>
       <section class="o-row">
         <div class="o-container">
-          <div id="example_wrapper" class="dataTables_wrapper">
+          <!--<div id="example_wrapper" class="dataTables_wrapper">
             <div class="dataTables_length" id="example_length">
               <label
                 >Show
@@ -137,7 +135,19 @@
               <a class="paginate_button previous disabled" aria-controls="example" data-dt-idx="previous" tabindex="-1" id="example_previous">Previous</a><span><a class="paginate_button current" aria-controls="example" data-dt-idx="0" tabindex="0">1</a><a class="paginate_button" aria-controls="example" data-dt-idx="1" tabindex="0">2</a><a class="paginate_button" aria-controls="example" data-dt-idx="2" tabindex="0">3</a><a class="paginate_button" aria-controls="example" data-dt-idx="3" tabindex="0">4</a><a class="paginate_button" aria-controls="example" data-dt-idx="4" tabindex="0">5</a><a class="paginate_button" aria-controls="example" data-dt-idx="5" tabindex="0">6</a></span
               ><a class="paginate_button next" aria-controls="example" data-dt-idx="next" tabindex="0" id="example_next">Next</a>
             </div>
-          </div>
+          </div>-->
+          <table id="logTable">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Error</th>
+              </tr>
+            </thead>
+            <tbody id="logBody">
+            </tbody>
+          </table>
         </div>
       </section>
     </main>
