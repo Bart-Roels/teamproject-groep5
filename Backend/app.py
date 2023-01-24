@@ -1,3 +1,4 @@
+import json
 import random
 import threading
 import time
@@ -92,6 +93,7 @@ def on_connect(client, userdata, flags, rc):  # Handels connection
         if rc == 0:
             print("Connected OK Returned code=", rc)
             client.subscribe("games")
+            client.subscribe("minesweepr")
             client.subscribe("button")
             client.subscribe("stop")
             client.subscribe("pauze")
@@ -159,25 +161,24 @@ def on_message(client, userdata, message):  # Handels incomming messages
                 score_team_red = 0
                 start_redvsblue_game = True
                 new_game_redvsblue = True
-                current_game = 'redblue'
             elif message == "zen":
                 game = "zen"
                 print("zen")
                 total_score_zen = 0
                 start_zen_game = True
                 new_zen_game = True
-                current_game = 'zen'
                 # zen_game()
-            elif message == "minesweepr":
-                game = "minesweepr"
-                print("minesweepr")
-                print('1: easy level, 2: medium level, 3: hard level')
-                level_minesweeper = int(input('choose level: '))
-                print(f'chosen level {level_minesweeper}')
-                current_game = 'minesweeper'
-                score_minesweeper = 0
-                start_minesweeper = True
-                new_game_minesweeper = True
+        if topic == "minesweepr":
+            # Parse json
+            data = json.loads(message)
+            # Game 
+            game = "minesweepr"
+            # Get level out of json
+            level_minesweeper = data["difficulty"]
+            # Variables
+            score_minesweeper = 0
+            start_minesweeper = True
+            new_game_minesweeper = True
         if topic == "button":
             if game == "memory":
                 check_sequence(message)
