@@ -96,6 +96,7 @@ def on_connect(client, userdata, flags, rc):  # Handels connection
             client.subscribe("stop")
             client.subscribe("pauze")
             client.subscribe("unpauze")
+            client.subscribe("niveau")
         else:
             raise Exception("Bad connection Returned code=", rc)
     except Exception as e:
@@ -220,6 +221,7 @@ def on_message(client, userdata, message):  # Handels incomming messages
             elif game == "minesweepr":
                 start_minesweeper = False
                 new_game_minesweeper = False
+                client.publish("niveau", str(level_minesweeper))
                 print("stop minesweepr")
         if topic == "pauze":
             if game == "memory":
