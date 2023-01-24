@@ -54,31 +54,40 @@ client.on('connect', () => {
       } else if (topic === 'scoreBlue') {
         document.querySelector('.js-score-blue').textContent = message.toString();
       }
-      if (document.querySelector('.js-endscore-page')) {
-        const extraInfo = document.querySelector('.js-infos');
-        if (topic === 'totalbuttonspressed') {
-          if (gameData.game != 'bluevsred') {
-            extraInfo.innerHTML += `
-                <li class="c-endscore__item">
-                  <h3 class="c-endscore__item-title">Ingedrukte knoppen</h3>
-                  <p class="c-endscore__item-text">${message.toString()}</p>
-                </li>
-      `;
-          }
-        } else if (topic === 'niveau') {
-          if (gameData.game != 'bluevsred') {
-            extraInfo.innerHTML += `
-                <li class="c-endscore__item">
-                  <h3 class="c-endscore__item-title">Niveau</h3>
-                  <p class="c-endscore__item-text">${message.toString()}</p>
-                </li>
-      `;
-          }
-        }
+      if (topic === 'totalbuttonspressed') {
+        localStorage.setItem('totalbuttonspressed', message.toString());
+      } else if (topic === 'niveau') {
+        localStorage.setItem('niveau', message.toString());
       }
     }
   });
 });
+
+const showExtraInfo = () => {
+  let gameData = JSON.parse(localStorage.getItem('gameData'));
+  const extraInfo = document.querySelector('.js-infos');
+  if (gameData.game != 'bluevsred') {
+    if (localStorage.getItem('totalbuttonspressed') != null) {
+      extraInfo.innerHTML += `
+                <li class="c-endscore__item">
+                  <h3 class="c-endscore__item-title">Ingedrukte knoppen</h3>
+                  <p class="c-endscore__item-text">${localStorage.getItem('totalbuttonspressed')}</p>
+                </li>
+      `;
+    }
+
+    if (localStorage.getItem('niveau') != null) {
+      if (gameData.game != 'zengame') {
+        extraInfo.innerHTML += `
+              <li class="c-endscore__item">
+                <h3 class="c-endscore__item-title">Niveau</h3>
+                <p class="c-endscore__item-text">${localStorage.getItem('niveau') - 1}</p>
+              </li>
+    `;
+      }
+    }
+  }
+};
 
 // open popup on click and close on click
 const listenToPopup = () => {
@@ -108,6 +117,48 @@ const listenToPopup = () => {
   });
 };
 
+// listen to selected game btn on ranking page
+const listenToGameBtns = () => {
+  const gameBtns = document.querySelectorAll('.js-game-btn');
+  const dropdown = document.querySelector('.js-dropdown');
+  gameBtns.forEach((btn) => {
+    btn.addEventListener('change', () => {
+      const gameName = btn.id;
+      let time, difficulty;
+      // console.log(dropdown);
+      if (gameName === 'minesweeper') {
+        dropdown.innerHTML += dropdownRanking.difficulty;
+        time = document.querySelector('#select1').value;
+        difficulty = document.querySelector('#select2').value;
+      } else {
+        dropdown.innerHTML = dropdownRanking.time;
+        time = document.querySelector('#select1').value;
+      }
+      getTop10(gameName, time, difficulty);
+      listenToDropdown();
+    });
+  });
+};
+
+// listen to selected dropdown time and difficulty on ranking page
+const listenToDropdown = () => {
+  const dropdowns = document.querySelectorAll('.c-custom-select__input');
+  dropdowns.forEach((dropdown) => {
+    dropdown.addEventListener('change', () => {
+      console.log('change');
+      const gameName = document.querySelector('.js-game-btn:checked').id;
+      let time, difficulty;
+      if (gameName === 'minesweeper') {
+        time = document.querySelector('#select1').value;
+        difficulty = document.querySelector('#select2').value;
+      } else {
+        time = document.querySelector('#select1').value;
+      }
+      getTop10(gameName, time, difficulty);
+    });
+  });
+};
+
 const listener = () => {
   // listen to tabs and go to the clicked page
   const tabs = document.querySelectorAll('.js-tabs');
@@ -122,25 +173,6 @@ const listener = () => {
       } else if (tabName === 'overons') {
         window.location.href = 'over-ons.html';
       }
-    });
-  });
-
-  const gameBtns = document.querySelectorAll('.js-game-btn');
-  const dropdown = document.querySelector('.js-dropdown');
-  gameBtns.forEach((btn) => {
-    btn.addEventListener('change', () => {
-      const gameName = btn.id;
-      let time, difficulty;
-      console.log(dropdown);
-      if (gameName === 'minesweeper') {
-        dropdown.innerHTML += dropdownRanking.difficulty;
-        time = document.querySelector('#select1').value;
-        difficulty = document.querySelector('#select2').value;
-      } else {
-        dropdown.innerHTML = dropdownRanking.time;
-        time = document.querySelector('#select1').value;
-      }
-      // getTop10(gameName, time, difficulty);
     });
   });
 
@@ -176,10 +208,10 @@ const listenToControls = () => {
       // console.log(gameData);
       console.log('save score');
       sendStopGame();
-      // saveScore(gameData.game);
+      saveScore();
 
-      window.location.href = 'endscore.html';
-      window.location.replace('endscore.html');
+      // window.location.href = 'endscore.html';
+      // window.location.replace('endscore.html');
     }, 1000);
   });
   pauseBtn.addEventListener('click', () => {
@@ -213,9 +245,82 @@ const listenToControls = () => {
   });
 };
 
+const saveScore = () => {
+  let gameData = JSON.parse(localStorage.getItem('gameData'));
+  const url = `http://127.0.0.1:5000/api/v1/score`;
+  console.log('show end page');
+  const body = JSON.stringify(gameData);
+  handleData(url, goToEndScore, null, 'POST', body);
+};
+
+const goToEndScore = () => {
+  console.log('redirect');
+  window.location.href = 'endscore.html';
+  window.location.replace('endscore.html');
+};
+
+const getTop10 = (gameName, time, difficulty) => {
+  const url = `http://127.0.0.1:5000/api/v1/score/${gameName}/${time}/${difficulty}`;
+  console.log(url);
+  handleData(url, showTop10, null, 'GET');
+};
+
+const showTop10 = (data) => {
+  if (data.length > 0) {
+    const top10 = document.querySelector('.js-rangschikking');
+    top10.innerHTML = '';
+
+    for (let i = 0; i < data.length; i++) {
+      let name, score;
+      if (data[i].game != 'bluevsred') {
+        name = data[i].name;
+        score = data[i].score;
+      } else {
+        if (data[i].scoreRed == data[i].scoreBlue) {
+          name = `${data[i].nameRed} & ${data[i].nameBlue}`;
+          score = data[i].scoreRed;
+        } else if (data[i].scoreRed > data[i].scoreBlue) {
+          name = data[i].nameRed;
+          score = data[i].scoreRed;
+        } else {
+          name = data[i].nameBlue;
+          score = data[i].scoreBlue;
+        }
+      }
+
+      if (i === 0) {
+        top10.innerHTML += `
+            <li class="c-ranking__item c-ranking__item--first">
+                  <span><img src="img/icons/first_place.svg" alt="eerste plaat badge" /></span><span>${name}</span><span class="c-ranking__score">${score}p</span>
+              </li>`;
+      } else if (i === 1) {
+        top10.innerHTML += `
+                <li class="c-ranking__item c-ranking__item--second">
+                  <span><img src="img/icons/second_place.svg" alt="eerste plaat badge" /></span><span>${name}</span><span class="c-ranking__score">${score}p</span>
+                </li>`;
+      } else if (i === 2) {
+        top10.innerHTML += `
+                <li class="c-ranking__item c-ranking__item--third">
+                  <span><img src="img/icons/thrid_place.svg" alt="eerste plaat badge" /></span><span>${name}</span><span class="c-ranking__score">${score}p</span>
+                </li>`;
+      } else {
+        top10.innerHTML += `<li class="c-ranking__item"><span>${i + 1}</span><span>${name}</span><span class="c-ranking__score">${score}p</span></li>`;
+      }
+    }
+  } else {
+    const top10 = document.querySelector('.js-rangschikking');
+    top10.innerHTML = '';
+    top10.innerHTML += `<li class="c-ranking__item">Er zijn nog geen scores</li>`;
+  }
+};
+
 const sendPlayGame = () => {
   let gameData = JSON.parse(localStorage.getItem('gameData'));
-  client.publish('games', gameData.game);
+  if (gameData.game == 'minesweeper') {
+    client.publish('minesweeper', JSON.stringify({ game: gameData.game, difficulty: gameData.difficulty }));
+  } else {
+    client.publish('games', gameData.game);
+  }
 };
 
 const sendPauseGame = () => {
@@ -267,6 +372,7 @@ const showCountDown3sec = () => {
     localStorage.setItem('timeLeft', null);
     console.log(localStorage.getItem('startTimeGame'));
     sendPlayGame();
+    console.log('redirect live-scorebord.html');
     window.location.href = 'live-scorebord.html';
   }, 3600);
 };
@@ -362,9 +468,8 @@ const showForm = () => {
     listenToFormSubmit([formElement.fieldRed, formElement.fieldBlue], [formElement.inputRed, formElement.inputBlue], [formElement.errorRed, formElement.errorBlue]);
   } else if (selectedGameForm === 'minesweeper') {
     formElement.dropdownDifficulty.classList.remove('u-hidden');
-  } else {
-    listenToFormSubmit([formElement.field], [formElement.input], [formElement.error]);
   }
+  listenToFormSubmit([formElement.field], [formElement.input], [formElement.error]);
 
   const backBtn = document.querySelector('.js-back-btn');
   backBtn.addEventListener('click', () => {
@@ -408,9 +513,7 @@ const showCountdown = () => {
             localStorage.setItem('gameData', JSON.stringify(gameData));
             console.log('save score');
             sendStopGame();
-            // saveScore(gameData.game);
-            window.location.href = 'endscore.html';
-            window.location.replace('endscore.html');
+            saveScore();
           }, 2000);
         }
       }
@@ -528,10 +631,10 @@ const showScore = () => {
     score = Math.max(gameData.scoreBlue, gameData.scoreRed);
     if (gameData.scoreBlue != gameData.scoreRed) {
       if (score == gameData.scoreBlue) {
-        winner = 'Blue team wint!';
+        winner = `${gameData.nameBlue} team wint!`;
         score = gameData.scoreBlue;
       } else {
-        winner = 'Red team wint!';
+        winner = `${gameData.nameRed} team wint!`;
         score = gameData.scoreRed;
       }
     }
@@ -541,11 +644,11 @@ const showScore = () => {
                   <p class="c-endscore__item-text">${gameData.time} min</p>
                 </li>
                 <li class="c-endscore__item">
-                  <h3 class="c-endscore__item-title">Red team</h3>
+                  <h3 class="c-endscore__item-title">${gameData.nameRed} team</h3>
                   <p class="c-endscore__item-text">${gameData.scoreRed}p</p>
                 </li>
                 <li class="c-endscore__item">
-                  <h3 class="c-endscore__item-title">Blue team</h3>
+                  <h3 class="c-endscore__item-title">${gameData.nameBlue} team</h3>
                   <p class="c-endscore__item-text">${gameData.scoreBlue}p</p>
                 </li>
       `;
@@ -608,6 +711,34 @@ const showSplashScreen = () => {
   }
 };
 
+const setToggleAndFilter = (game, time, difficulty) => {
+  const toggle = document.querySelectorAll('.js-game-btn');
+  const dropdownTime = document.querySelectorAll('.c-custom-select__input')[0];
+  if (game != null) {
+    // change toggle button value to selected game
+    toggle.forEach((btn) => {
+      if (btn.id == game) {
+        btn.checked = true;
+      }
+    });
+
+    // change time dropdown
+    if (time != null) {
+      dropdownTime.value = time;
+    }
+
+    // change difficulty dropdown
+    if (difficulty != null) {
+      document.querySelector('.js-dropdown').innerHTML += dropdownRanking.difficulty;
+      const dropdownDifficulty = document.querySelectorAll('.c-custom-select__input')[1];
+      dropdownDifficulty.value = difficulty;
+    }
+  } else {
+    toggle[0].checked = true;
+    dropdownTime.value = '3';
+  }
+};
+
 const init = () => {
   console.log('DOM loaded');
   listener();
@@ -621,7 +752,15 @@ const init = () => {
     localStorage.removeItem('gameData');
     showForm();
   } else if (document.querySelector('.js-ranking-page')) {
-    // getTop10(game, time, difficulty);
+    const gameData = JSON.parse(localStorage.getItem('gameData'));
+    if (gameData != null) {
+      setToggleAndFilter(gameData.game, gameData.time, gameData.difficulty);
+      getTop10(gameData.game, gameData.time, gameData.difficulty);
+    } else {
+      getTop10('memorygame', '3', null);
+    }
+    listenToGameBtns();
+    listenToDropdown();
   } else if (document.querySelector('.js-live-page')) {
     showLiveScoreBoard();
     listenToControls();
@@ -630,6 +769,7 @@ const init = () => {
     showCountdown();
   } else if (document.querySelector('.js-endscore-page')) {
     showScore();
+    showExtraInfo();
   }
 };
 

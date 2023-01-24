@@ -1766,6 +1766,13 @@ input:disabled {
     stroke: var(--global-color-alpha);
 }
 
+.c-endscore__button:hover .c-floating-btn .c-icon rect {
+    stroke: var(--global-color-alpha);
+}
+
+.c-endscore__button:hover .c-floating-btn .c-icon circle {
+    fill: var(--global-color-alpha);
+}
 
 @media (min-width: 576px) {
     .c-endscore__card {
