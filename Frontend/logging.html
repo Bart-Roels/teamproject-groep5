@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Log | Interactieve paaltjes</title>
+    <meta name="description" content="Speel onze interactieve paaltjes" />
+
+    <link rel="icon" href="img/logos/favicon.svg" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+    <link rel="manifest" href="manifest.json" />
+
+    <link rel="stylesheet" href="css/normalize.css" />
+    <link rel="stylesheet" href="css/screen.css" />
+
+    <link rel="stylesheet" type="text/css" href="DataTables/datatables.min.css" />
+    <script type="text/javascript" src="DataTables/datatables.min.js"></script>
+    <script type="text/javascript" src="script/log.js"></script>
+    <!--<script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let table = new DataTable('#example');
+        });
+    </script>-->
+  </head>
+
+  <body>
+    <main>
+      <header class="o-row u-p-clear">
+        <div class="o-container">
+          <div class="c-header">
+            <h1 class="c-header__title">Log</h1>
+          </div>
+        </div>
+      </header>
+      <section class="o-row">
+        <div class="o-container">
+          <div id="example_wrapper" class="dataTables_wrapper">
+            <div class="dataTables_length" id="example_length">
+              <label
+                >Show
+                <select name="example_length" aria-controls="example" class="">
+                  <option value="10">10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                </select>
+                entries</label
+              >
+            </div>
+            <div id="example_filter" class="dataTables_filter">
+              <label>Search:<input type="search" class="" placeholder="" aria-controls="example" /></label>
+            </div>
+            <table id="example" class="display dataTable" style="width: 100%" aria-describedby="example_info">
+              <thead>
+                <tr>
+                  <th class="sorting sorting_asc" tabindex="0" aria-controls="example" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending" style="width: 131.163px">Date</th>
+
+                  <th class="sorting" tabindex="0" aria-controls="example" rowspan="1" colspan="1" aria-label="Position: activate to sort column ascending" style="width: 218.163px">Location</th>
+                  <th class="sorting" tabindex="0" aria-controls="example" rowspan="1" colspan="1" aria-label="Position: activate to sort column ascending" style="width: 218.163px">Type</th>
+
+                  <th class="sorting" tabindex="0" aria-controls="example" rowspan="1" colspan="1" aria-label="Age: activate to sort column ascending" style="width: 39.0125px">Error</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="odd">
+                  <td class="sorting_1">2022-06-01 10:00:00,000</td>
+                  <td>name</td>
+                  <td>Accountant</td>
+                  <td>Tokyo</td>
+                </tr>
+                <tr class="even">
+                  <td class="sorting_1">2022-06-01 11:15:00,000</td>
+                  <td>name</td>
+                  <td>Chief Executive Officer (CEO)</td>
+                  <td>London</td>
+                </tr>
+                <tr class="odd">
+                  <td class="sorting_1">2022-06-01 11:15:00,000</td>
+                  <td>name</td>
+                  <td>Junior Technical Author</td>
+                  <td>San Francisco</td>
+                </tr>
+                <tr class="even">
+                  <td class="sorting_1">2022-06-02 14:30:00,000</td>
+                  <td>name</td>
+                  <td>Software Engineer</td>
+                  <td>London</td>
+                </tr>
+                <tr class="odd">
+                  <td class="sorting_1">Brenden Wagner</td>
+                  <td>name</td>
+                  <td>Software Engineer</td>
+                  <td>San Francisco</td>
+                </tr>
+                <tr class="even">
+                  <td class="sorting_1">Brielle Williamson</td>
+                  <td>name</td>
+                  <td>Integration Specialist</td>
+                  <td>New York</td>
+                </tr>
+                <tr class="odd">
+                  <td class="sorting_1">Bruno Nash</td>
+                  <td>name</td>
+                  <td>Software Engineer</td>
+                  <td>London</td>
+                </tr>
+                <tr class="even">
+                  <td class="sorting_1">Caesar Vance</td>
+                  <td>name</td>
+                  <td>Pre-Sales Support</td>
+                  <td>New York</td>
+                </tr>
+                <tr class="odd">
+                  <td class="sorting_1">Cara Stevens</td>
+                  <td>name</td>
+                  <td>Sales Assistant</td>
+                  <td>New York</td>
+                </tr>
+                <tr class="even">
+                  <td class="sorting_1">Cedric Kelly</td>
+                  <td>name</td>
+                  <td>Senior Javascript Developer</td>
+                  <td>Edinburgh</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th rowspan="1" colspan="1">Date</th>
+                  <th rowspan="1" colspan="1">Type</th>
+                  <th rowspan="1" colspan="1">Error</th>
+                </tr>
+              </tfoot>
+            </table>
+            <div class="dataTables_info" id="example_info" role="status" aria-live="polite">Showing 1 to 10 of 57 entries</div>
+            <div class="dataTables_paginate paging_simple_numbers" id="example_paginate">
+              <a class="paginate_button previous disabled" aria-controls="example" data-dt-idx="previous" tabindex="-1" id="example_previous">Previous</a><span><a class="paginate_button current" aria-controls="example" data-dt-idx="0" tabindex="0">1</a><a class="paginate_button" aria-controls="example" data-dt-idx="1" tabindex="0">2</a><a class="paginate_button" aria-controls="example" data-dt-idx="2" tabindex="0">3</a><a class="paginate_button" aria-controls="example" data-dt-idx="3" tabindex="0">4</a><a class="paginate_button" aria-controls="example" data-dt-idx="4" tabindex="0">5</a><a class="paginate_button" aria-controls="example" data-dt-idx="5" tabindex="0">6</a></span
+              ><a class="paginate_button next" aria-controls="example" data-dt-idx="next" tabindex="0" id="example_next">Next</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
