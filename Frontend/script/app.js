@@ -54,31 +54,36 @@ client.on('connect', () => {
       } else if (topic === 'scoreBlue') {
         document.querySelector('.js-score-blue').textContent = message.toString();
       }
-      if (document.querySelector('.js-endscore-page')) {
-        const extraInfo = document.querySelector('.js-infos');
-        if (topic === 'totalbuttonspressed') {
-          if (gameData.game != 'bluevsred') {
-            extraInfo.innerHTML += `
-                <li class="c-endscore__item">
-                  <h3 class="c-endscore__item-title">Ingedrukte knoppen</h3>
-                  <p class="c-endscore__item-text">${message.toString()}</p>
-                </li>
-      `;
-          }
-        } else if (topic === 'niveau') {
-          if (gameData.game != 'bluevsred') {
-            extraInfo.innerHTML += `
-                <li class="c-endscore__item">
-                  <h3 class="c-endscore__item-title">Niveau</h3>
-                  <p class="c-endscore__item-text">${message.toString()}</p>
-                </li>
-      `;
-          }
-        }
+      if (topic === 'totalbuttonspressed') {
+        localStorage.setItem('totalbuttonspressed', message.toString());
+      } else if (topic === 'niveau') {
+        localStorage.setItem('niveau', message.toString());
       }
     }
   });
 });
+
+const showPressedBtns = () => {
+  let gameData = JSON.parse(localStorage.getItem('gameData'));
+  const extraInfo = document.querySelector('.js-infos');
+  if (gameData.game != 'bluevsred') {
+    if (localStorage.getItem('totalbuttonspressed') != null) {
+      extraInfo.innerHTML += `
+                <li class="c-endscore__item">
+                  <h3 class="c-endscore__item-title">Ingedrukte knoppen</h3>
+                  <p class="c-endscore__item-text">${localStorage.getItem('totalbuttonspressed')}</p>
+                </li>
+      `;
+    } else if (localStorage.getItem('niveau') != null) {
+      extraInfo.innerHTML += `
+              <li class="c-endscore__item">
+                <h3 class="c-endscore__item-title">Niveau</h3>
+                <p class="c-endscore__item-text">${localStorage.getItem('niveau')}</p>
+              </li>
+    `;
+    }
+  }
+};
 
 // open popup on click and close on click
 const listenToPopup = () => {
@@ -248,7 +253,7 @@ const saveScore = () => {
 const goToEndScore = () => {
   console.log('redirect');
   window.location.href = 'endscore.html';
-  //window.location.replace('endscore.html');
+  window.location.replace('endscore.html');
 };
 
 const getTop10 = (gameName, time, difficulty) => {
@@ -502,8 +507,6 @@ const showCountdown = () => {
             console.log('save score');
             sendStopGame();
             saveScore();
-            // window.location.href = 'endscore.html';
-            // window.location.replace('endscore.html');
           }, 2000);
         }
       }
@@ -705,36 +708,23 @@ const setToggleAndFilter = (game, time, difficulty) => {
   const toggle = document.querySelectorAll('.js-game-btn');
   const dropdownTime = document.querySelectorAll('.c-custom-select__input')[0];
   if (game != null) {
-    if (game == 'memorygame') {
-      toggle[0].checked = true;
-    } else if (game == 'bluevsred') {
-      toggle[1].checked = true;
-    } else if (game == 'zengame') {
-      toggle[2].checked = true;
-    } else if (game == 'minesweeper') {
-      console.log(toggle[3]);
-      toggle[3].checked = true;
+    // change toggle button value to selected game
+    toggle.forEach((btn) => {
+      if (btn.value == game) {
+        btn.checked = true;
+      }
+    });
+
+    // change time dropdown
+    if (time != null) {
+      dropdownTime.value = time;
     }
 
-    if (time == '3') {
-      dropdownTime.value = '3';
-    } else if (time == '5') {
-      dropdownTime.value = '5';
-    } else if (time == '10') {
-      dropdownTime.value = '10';
-    }
-
+    // change difficulty dropdown
     if (difficulty != null) {
       document.querySelector('.js-dropdown').innerHTML += dropdownRanking.difficulty;
       const dropdownDifficulty = document.querySelectorAll('.c-custom-select__input')[1];
-      console.log(dropdownDifficulty);
-      if (difficulty == 'makkelijk') {
-        dropdownDifficulty.value = 'makkelijk';
-      } else if (difficulty == 'normaal') {
-        dropdownDifficulty.value = 'normaal';
-      } else if (difficulty == 'moeilijk') {
-        dropdownDifficulty.value = 'moeilijk';
-      }
+      dropdownDifficulty.value = difficulty;
     }
   } else {
     toggle[0].checked = true;
@@ -772,6 +762,7 @@ const init = () => {
     showCountdown();
   } else if (document.querySelector('.js-endscore-page')) {
     showScore();
+    showPressedBtns();
   }
 };
 
