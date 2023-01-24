@@ -162,7 +162,7 @@ def on_message(client, userdata, message):  # Handels incomming messages
                 score_team_red = 0
                 start_redvsblue_game = True
                 new_game_redvsblue = True
-            elif message == "zen":
+            elif message == "zengame":
                 game = "zen"
                 print("zen")
                 total_score_zen = 0
