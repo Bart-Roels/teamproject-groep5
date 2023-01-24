@@ -317,7 +317,7 @@ const showTop10 = (data) => {
 const sendPlayGame = () => {
   let gameData = JSON.parse(localStorage.getItem('gameData'));
   if (gameData.game == 'minesweeper') {
-    client.publish('minesweeper', JSON.stringify({ game: gameData.game, difficulty: gameData.difficulty}));
+    client.publish('minesweeper', JSON.stringify({ game: gameData.game, difficulty: gameData.difficulty }));
   } else {
     client.publish('games', gameData.game);
   }
@@ -631,10 +631,10 @@ const showScore = () => {
     score = Math.max(gameData.scoreBlue, gameData.scoreRed);
     if (gameData.scoreBlue != gameData.scoreRed) {
       if (score == gameData.scoreBlue) {
-        winner = 'Blue team wint!';
+        winner = `${gameData.nameBlue} team wint!`;
         score = gameData.scoreBlue;
       } else {
-        winner = 'Red team wint!';
+        winner = `${gameData.nameRed} team wint!`;
         score = gameData.scoreRed;
       }
     }
@@ -644,11 +644,11 @@ const showScore = () => {
                   <p class="c-endscore__item-text">${gameData.time} min</p>
                 </li>
                 <li class="c-endscore__item">
-                  <h3 class="c-endscore__item-title">Red team</h3>
+                  <h3 class="c-endscore__item-title">${gameData.nameRed} team</h3>
                   <p class="c-endscore__item-text">${gameData.scoreRed}p</p>
                 </li>
                 <li class="c-endscore__item">
-                  <h3 class="c-endscore__item-title">Blue team</h3>
+                  <h3 class="c-endscore__item-title">${gameData.nameBlue} team</h3>
                   <p class="c-endscore__item-text">${gameData.scoreBlue}p</p>
                 </li>
       `;
@@ -717,7 +717,7 @@ const setToggleAndFilter = (game, time, difficulty) => {
   if (game != null) {
     // change toggle button value to selected game
     toggle.forEach((btn) => {
-      if (btn.value == game) {
+      if (btn.id == game) {
         btn.checked = true;
       }
     });
