@@ -334,7 +334,7 @@ def handle_games():
                     print(f'list: {list_minesweeper}')
                     index_minesweeper = 0
                     print(f'level minesweeper: {level_minesweeper}')
-                    if level_minesweeper == [1, 2]:
+                    if level_minesweeper ==1:
                         send_hint_function()
 
                     new_game_minesweeper = False
@@ -543,7 +543,7 @@ def analyse_buttons_minesweeper(message):
                     haswon = True
             else:
                 print('wrong')
-                if level_minesweeper == 2 or level_minesweeper == 3:
+                if  level_minesweeper == 3:
                     print('game lost')
                     haslost = True
     except Exception as e:
@@ -567,9 +567,9 @@ def sequence_off():
     try:
         busy_minesweeper = True
         print('sequence off')
+        time.sleep(1)
         for i in range(4):
             client.publish(str(i), "off")
-        time.sleep(1)
         busy_minesweeper = False
     except Exception as e:
         logger.error(e)
