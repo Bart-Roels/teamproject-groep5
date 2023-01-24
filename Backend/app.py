@@ -144,24 +144,24 @@ def on_message(client, userdata, message):  # Handels incomming messages
         print(f"Topic: {topic}, Message: {message}")
         # Logic
         if topic == "games":
-            if message == "memory":
+            if message == "memorygame":
                 print("starting memory")
-                game = "memory"
+                game = "memorygame"
                 # Start memory
                 sequence = []
                 sequence_number = 1
                 start_memory_var = True
                 new_game = True
                 pause = False
-            elif message == "redblue":
-                game = "redblue"
+            elif message == "bluevsred":
+                game = "bluevsred"
                 print("redblue")
                 score_team_blue = 0
                 score_team_red = 0
                 start_redvsblue_game = True
                 new_game_redvsblue = True
                 current_game = 'redblue'
-            elif message == "zen":
+            elif message == "zengame":
                 game = "zen"
                 print("zen")
                 total_score_zen = 0
@@ -169,8 +169,8 @@ def on_message(client, userdata, message):  # Handels incomming messages
                 new_zen_game = True
                 current_game = 'zen'
                 # zen_game()
-            elif message == "minesweepr":
-                game = "minesweepr"
+            elif message == "minesweeper":
+                game = "minesweeper"
                 print("minesweepr")
                 print('1: easy level, 2: medium level, 3: hard level')
                 level_minesweeper = int(input('choose level: '))
@@ -180,73 +180,73 @@ def on_message(client, userdata, message):  # Handels incomming messages
                 start_minesweeper = True
                 new_game_minesweeper = True
         if topic == "button":
-            if game == "memory":
+            if game == "memorygame":
                 check_sequence(message)
-            elif game == "redblue":
+            elif game == "bluevsred":
                 # Do read button stuff voor redblue
                 print("red vs blue button incomming")
                 analyse_pressed_buttons_redvsblue(int(message))
-            elif game == "zen":
+            elif game == "zengame":
                 # Do read button stuff voor zen
                 print("zen button incomming")
                 analyse_buttons_zen(int(message))
-            elif game == "minesweepr":
+            elif game == "minesweeper":
                 # Do read button stuff voor minesweepr
                 print("minesweeper button incomming")
                 analyse_buttons_minesweeper(message)
         if topic == "stop":
             client.publish("totalbuttonspressed", str(total_buttons_pressed))
             # If stop
-            game = None
             pause = False
             # Send off to all led's mqtt message to turn off
             for i in range(0, 4):
                 client.publish(str(i), "off")
-            if game == "memory":
+            if game == "memorygame":
                 start_memory_var = False
                 new_game = False
                 # Send sequence number to mqtt
                 client.publish("niveau", str(sequence_number))
                 sequence_number = 1
                 # Print stop memory
+                game = None
                 print("stop memory")
-            elif game == "redblue":
+            elif game == "bluevsred":
                 print("stop redblue")
                 start_redvsblue_game = False
                 new_game_redvsblue = False
-            elif game == "zen":
+            elif game == "zengame":
                 print("stop zen")
                 start_zen_game = False
                 new_zen_game = False
-            elif game == "minesweepr":
+            elif game == "minesweeper":
                 start_minesweeper = False
                 new_game_minesweeper = False
                 client.publish("niveau", str(level_minesweeper))
                 print("stop minesweepr")
         if topic == "pauze":
-            if game == "memory":
+            if game == "memorygame":
                 print("pauze memory")
                 pause = True
-            elif game == "redblue":
+            elif game == "bluevsred":
                 print("pauze redblue")
                 pause = True
-            elif game == "zen":
+            elif game == "zengame":
                 print("pauze zen")
                 pause = True
-            elif game == "minesweepr":
+            elif game == "minesweeper":
                 busy_minesweeper = True
                 print("pauze minesweepr")
         if topic == "unpauze":
-            if game == "memory":
+            if game == "memorygame":
                 print("unpauze memory")
                 pause = False
-            elif game == "redblue":
+            elif game == "bluevsred":
                 print("unpauze redblue")
                 pause = False
-            elif game == "zen":
+            elif game == "zengame":
                 print("unpauze zen")
                 pause = False
-            elif game == "minesweepr":
+            elif game == "minesweeper":
                 busy_minesweeper = False
                 print("unpauze minesweepr")
     except Exception as e:

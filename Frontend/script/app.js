@@ -63,7 +63,7 @@ client.on('connect', () => {
   });
 });
 
-const showPressedBtns = () => {
+const showExtraInfo = () => {
   let gameData = JSON.parse(localStorage.getItem('gameData'));
   const extraInfo = document.querySelector('.js-infos');
   if (gameData.game != 'bluevsred') {
@@ -74,13 +74,17 @@ const showPressedBtns = () => {
                   <p class="c-endscore__item-text">${localStorage.getItem('totalbuttonspressed')}</p>
                 </li>
       `;
-    } else if (localStorage.getItem('niveau') != null) {
-      extraInfo.innerHTML += `
+    }
+
+    if (localStorage.getItem('niveau') != null) {
+      if (gameData.game != 'zengame') {
+        extraInfo.innerHTML += `
               <li class="c-endscore__item">
                 <h3 class="c-endscore__item-title">Niveau</h3>
-                <p class="c-endscore__item-text">${localStorage.getItem('niveau')}</p>
+                <p class="c-endscore__item-text">${localStorage.getItem('niveau') - 1}</p>
               </li>
     `;
+      }
     }
   }
 };
@@ -204,7 +208,6 @@ const listenToControls = () => {
       // console.log(gameData);
       console.log('save score');
       sendStopGame();
-
       saveScore();
 
       // window.location.href = 'endscore.html';
@@ -313,7 +316,12 @@ const showTop10 = (data) => {
 
 const sendPlayGame = () => {
   let gameData = JSON.parse(localStorage.getItem('gameData'));
-  client.publish('games', gameData.game);
+  if (gameData.game == 'minesweeper') {
+    client.publish('games', JSON.stringify({ game: gameData.game, difficulty: gameData.difficulty}));
+  } else {
+    client.publish('games', gameData.game);
+  }
+  console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxx' + gameData.game);
 };
 
 const sendPauseGame = () => {
@@ -762,7 +770,7 @@ const init = () => {
     showCountdown();
   } else if (document.querySelector('.js-endscore-page')) {
     showScore();
-    showPressedBtns();
+    showExtraInfo();
   }
 };
 
