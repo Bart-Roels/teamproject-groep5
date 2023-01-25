@@ -7,7 +7,10 @@ const showData = function (jsonObject) {
         { "data": "message" },
         { "data": "type" }
     ],
-    "searching": true
+    "searching": true,
+    paging:false,
+    ordering:false,
+    info:false,
   })
   console.log(jsonObject);
   
