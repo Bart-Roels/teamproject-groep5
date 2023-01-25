@@ -234,6 +234,7 @@ def on_message(client, userdata, message):  # Handels incomming messages
             elif game == "minesweeper":
                 start_minesweeper = False
                 new_game_minesweeper = False
+                sequence_off()
                 client.publish("niveau", str(level_minesweeper))
                 print("stop minesweepr")
         if topic == "pauze":
