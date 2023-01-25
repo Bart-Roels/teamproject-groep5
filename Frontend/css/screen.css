@@ -1815,9 +1815,82 @@ input:disabled {
     transition: opacity 0.1s ease-in-out;
 }
 
+/* 
+    Components: battery
+    ---
+    Battery component
+*/
+
+.c-batterys {
+    margin-bottom: 72px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.c-battery__item {
+    padding: 12px 16px;
+    border-radius: var(--global-borderRadius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+}
+
+.c-battery__title {
+    font-size: 16px;
+    margin: 0;
+}
+
+.c-battery {
+    border: 3px solid var(--global-color-neutral-xxx-dark);
+    width: 72px;
+    height: 32px;
+    padding: 1px;
+    border-radius: 4px;
+    position: relative;
+}
+
+.c-battery::before {
+    content: '';
+    height: 5px;
+    width: 18px;
+    background: var(--global-color-neutral-xxx-dark);
+    display: block;
+    position: absolute;
+    right: -15px;
+    bottom: 12px;
+    border-radius: 4px 4px 0 0;
+    transform: rotate(90deg);
+}
+
+.c-battery-level {
+    background-color: var(--global-color-fourth);
+    height: 100%;
+}
+
+.c-battery-level--low {
+    background-color: var(--global-color-error);
+}
+
+.c-battery-level--medium {
+    background-color: var(--global-color-secondary);
+}
+
+
+@media (min-width: 576px) {
+    .c-batterys {
+        padding: 0 72px;
+    }
+}
+
+
 /*------------------------------------*\
 #UTILITIES
 \*------------------------------------*/
+.u-space-around {
+    justify-content: space-around;
+}
 
 .u-hidden {
     display: none;
