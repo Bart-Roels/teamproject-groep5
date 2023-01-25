@@ -227,15 +227,20 @@ def on_message(client, userdata, message):  # Handels incomming messages
                 print("stop redblue")
                 start_redvsblue_game = False
                 new_game_redvsblue = False
+                game = None
             elif game == "zengame":
                 print("stop zen")
                 start_zen_game = False
                 new_zen_game = False
+                game = None
             elif game == "minesweeper":
                 start_minesweeper = False
                 new_game_minesweeper = False
+                game = None
+                sequence_off()
                 client.publish("niveau", str(level_minesweeper))
                 print("stop minesweepr")
+                
         if topic == "pauze":
             if game == "memorygame":
                 print("pauze memory")
@@ -323,7 +328,7 @@ def handle_games():
                     for i in range(0, 4):
                         client.publish(str(i), "off")
                     random_led_zen = random.randint(0, 3)
-                    random_color_zen = random.randint(0, 3)
+                    random_color_zen = 1
                     print(
                         f"random led: {random_led_zen} kleur: {random_color_zen}")
                     client.publish(str(random_led_zen), str(random_color_zen))
@@ -368,7 +373,9 @@ def generate_sequence(sequence_number):
     try:
         leds = [0, 1, 2]
         global sequence
-        sequence = random.sample(leds, sequence_number)
+        for i in range(sequence_number):
+            led = leds[random.randint(0, len(leds)-1)]
+            sequence.append(led)
         return sequence
     except Exception as e:
         print(e)
@@ -423,8 +430,8 @@ def check_sequence(received_sequence):  # Check sequence
         global sequence_number, counter, sequence, haswon, haslost, bussy, total_buttons_pressed
         # Check if not bussy
         if not bussy:
-            total_buttons_pressed += 1
-            print(f"Total buttons pressed: {total_buttons_pressed}")
+            #total_buttons_pressed += 1
+            #print(f"Total buttons pressed: {total_buttons_pressed}")
             # check if the received sequence matches the current sequence
             if int(received_sequence) == sequence[counter]:
                 counter += 1
