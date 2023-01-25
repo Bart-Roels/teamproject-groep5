@@ -1884,10 +1884,51 @@ input:disabled {
     }
 }
 
+/*
+    Components: table
+    ---
+    Table component
+*/
+
+.c-table {
+    width: 100%;
+    padding-bottom: 40px;
+    overflow: hidden;
+    min-width: 100%;
+}
+
+.c-table__header {
+    font-family: 'Lato', sans-serif;
+    background: var(--global-color-alpha);
+}
+
+.dataTables_wrapper .dataTables_filter {
+    display: flex;
+    justify-content: start;
+    padding-bottom: 16px;
+}
+
+.c-table th,
+.c-table td {
+    padding: 12px 15px;
+}
+
+.c-table tbody tr:nth-of-type(even) {
+    background-color: #E9EFFC;
+}
+
+.c-table tbody tr:last-of-type {
+    border-bottom: 2px solid var(--global-color-neutral-xxx-light);
+}
 
 /*------------------------------------*\
 #UTILITIES
 \*------------------------------------*/
+.u-scroll-x {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
 .u-space-around {
     justify-content: space-around;
 }

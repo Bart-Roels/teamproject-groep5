@@ -33,13 +33,41 @@ const listenToNavBtns = () => {
   });
 };
 
+const showData = function (jsonObject) {
+  let tableTest = $('.js-table').DataTable({
+    data: jsonObject,
+    columns: [{ data: 'tijd' }, { data: 'functie' }, { data: 'message' }, { data: 'type' }],
+    language: {
+      search: '_INPUT_',
+      searchPlaceholder: 'Zoeken',
+    },
+    lengthChange: false,
+    paging: 15,
+    ordering: false,
+    info: false,
+  });
+  console.log(jsonObject);
+};
+
+const getLogData = function () {
+  console.log('getData');
+  const url = 'http://127.0.0.1:5000/api/v1/logs';
+  handleData(url, showData);
+};
+
+const askBatteryData = () => {
+  client.publish('bat1');
+  client.publish('bat2');
+  client.publish('bat3');
+  client.publish('bat4');
+};
+
 const init = () => {
   listenToNavBtns();
-  if (document.querySelector('.js-battery-page')) {
-    client.publish('bat1');
-    client.publish('bat2');
-    client.publish('bat3');
-    client.publish('bat4');
+  if (document.querySelector('.js-logging-page')) {
+    getLogData();
+  } else if (document.querySelector('.js-battery-page')) {
+    askBatteryData();
   }
 };
 
