@@ -328,7 +328,7 @@ def handle_games():
                     for i in range(0, 4):
                         client.publish(str(i), "off")
                     random_led_zen = random.randint(0, 3)
-                    random_color_zen = random.randint(0, 3)
+                    random_color_zen = 1
                     print(
                         f"random led: {random_led_zen} kleur: {random_color_zen}")
                     client.publish(str(random_led_zen), str(random_color_zen))
