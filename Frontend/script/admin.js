@@ -19,6 +19,7 @@ client.on('connect', () => {
       batteryElement.classList.toggle('c-battery-level--low', batteryProcent <= 10);
       batteryElement.classList.toggle('c-battery-level--medium', batteryProcent < 25 && batteryProcent > 10);
       batteryElement.style.width = message.toString() + '%';
+      document.querySelectorAll('.c-battery__procent')[index].innerHTML = `${message.toString()}%`
     }
   });
 });
