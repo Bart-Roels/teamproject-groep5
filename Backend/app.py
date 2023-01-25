@@ -368,7 +368,9 @@ def generate_sequence(sequence_number):
     try:
         leds = [0, 1, 2]
         global sequence
-        sequence = random.sample(leds, sequence_number)
+        for i in range(sequence_number):
+            led = leds[random.randint(0, len(leds)-1)]
+            sequence.append(led)
         return sequence
     except Exception as e:
         print(e)
@@ -423,8 +425,8 @@ def check_sequence(received_sequence):  # Check sequence
         global sequence_number, counter, sequence, haswon, haslost, bussy, total_buttons_pressed
         # Check if not bussy
         if not bussy:
-            total_buttons_pressed += 1
-            print(f"Total buttons pressed: {total_buttons_pressed}")
+            #total_buttons_pressed += 1
+            #print(f"Total buttons pressed: {total_buttons_pressed}")
             # check if the received sequence matches the current sequence
             if int(received_sequence) == sequence[counter]:
                 counter += 1
