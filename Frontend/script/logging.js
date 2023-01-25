@@ -1,25 +1,18 @@
 const showData = function (jsonObject) {
+  let tableTest = $('#example').DataTable({
+    "data": jsonObject,
+    "columns": [
+        { "data": "tijd" },
+        { "data": "functie" },
+        { "data": "message" },
+        { "data": "type" }
+    ],
+    "searching": true
+  })
   console.log(jsonObject);
-  // write code to add the data to the data table
-  const table = document.querySelector('table');
-  const tbody = table.querySelector('tbody');
-  for (let i = 0; i < jsonObject.length; i++) {
-    const tr = document.createElement('tr');
-    const tdDate = document.createElement('td');
-    tdDate.textContent = jsonObject[i].tijd;
-    tr.appendChild(tdDate);
-    const tdTime = document.createElement('td');
-    tdTime.textContent = jsonObject[i].functie;
-    tr.appendChild(tdTime);
-    const tdLevel = document.createElement('td');
-    tdLevel.textContent = jsonObject[i].type;
-    tr.appendChild(tdLevel);
-    const tdMessage = document.createElement('td');
-    tdMessage.textContent = jsonObject[i].message;
-    tr.appendChild(tdMessage);
-    tbody.appendChild(tr);
-  }
+  
 };
+
 
 const getData = function () {
   console.log('getData');
