@@ -6,22 +6,22 @@ let timeInSeconds = null;
 const game = {
   bluevsred: {
     name: 'Blue vs Red',
-    description: 'Het rode en het blauwe team strijden tegen elkaar. Het team dat in 30 seconden het meeste LED-lichtjes van zijn kleur uittikt, wint het spel.',
+    description: 'Bij dit spel strijden het blauwe en het rode team tegen elkaar. Het team dat binnen de tijdslimiet de meeste LED-lichtjes van zijn kleur uittikt, wint het spel.',
     icon: '<svg class="c-icon" xmlns="http://www.w3.org/2000/svg" width="74" height="74" viewBox="0 0 74 74"><g transform="translate(-288 -349)"><g transform="translate(288.308 349.308)"><path d="M37,0h0a0,0,0,0,1,0,0V74a0,0,0,0,1,0,0h0A37,37,0,0,1,0,37v0A37,37,0,0,1,37,0Z" transform="translate(-0.308 -0.308)" fill="#f24330"/><path d="M0,0H0A37,37,0,0,1,37,37v0A37,37,0,0,1,0,74H0a0,0,0,0,1,0,0V0A0,0,0,0,1,0,0Z" transform="translate(36.692 -0.308)" fill="#3cb0d9"/></g></g></svg>',
   },
   zengame: {
     name: 'Zen Game',
-    description: 'Probeer de opgelichte LED zo snel mogelijk uit te tikken. De reactie-snelheid waarmee de speler reageert bepaald de score.',
+    description: 'Probeer de opgelichte LED zo snel mogelijk uit te tikken. Hoe sneller je de LED uitklikt, hoe hoger je score zal zijn.',
     icon: '<svg class="c-icon" xmlns="http://www.w3.org/2000/svg" width="74" height="74" viewBox="0 0 74 74"><g transform="translate(-117 -401)"><path d="M37,0A37,37,0,1,1,0,37,37,37,0,0,1,37,0Z" transform="translate(117 401)" fill="#f56331"/><g transform="translate(130 414)"><path d="M24,44.333A18.333,18.333,0,1,0,5.667,26,18.333,18.333,0,0,0,24,44.333Z" fill="none" stroke="#fff" stroke-linejoin="round" stroke-width="3"/><path d="M23.759,15.354V26.362l7.772,7.772" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/><path d="M4,9l7-5" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/><path d="M44,9,37,4" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/></g></g></svg>',
   },
   minesweeper: {
     name: 'Mine Sweeper',
-    description: "Er wordt 1 knop als hint gegeven. Daarna moeten de juiste knoppen gevonden worden. Indien op de foute knop geklikt wordt moet opnieuw begonnen worden. Indien op de juiste knoppen aangeklikt worden, blijven de LED's opgelicht.",
+    description: `Klik op de knoppen om de palen in de juiste volgorde op te lichten. Er zijn 3 moeilijkheidsgraden: met hint, zonder hint, en bij fout opnieuw beginnen.`,
     icon: '<svg class="c-icon" xmlns="http://www.w3.org/2000/svg" width="74" height="74" viewBox="0 0 74 74"><g transform="translate(-104 -463)"><path d="M37,0A37,37,0,1,1,0,37,37,37,0,0,1,37,0Z" transform="translate(104 463)" fill="#f24330"/><g transform="translate(124 480)"><path d="M11.306,43.49l3.4-8.209A17.1,17.1,0,1,1,41.339,21.052a17.007,17.007,0,0,1-7.7,14.229l3.4,8.209Z" transform="translate(-7 -4)" fill="none" stroke="#fff" stroke-linejoin="round" stroke-width="3"/><path d="M20,38v5.976" transform="translate(-6.87 -4.486)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/><path d="M28,38v5.976" transform="translate(-6.791 -4.486)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/><path d="M16.988,22.976A2.988,2.988,0,1,0,14,19.988,2.988,2.988,0,0,0,16.988,22.976Z" transform="translate(-6.909 -4.186)" fill="none" stroke="#fff" stroke-linejoin="round" stroke-width="3"/><path d="M30.988,22.976A2.988,2.988,0,1,0,28,19.988,2.988,2.988,0,0,0,30.988,22.976Z" transform="translate(-6.727 -4.186)" fill="none" stroke="#fff" stroke-linejoin="round" stroke-width="3"/><path d="M31.968,44H24" transform="translate(-6.757 -4.51)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/><path d="M23.968,44H16" transform="translate(-6.871 -4.51)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/></g></g></svg>',
   },
   memorygame: {
     name: 'Memory Game',
-    description: 'Probeer de getoonde sequentie zo lang mogelijk na te doen door de juiste paaltjes aan te klikken. Er zal telkens een extra LED oplichten.',
+    description: 'Probeer de getoonde volgorde zo lang mogelijk na te doen door de juiste paaltjes aan te klikken. Er zal telkens een extra LED oplichten.',
     icon: '<svg class="c-icon" xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 72 72"><g transform="translate(-256 -307)"><g transform="translate(256 307)"><path d="M36,0h0a0,0,0,0,1,0,0V36a0,0,0,0,1,0,0H0a0,0,0,0,1,0,0v0A36,36,0,0,1,36,0Z" fill="#f24330"/><path d="M0,0H0A36,36,0,0,1,36,36v0a0,0,0,0,1,0,0H0a0,0,0,0,1,0,0V0A0,0,0,0,1,0,0Z" transform="translate(36)" fill="#3cb0d9"/><path d="M0,0H36a0,0,0,0,1,0,0V36a0,0,0,0,1,0,0h0A36,36,0,0,1,0,0V0A0,0,0,0,1,0,0Z" transform="translate(0 36)" fill="#e5ea49"/><path d="M0,0H36a0,0,0,0,1,0,0V0A36,36,0,0,1,0,36H0a0,0,0,0,1,0,0V0A0,0,0,0,1,0,0Z" transform="translate(36 36)" fill="#5ed540"/></g></g></svg>',
   },
 };
