@@ -22,10 +22,10 @@ ip = "127.0.0.1"
 port = 1883
 
 # Log path main directory
-log_path = "Backend/Logs/app.log"
+log_path = "/home/bart/teamproject-groep5/Backend/Logs/app.log"
 
 # Database
-db = TinyDB('Backend/Database/db.json')
+db = TinyDB('/home/bart/teamproject-groep5/Backend/Database/db.json')
 
 
 # Logging setup
