@@ -40,6 +40,7 @@
     --global-color-secondary: #F56331;
     --global-color-third: #E5EA49;
     --global-color-fourth: #5ED540;
+    --global-color-fifth: #F24330;
 
     --global-color-neutral-xxxx-light: #FFFFFF;
     --global-color-neutral-xxx-light: #F5F9FA;
@@ -55,9 +56,9 @@
     --global-color-error: #FF3333;
     --global-color-error-transparent: #FF333380;
 
-    --global-color-firstPlace: #F1C43BCC;
-    --global-color-secondPlace: #BFCDD9CC;
-    --global-color-thirdPlace: #D98841CC;
+    --global-color-firstPlace: #F1C43B80;
+    --global-color-secondPlace: #BFCDD954;
+    --global-color-thirdPlace: #D9884180;
 
     /* global page settings */
     --global-page-color: var(--global-color-neutral-xxxx-dark);
@@ -1136,17 +1137,17 @@ input:disabled {
 }
 
 .c-custom-select__input {
-    padding: 8px 16px;
+    padding: 12px 16px;
     border: 2px solid var(--global-color-neutral-xx-light);
     border-radius: var(--global-borderRadius-md);
 }
 
 .c-custom-select__symbol {
-    width: 24px;
+    c-battery-level width: 24px;
     height: 24px;
     position: absolute;
-    top: 11px;
-    right: 12px;
+    top: 14px;
+    right: 16px;
     pointer-events: none;
 }
 
@@ -1390,7 +1391,7 @@ input:disabled {
 }
 
 .c-live--red {
-    background-color: var(--global-color-error);
+    background-color: var(--global-color-fifth);
     height: 50vh;
 }
 
@@ -1877,6 +1878,14 @@ input:disabled {
     background-color: var(--global-color-secondary);
 }
 
+.c-battery__procent {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-weight: var(--global-fontWeight-bold);
+}
 
 @media (min-width: 576px) {
     .c-batterys {
@@ -1906,6 +1915,22 @@ input:disabled {
     display: flex;
     justify-content: start;
     padding-bottom: 16px;
+}
+
+.dataTables_filter input {
+    padding: 12px 16px !important;
+    border: 2px solid var(--global-color-neutral-xx-light) !important;
+    border-radius: var(--global-borderRadius-md) !important;
+    font-size: 16px !important;
+    font-family: 'Lato', sans-serif !important;
+    color: var(--global-input-color) !important;
+    outline: none;
+}
+
+.dataTables_filter input:focus,
+.dataTables_filter input:hover {
+    border: 2px solid var(--global-color-alpha) !important;
+    box-shadow: var(--global-input-focus-boxShadowSpread) var(--global-input-focus-boxShadowColor) !important;
 }
 
 .c-table th,
