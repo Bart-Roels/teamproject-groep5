@@ -281,11 +281,10 @@ const showTop10 = (data) => {
           score = data[i].scoreRed;
         } else if (data[i].scoreRed > data[i].scoreBlue) {
           name = data[i].nameRed;
-          score = data[i].scoreRed;
         } else {
           name = data[i].nameBlue;
-          score = data[i].scoreBlue;
         }
+        score = data[i].score;
       }
 
       if (i === 0) {

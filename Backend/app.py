@@ -693,12 +693,21 @@ def get_score(game, time, dificulty):
 
     # Sort scores based on score
     if(game == 'bluevsred'):
-        data_scores.sort(key=lambda x: x['scoreRed'], reverse=True)
-        data_scores.sort(key=lambda x: x['scoreBlue'], reverse=True)
-    else:
-        data_scores.sort(key=lambda x: x['score'], reverse=True)
+        
+        # set to int and Check if red or blue has the highest score
+        for i in range(len(data_scores)):
+            data_scores[i]['scoreRed'] = int(data_scores[i]['scoreRed'])
+            data_scores[i]['scoreBlue'] = int(data_scores[i]['scoreBlue'])
+            if(data_scores[i]['scoreRed'] > data_scores[i]['scoreBlue']):
+                data_scores[i]['score'] = data_scores[i]['scoreRed']
+            else:
+                data_scores[i]['score'] = data_scores[i]['scoreBlue']
+    # Sort based on score
+    data_scores.sort(key=lambda x: x['score'], reverse=True)
     # Get top 10 scores
     data_scores = data_scores[:10]
+    # Sort based on score from high to low
+    data_scores.sort(key=lambda x: x['score'], reverse=True)
     # Return data
     return jsonify(data_scores)
 
