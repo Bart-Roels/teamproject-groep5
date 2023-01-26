@@ -3,9 +3,6 @@ let stop = false;
 let timeLeft = null;
 let timeInSeconds = null;
 
-const test = `Probeer de palen in de juiste volgorde op te lichten door op de knoppen te klikken. Bij dit spel zijn er 3 moeilijkheidsgraden.`;
-//
-
 const game = {
   bluevsred: {
     name: 'Blue vs Red',

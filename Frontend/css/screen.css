@@ -613,7 +613,8 @@ input:disabled {
     gap: 8px;
     width: 100%;
     justify-content: center;
-    margin-left: -32px;
+    margin-right: 32px;
+    
 }
 
 .c-header__title {
