@@ -1,25 +1,26 @@
 'use strict';
+const ip = '192.168.220.1';
 
-const client = mqtt.connect('ws://localhost:9001');
+const client = mqtt.connect(`ws://${ip}:9001`);
 client.on('connect', () => {
   console.log('Connected to the MQTT WebSocket');
 
+  client.subscribe('bat0');
   client.subscribe('bat1');
   client.subscribe('bat2');
   client.subscribe('bat3');
-  client.subscribe('bat4');
 
   client.on('message', (topic, message) => {
     console.log('Message received: ', topic, message.toString());
     const batteryProcent = parseFloat(message.toString());
-    const topics = ['bat1', 'bat2', 'bat3', 'bat4'];
+    const topics = ['bat0', 'bat1', 'bat2', 'bat3'];
     if (topics.includes(topic)) {
       const index = topics.indexOf(topic);
       const batteryElement = document.querySelectorAll('.c-battery-level')[index];
       batteryElement.classList.toggle('c-battery-level--low', batteryProcent <= 10);
       batteryElement.classList.toggle('c-battery-level--medium', batteryProcent < 25 && batteryProcent > 10);
       batteryElement.style.width = message.toString() + '%';
-      document.querySelectorAll('.c-battery__procent')[index].innerHTML = `${message.toString()}%`
+      document.querySelectorAll('.c-battery__procent')[index].innerHTML = `${message.toString()}%`;
     }
   });
 });
@@ -52,7 +53,7 @@ const showData = function (jsonObject) {
 
 const getLogData = function () {
   console.log('getData');
-  const url = 'http://127.0.0.1:5000/api/v1/logs';
+  const url = `http://${ip}:5000/api/v1/logs`;
   handleData(url, showData);
 };
 

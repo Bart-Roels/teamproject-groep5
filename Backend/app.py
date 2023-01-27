@@ -754,4 +754,4 @@ def start_threads():
 if __name__ == '__main__':
     print("Starting server")
     start_threads()
-    app.run(debug=False)
+    app.run(host='192.168.220.1',debug=False)

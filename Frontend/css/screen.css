@@ -17,7 +17,7 @@
 @font-face {
     font-family: 'Lato';
     font-weight: 600;
-    src: url('../fonts/Lato-SemiBold.ttf') format('truetype');
+    src: url('../fonts/Lato-Semibold.ttf') format('truetype');
 }
 
 @font-face {
@@ -614,7 +614,7 @@ input:disabled {
     width: 100%;
     justify-content: center;
     margin-right: 32px;
-    
+
 }
 
 .c-header__title {

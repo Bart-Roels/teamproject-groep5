@@ -2,7 +2,7 @@
 let stop = false;
 let timeLeft = null;
 let timeInSeconds = null;
-
+const ip = '192.168.220.1';
 const game = {
   bluevsred: {
     name: 'Blue vs Red',
@@ -32,7 +32,7 @@ const dropdownRanking = {
     '<div class="c-custom-select u-mt-md"><select class="c-input c-custom-select__input" name="select2" id="select2"><option value="makkelijk">makkelijk</option><option value="normaal">normaal</option><option value="moeilijk">moeilijk</option></select><svg class="c-custom-select__symbol" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M36 18L24 30L12 18" stroke="#333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" /></svg></div>',
 };
 
-const client = mqtt.connect('ws://localhost:9001');
+const client = mqtt.connect(`ws://${ip}:9001`);
 client.on('connect', () => {
   console.log('Connected to the MQTT WebSocket');
 
@@ -62,6 +62,11 @@ client.on('connect', () => {
     }
   });
 });
+
+client.on('close', () => {
+  console.log('Disconnected from the MQTT WebSocket');
+});
+
 
 const showExtraInfo = () => {
   let gameData = JSON.parse(localStorage.getItem('gameData'));
@@ -145,7 +150,7 @@ const listenToDropdown = () => {
   const dropdowns = document.querySelectorAll('.c-custom-select__input');
   dropdowns.forEach((dropdown) => {
     dropdown.addEventListener('change', () => {
-      console.log('change');
+      // console.log('change');
       const gameName = document.querySelector('.js-game-btn:checked').id;
       let time, difficulty;
       if (gameName === 'minesweeper') {
@@ -206,7 +211,7 @@ const listenToControls = () => {
       }
       localStorage.setItem('gameData', JSON.stringify(gameData));
       // console.log(gameData);
-      console.log('save score');
+      // console.log('save score');
       sendStopGame();
       saveScore();
 
@@ -247,21 +252,21 @@ const listenToControls = () => {
 
 const saveScore = () => {
   let gameData = JSON.parse(localStorage.getItem('gameData'));
-  const url = `http://127.0.0.1:5000/api/v1/score`;
-  console.log('show end page');
+  const url = `http://${ip}:5000/api/v1/score`;
+  // console.log('show end page');
   const body = JSON.stringify(gameData);
   handleData(url, goToEndScore, null, 'POST', body);
 };
 
 const goToEndScore = () => {
-  console.log('redirect');
+  // console.log('redirect');
   window.location.href = 'endscore.html';
   window.location.replace('endscore.html');
 };
 
 const getTop10 = (gameName, time, difficulty) => {
-  const url = `http://127.0.0.1:5000/api/v1/score/${gameName}/${time}/${difficulty}`;
-  console.log(url);
+  const url = `http://${ip}:5000/api/v1/score/${gameName}/${time}/${difficulty}`;
+  // console.log(url);
   handleData(url, showTop10, null, 'GET');
 };
 
@@ -369,9 +374,9 @@ const showCountDown3sec = () => {
     localStorage.setItem('pause', false);
     localStorage.setItem('pauseTime', 0);
     localStorage.setItem('timeLeft', null);
-    console.log(localStorage.getItem('startTimeGame'));
+    // console.log(localStorage.getItem('startTimeGame'));
     sendPlayGame();
-    console.log('redirect live-scorebord.html');
+    // console.log('redirect live-scorebord.html');
     window.location.href = 'live-scorebord.html';
   }, 3600);
 };
@@ -401,7 +406,7 @@ const listenToFormSubmit = (arrField, arrInput, arrError) => {
 
     // check if all fields are filled in
     if (!arrFieldStatus.includes(false)) {
-      console.log('form is valid');
+      // console.log('form is valid');
       let name, nameRed, nameBlue, selectedDropdown, selectedDifficulty;
       if (localStorage.getItem('selectedGameForm') == 'bluevsred') {
         nameRed = arrInput[0].value;
@@ -425,7 +430,7 @@ const listenToFormSubmit = (arrField, arrInput, arrError) => {
 
       // put object in localstorage
       localStorage.setItem('gameData', JSON.stringify(gameData));
-      console.log(localStorage.getItem('gameData'));
+      // console.log(localStorage.getItem('gameData'));
 
       // count down timer 3 2 1
       showCountDown3sec();
@@ -483,7 +488,7 @@ const isEmpty = function (fieldValue) {
 const showCountdown = () => {
   const gameData = JSON.parse(localStorage.getItem('gameData'));
   const time = gameData.time;
-  console.log(gameData);
+  // console.log(gameData);
   setTimeout(() => {
     document.querySelector('.js-start-text').innerHTML = '';
   }, 1000);
@@ -491,7 +496,7 @@ const showCountdown = () => {
   timeInSeconds = time * 60 - timeLeft;
   const counter = setInterval(() => {
     if (localStorage.getItem('pause') == 'false') {
-      console.log(timeInSeconds);
+      // console.log(timeInSeconds);
       const minutes = Math.floor(timeInSeconds / 60);
       const seconds = timeInSeconds % 60;
       // show time in html
@@ -510,7 +515,7 @@ const showCountdown = () => {
               gameData.score = document.querySelector('.js-score').innerHTML;
             }
             localStorage.setItem('gameData', JSON.stringify(gameData));
-            console.log('save score');
+            // console.log('save score');
             sendStopGame();
             saveScore();
           }, 2000);
@@ -534,7 +539,7 @@ const showCountdownStart = () => {
   } else {
     const gameData = JSON.parse(localStorage.getItem('gameData'));
     time = gameData.time;
-    console.log(gameData.time);
+    // console.log(gameData.time);
     // if refresh page, get time from localstorage and calculate time left
     timeLeft = Date.now() - localStorage.getItem('startTimeGame');
     timeLeft = Math.floor(timeLeft / 1000);
@@ -614,8 +619,8 @@ const showLiveScoreBoard = () => {
 
 const showScore = () => {
   let score = 0;
-  console.log('showScore');
-  console.log(localStorage.getItem('gameData'));
+  // console.log('showScore');
+  // console.log(localStorage.getItem('gameData'));
   const extraInfo = document.querySelector('.js-infos');
   const gameData = JSON.parse(localStorage.getItem('gameData'));
   const cardElement = document.querySelector('.js-card');
@@ -626,7 +631,7 @@ const showScore = () => {
   const svgZenGame = `<svg class="c-endscore__icon" xmlns="http://www.w3.org/2000/svg" width="74" height="74" viewBox="0 0 74 74"><g transform="translate(-117 -401)"><path d="M37,0A37,37,0,1,1,0,37,37,37,0,0,1,37,0Z" transform="translate(117 401)" fill="#f56331"/><g transform="translate(130 414)"><path d="M24,44.333A18.333,18.333,0,1,0,5.667,26,18.333,18.333,0,0,0,24,44.333Z" fill="none" stroke="#fff" stroke-linejoin="round" stroke-width="3"/><path d="M23.759,15.354V26.362l7.772,7.772" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/><path d="M4,9l7-5" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/><path d="M44,9,37,4" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/></g></g></svg>`;
   if (gameData.game == 'bluevsred') {
     let winner = 'Gelijkspel!';
-    console.log(gameData);
+    // console.log(gameData);
     score = Math.max(gameData.scoreBlue, gameData.scoreRed);
     if (gameData.scoreBlue != gameData.scoreRed) {
       if (score == gameData.scoreBlue) {
@@ -739,7 +744,7 @@ const setToggleAndFilter = (game, time, difficulty) => {
 };
 
 const init = () => {
-  console.log('DOM loaded');
+  console.log('app started');
   listener();
   showSplashScreen();
 
