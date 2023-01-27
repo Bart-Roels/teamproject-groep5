@@ -67,6 +67,7 @@ client.on('close', () => {
   console.log('Disconnected from the MQTT WebSocket');
 });
 
+
 const showExtraInfo = () => {
   let gameData = JSON.parse(localStorage.getItem('gameData'));
   const extraInfo = document.querySelector('.js-infos');
