@@ -10,7 +10,7 @@ bool prevstate;
 //merkers
 bool a = false;
 float o;
-  
+
 //library
 #include "FastLED.h"
 #include <WiFi.h>
@@ -176,6 +176,9 @@ void reconnect() {
 
   // Loop until we're reconnected
   while (!client.connected()) {
+    if (WiFi.status() != WL_CONNECTED) {
+      setup_wifi();
+    }
     mqqtconnecting();
     Serial.print("Attempting MQTT connection...");
     // Attempt to connect
@@ -209,14 +212,16 @@ void loop() {
   if (WiFi.status() != WL_CONNECTED) {
     setup_wifi();
   }
-  if (!client.connected()) {
-    reconnect();
-  }
-  if (client.connected()) {
-    client.loop();
-    btnpress();
-    if (a == true) {
-      rainbowCycle(1);
+  if (WiFi.status() == WL_CONNECTED) {
+    if (!client.connected()) {
+      reconnect();
+    }
+    if (client.connected()) {
+      client.loop();
+      btnpress();
+      if (a == true) {
+        rainbowCycle(1);
+      }
     }
   }
 }
@@ -238,7 +243,7 @@ void btnpress() {
 void measure_bat() {
   float reading = analogRead(bat);
   float voltage = ((reading / 4095.0) * 3.3) * 2;
-  float percentage = (4095 - voltage)/4095*(100);
+  float percentage = (4095 - voltage) / 4095 * (100);
   publishVoltage(percentage);
 }
 
