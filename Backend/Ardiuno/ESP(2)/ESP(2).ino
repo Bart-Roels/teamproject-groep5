@@ -1,6 +1,7 @@
 //pinnen
 const int ledaantal = 12;
 int btn1Pin = 18;
+float bat = 34;
 
 //states
 bool btn1State;
@@ -8,7 +9,8 @@ bool prevstate;
 
 //merkers
 bool a = false;
-
+float o;
+  
 //library
 #include "FastLED.h"
 #include <WiFi.h>
@@ -107,7 +109,7 @@ void callback(char* topic, byte* message, unsigned int length) {
         leds[i] = kleuren[3];
       }
       FastLED.show();
-      delay(300);
+      delay(100);
       Serial.println("On");
     }
     if (messageTemp == "0") {
@@ -116,7 +118,7 @@ void callback(char* topic, byte* message, unsigned int length) {
         leds[i] = kleuren[0];
       }
       FastLED.show();
-      delay(300);
+      delay(100);
       Serial.println("0");
     }
     if (messageTemp == "1") {
@@ -125,7 +127,7 @@ void callback(char* topic, byte* message, unsigned int length) {
         leds[i] = kleuren[1];
       }
       FastLED.show();
-      delay(300);
+      delay(100);
       Serial.println("On");
     }
     if (messageTemp == "2") {
@@ -134,7 +136,7 @@ void callback(char* topic, byte* message, unsigned int length) {
         leds[i] = kleuren[2];
       }
       FastLED.show();
-      delay(300);
+      delay(100);
       Serial.println("On");
     }
     if (messageTemp == "3") {
@@ -143,7 +145,7 @@ void callback(char* topic, byte* message, unsigned int length) {
         leds[i] = kleuren[3];
       }
       FastLED.show();
-      delay(300);
+      delay(100);
       Serial.println("on");
     }
     if (messageTemp == "RGB") {
@@ -153,14 +155,17 @@ void callback(char* topic, byte* message, unsigned int length) {
       // run();
     }
     if (messageTemp == "fade") {
-      fadeAnimation(random(0,255),random(0,255) , random(0,255));  // Orange
+      fadeAnimation(random(0, 255), random(0, 255), random(0, 255));  // Orange
       client.publish("3", "fade");
+    }
+    if (messageTemp == "bat2") {
+      measure_bat();
     } else if (messageTemp == "off") {
       for (int i = 0; i < ledaantal; i++) {
         leds[i] = kleuren[4];
       }
       FastLED.show();
-      delay(300);
+      delay(100);
       a = false;
       Serial.println("off");
     }
@@ -224,25 +229,31 @@ void btnpress() {
       Serial.println("Button is pressed");
       client.publish("button", "2");
       //        client.publish("ledstate" , "Is Off");
-      delay(150);
+      delay(300);
     }
   }
   prevstate = btn1State;
 }
 
+void measure_bat() {
+  float reading = analogRead(bat);
+  float voltage = ((reading / 4095.0) * 3.3) * 2;
+  float percentage = (4095 - voltage)/4095*(100);
+  publishVoltage(percentage);
+}
 
 void connectblink() {
   for (int i = 0; i < ledaantal; i++) {
     leds[i] = kleuren[0];
   }
   FastLED.show();
-  delay(300);
+  delay(100);
   delay(100);
   for (int i = 0; i < ledaantal; i++) {
     leds[i] = kleuren[4];
   }
   FastLED.show();
-  delay(300);
+  delay(100);
 }
 void mqqtconnecting() {
   //  leds[0] = CRGB::Yellow; FastLED.show(); delay(300);
@@ -250,25 +261,25 @@ void mqqtconnecting() {
     leds[i] = kleuren[1];
   }
   FastLED.show();
-  delay(300);
+  delay(100);
   delay(100);
   for (int i = 0; i < ledaantal; i++) {
     leds[i] = kleuren[4];
   }
   FastLED.show();
-  delay(300);
+  delay(100);
   delay(100);
   for (int i = 0; i < ledaantal; i++) {
     leds[i] = kleuren[1];
   }
   FastLED.show();
-  delay(300);
+  delay(100);
   delay(100);
   for (int i = 0; i < ledaantal; i++) {
     leds[i] = kleuren[4];
   }
   FastLED.show();
-  delay(300);
+  delay(100);
   delay(100);
 }
 
@@ -340,4 +351,9 @@ void fadeAnimation(int red, int green, int blue) {
     FastLED.show();
     delay(2);
   }
+}
+void publishVoltage(float voltage) {
+  String message = String(voltage);
+  client.publish("bat2", message.c_str());
+  // Serial.println(message);
 }
