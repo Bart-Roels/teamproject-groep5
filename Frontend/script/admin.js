@@ -1,6 +1,7 @@
 'use strict';
+const ip = '192.168.220.1';
 
-const client = mqtt.connect('ws://localhost:9001');
+const client = mqtt.connect(`ws://${ip}:9001`);
 client.on('connect', () => {
   console.log('Connected to the MQTT WebSocket');
 
@@ -52,7 +53,7 @@ const showData = function (jsonObject) {
 
 const getLogData = function () {
   console.log('getData');
-  const url = 'http://127.0.0.1:5000/api/v1/logs';
+  const url = `http://${ip}:5000/api/v1/logs`;
   handleData(url, showData);
 };
 

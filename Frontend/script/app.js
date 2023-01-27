@@ -2,7 +2,7 @@
 let stop = false;
 let timeLeft = null;
 let timeInSeconds = null;
-
+const ip = '192.168.220.1';
 const game = {
   bluevsred: {
     name: 'Blue vs Red',
@@ -32,7 +32,7 @@ const dropdownRanking = {
     '<div class="c-custom-select u-mt-md"><select class="c-input c-custom-select__input" name="select2" id="select2"><option value="makkelijk">makkelijk</option><option value="normaal">normaal</option><option value="moeilijk">moeilijk</option></select><svg class="c-custom-select__symbol" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M36 18L24 30L12 18" stroke="#333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" /></svg></div>',
 };
 
-const client = mqtt.connect('ws://localhost:9001');
+const client = mqtt.connect(`ws://${ip}:9001`);
 client.on('connect', () => {
   console.log('Connected to the MQTT WebSocket');
 
@@ -252,7 +252,7 @@ const listenToControls = () => {
 
 const saveScore = () => {
   let gameData = JSON.parse(localStorage.getItem('gameData'));
-  const url = `http://127.0.0.1:5000/api/v1/score`;
+  const url = `http://${ip}:5000/api/v1/score`;
   // console.log('show end page');
   const body = JSON.stringify(gameData);
   handleData(url, goToEndScore, null, 'POST', body);
@@ -265,7 +265,7 @@ const goToEndScore = () => {
 };
 
 const getTop10 = (gameName, time, difficulty) => {
-  const url = `http://127.0.0.1:5000/api/v1/score/${gameName}/${time}/${difficulty}`;
+  const url = `http://${ip}:5000/api/v1/score/${gameName}/${time}/${difficulty}`;
   // console.log(url);
   handleData(url, showTop10, null, 'GET');
 };
