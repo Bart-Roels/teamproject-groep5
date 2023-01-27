@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home | Interactieve paaltjes</title>
+    <meta name="description" content="Speel onze interactieve paaltjes" />
+
+    <link rel="icon" href="img/logos/favicon.svg" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+    <link rel="manifest" href="manifest.json" />
+
+    <link rel="stylesheet" href="css/normalize.css" />
+    <link rel="stylesheet" href="css/screen.css" />
+
+    <script src="vendor/mqtt.js"></script>
+    <script src="script/admin.js"></script>
+  </head>
+  <body class="js-battery-page">
+    <main>
+      <!-- header -->
+      <header class="o-row u-p-clear">
+        <div class="o-container">
+          <div class="c-header">
+            <h1 class="c-header__title">Batterij</h1>
+          </div>
+        </div>
+      </header>
+      <!-- batterijen -->
+      <section class="o-row">
+        <div class="o-container">
+          <div class="c-batterys">
+            <div class="c-battery__item">
+              <h2 class="c-battery__title">Paal 1</h2>
+              <div class="c-battery">
+                <div class="c-battery-level" style="width: 99%"></div>
+                <p class="c-battery__procent">99%</p>
+              </div>
+            </div>
+            <div class="c-battery__item">
+              <h2 class="c-battery__title">Paal 2</h2>
+              <div class="c-battery">
+                <div class="c-battery-level" style="width: 34%"></div>
+                <p class="c-battery__procent">34%</p>
+              </div>
+            </div>
+            <div class="c-battery__item">
+              <h2 class="c-battery__title">Paal 3</h2>
+              <div class="c-battery">
+                <div class="c-battery-level c-battery-level--medium" style="width: 20%"></div>
+                <p class="c-battery__procent">20%</p>
+              </div>
+            </div>
+            <div class="c-battery__item">
+              <h2 class="c-battery__title">Paal 4</h2>
+              <div class="c-battery">
+                <div class="c-battery-level c-battery-level--low" style="width: 3%"></div>
+                <p class="c-battery__procent">3%</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- navigation bar -->
+      <section class="o-row o-row-tabbar">
+        <div class="o-container">
+          <nav class="c-tabbar">
+            <ul class="o-list c-tabbar__items u-space-around">
+              <li class="c-tabbar__item">
+                <button class="c-tabbar__btn o-button-reset is-active js-tabs" data-page="battery">
+                  <div class="c-tabbar__symbol">
+                    <svg class="c-tabbar__icon" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M38 14H6C4.89543 14 4 14.8954 4 16V32C4 33.1046 4.89543 34 6 34H38C39.1046 34 40 33.1046 40 32V16C40 14.8954 39.1046 14 38 14Z"
+                        fill="none"
+                        stroke="#333"
+                        stroke-width="3"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path d="M42 20H44C45.1046 20 46 20.8954 46 22V26C46 27.1046 45.1046 28 44 28H42V20Z" fill="var(--global-color-neutral-xxx-light)" />
+                      <path d="M13 21V27" stroke="#333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                      <path d="M19 21V27" stroke="#333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </div>
+                </button>
+                <span class="c-tabbar__text">Batterij</span>
+              </li>
+              <li class="c-tabbar__item">
+                <button class="c-tabbar__btn o-button-reset js-tabs" data-page="logging">
+                  <div class="c-tabbar__symbol">
+                    <svg class="c-tabbar__icon" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M40 23V14L31 4H10C8.89543 4 8 4.89543 8 6V42C8 43.1046 8.89543 44 10 44H22" stroke="#333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                      <path d="M29 30L41 42" stroke="#333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                      <path d="M41 30L29 42" stroke="#333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                      <path d="M30 4V14H40" stroke="#333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </div>
+                </button>
+                <!-- <span class="c-tabbar__text">Logboek</span> -->
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

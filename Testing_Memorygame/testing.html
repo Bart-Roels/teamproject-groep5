@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="testing.css" />
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+    <script src="testing.js"></script>
+  </head>
+  <body>
+    <h1 id="memorypoints">0</h1>
+    <div class="container">
+      <div class="led-container">
+        <div class="led" id="led-1"></div>
+        <div class="led" id="led-2"></div>
+        <div class="led" id="led-3"></div>
+        <div class="led" id="led-4"></div>
+      </div>
+      <div class="button-container">
+        <button class="js-button-led" data-led-id="0">Red</button>
+        <button class="js-button-led" data-led-id="1">Yellow</button>
+        <button class="js-button-led" data-led-id="2">Green</button>
+        <button class="js-button-led" data-led-id="3">Blue</button>
+      </div>
+      <div class="button-container">
+        <button class="js-button-game" data-game-id="memorygame">memory</button>
+        <button class="js-button-game" data-game-id="bluevsred">redblue</button>
+        <button class="js-button-game" data-game-id="zengame">zen</button>
+        <button class="js-button-game" data-game-id="minesweeper">minesweepr</button>
+      </div>
+      <div class="button-container button-container-test">
+        <button class="js-button-action" data-action-id="stop">stop</button>
+        <button class="js-button-action" data-action-id="pauze">pauze</button>
+        <button class="js-button-action" data-action-id="unpauze">unpauze</button>
+      </div>
+    </div>
+  </body>
+</html>
