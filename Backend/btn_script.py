@@ -12,16 +12,18 @@ def setup():
     GPIO.add_event_detect(power,GPIO.FALLING,demo_callback,bouncetime=2000)
 
 def demo_callback(pin):
-    global teller
-    status = call(["systemctl", "is-active", "--quiet", "mijnproject"])
-    # print(status)
-    if status != 0:
-        call("sudo systemctl start mijnproject.service", shell=True)
-        print('ON')
-    else:
-        sleep(1)
-        call("sudo systemctl stop mijnproject.service", shell=True)
-        print('OFF')
+    # global teller
+    # status = call(["systemctl", "is-active", "--quiet", "mijnproject"])
+    # # print(status)
+    # if status != 0:
+    #     pass
+    #     # on
+    # else:
+    #     # off
+    print('SUDO REBOOT')
+    sleep(1)
+    call("sudo reboot", shell=True)
+
 
 
 try:
@@ -37,20 +39,10 @@ try:
             if GPIO.input(power) == 1:
                 status = False
             if status == True:
-                if(time()-start_time)>10:
+                if(time()-start_time)>6:
                     print('SUDO POWEROFF')
-                    if call(["systemctl", "is-active", "--quiet", "mijnproject"]) == 0:
-                        call("sudo systemctl stop mijnproject.service", shell=True)
-                    print("**** DB --> Pi is shutting down ****")
-                    sleep(2)
+                    sleep(1)
                     call("sudo poweroff", shell=True)
-                if(time()-start_time)>3:
-                    print('SUDO REBOOT')
-                    if call(["systemctl", "is-active", "--quiet", "mijnproject"]) == 0:
-                        call("sudo systemctl stop mijnproject.service", shell=True)
-                    print("**** DB --> Pi is rebooting ****")
-                    sleep(2)
-                    call("sudo reboot", shell=True)
         except Exception as e:
             print(e)
 except Exception as e:
