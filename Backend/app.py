@@ -724,13 +724,7 @@ def get_logs():
         data = [{'tijd': line[0], 'functie': line[1], 'type': line[2], 'message':line[3]} for line in data]
 
     # Return data
-    return jsonify(data)
-
-
-
-
-
-    
+    return jsonify(data)   
 
 #endregion
 
