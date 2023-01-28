@@ -1331,11 +1331,28 @@ input:disabled {
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-direction: column;
+}
+
+.c-countdown__text {
+    font-size: 32px;
+    font-weight: var(--global-fontWeight-semibold);
+    color: var(--global-color-neutral-xxx-dark);
+    text-align: center;
+    margin: 0;
 }
 
 @media (min-width: 768px) {
     .c-countdown__animation {
         transform: scale(1.5);
+    }
+
+    .c-countdown.is-visible {
+        gap: 40px;
+    }
+
+    .c-countdown__text {
+        font-size: 40px;
     }
 }
 

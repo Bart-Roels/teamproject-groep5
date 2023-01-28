@@ -12,14 +12,6 @@ def setup():
     GPIO.add_event_detect(power,GPIO.FALLING,demo_callback,bouncetime=2000)
 
 def demo_callback(pin):
-    # global teller
-    # status = call(["systemctl", "is-active", "--quiet", "mijnproject"])
-    # # print(status)
-    # if status != 0:
-    #     pass
-    #     # on
-    # else:
-    #     # off
     print('SUDO REBOOT')
     sleep(1)
     call("sudo reboot", shell=True)

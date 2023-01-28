@@ -12,7 +12,8 @@ client.on('connect', () => {
 
   client.on('message', (topic, message) => {
     console.log('Message received: ', topic, message.toString());
-    const batteryProcent = parseFloat(message.toString());
+    const batteryProcent = Math.round(parseFloat(message.toString()));
+    console.log('battery: ', batteryProcent);
     const topics = ['bat0', 'bat1', 'bat2', 'bat3'];
     if (topics.includes(topic)) {
       const index = topics.indexOf(topic);
@@ -20,7 +21,7 @@ client.on('connect', () => {
       batteryElement.classList.toggle('c-battery-level--low', batteryProcent <= 10);
       batteryElement.classList.toggle('c-battery-level--medium', batteryProcent < 25 && batteryProcent > 10);
       batteryElement.style.width = message.toString() + '%';
-      document.querySelectorAll('.c-battery__procent')[index].innerHTML = `${message.toString()}%`;
+      document.querySelectorAll('.c-battery__procent')[index].innerHTML = `${batteryProcent}%`;
     }
   });
 });
@@ -58,10 +59,27 @@ const getLogData = function () {
 };
 
 const askBatteryData = () => {
-  client.publish('bat1');
-  client.publish('bat2');
-  client.publish('bat3');
-  client.publish('bat4');
+  client.publish('0', 'bat0');
+  client.publish('1', 'bat1');
+  client.publish('2', 'bat2');
+  client.publish('3', 'bat3');
+};
+
+const setBattery = () => {
+  const batteryElements = document.querySelectorAll('.c-battery-level');
+  const batteryTexts = document.querySelectorAll('.c-battery__procent');
+  batteryElements.forEach((batteryElement, index) => {
+    batteryElement.style.width = '0%';
+    batteryTexts[index].innerHTML = '?';
+  });
+};
+
+const checkBattery = () => {
+  setInterval(function () {
+    console.log('Show battery');
+    setBattery();
+    askBatteryData();
+  }, 5000);
 };
 
 const init = () => {
@@ -69,7 +87,7 @@ const init = () => {
   if (document.querySelector('.js-logging-page')) {
     getLogData();
   } else if (document.querySelector('.js-battery-page')) {
-    askBatteryData();
+    checkBattery();
   }
 };
 
