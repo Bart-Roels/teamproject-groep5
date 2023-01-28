@@ -3,6 +3,8 @@ let stop = false;
 let timeLeft = null;
 let timeInSeconds = null;
 const ip = '192.168.220.1';
+// const ip = '127.0.0.1';
+
 const game = {
   bluevsred: {
     name: 'Blue vs Red',
@@ -66,7 +68,6 @@ client.on('connect', () => {
 client.on('close', () => {
   console.log('Disconnected from the MQTT WebSocket');
 });
-
 
 const showExtraInfo = () => {
   let gameData = JSON.parse(localStorage.getItem('gameData'));
@@ -432,11 +433,39 @@ const listenToFormSubmit = (arrField, arrInput, arrError) => {
       localStorage.setItem('gameData', JSON.stringify(gameData));
       // console.log(localStorage.getItem('gameData'));
 
-      // count down timer 3 2 1
-      showCountDown3sec();
+      // check if game is already playing
+      getGameStatus();
     }
     arrFieldStatus = [];
   });
+};
+
+// check if game is already playing
+const getGameStatus = () => {
+  const url = `http://${ip}:5000/api/v1/game`;
+  handleData(url, showGameStatus);
+};
+
+// show game status or start game
+const showGameStatus = (json) => {
+  console.log(json);
+  if (json.game == null) {
+    console.log('no one is playing');
+    // count down timer 3 2 1
+    showCountDown3sec();
+  } else {
+    console.log('someone is playing');
+
+    const countDown = document.querySelector('.c-countdown');
+    countDown.classList.add('is-visible');
+    countDown.innerHTML = `<lottie-player class="c-countdown__animation" src="img/waiting.json" background="transparent"  speed="1"  style="width: 300px; height: 300px;" autoplay loop></lottie-player>`;
+    countDown.innerHTML += `<p class="c-countdown__text">Er is al een spel bezig.</p>`;
+
+    setTimeout(() => {
+      countDown.innerHTML = '';
+      countDown.classList.remove('is-visible');
+    }, 5000);
+  }
 };
 
 const showForm = () => {
