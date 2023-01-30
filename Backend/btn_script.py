@@ -1,40 +1,54 @@
+import time
 import RPi.GPIO as GPIO
-from time import sleep,time
-from subprocess import call
 
-# PINf
-power = 6
+# Set the GPIO numbering mode
+GPIO.setmode(GPIO.BCM)
 
-def setup():
-    GPIO.setmode(GPIO.BCM) 
-    GPIO.setwarnings(False)
-    GPIO.setup(power, GPIO.IN, GPIO.PUD_UP)
-    GPIO.add_event_detect(power,GPIO.FALLING,demo_callback,bouncetime=2000)
+# Start time
+start_time = None 
+end_time = None
 
-def demo_callback(pin):
-    print('SUDO REBOOT')
-    sleep(1)
-    call("sudo reboot", shell=True)
+# Set the input pin for the button
+button_pin = 6
+GPIO.setup(button_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
+# Define the functions to be called when the button is pressed or released
+def button_pressed(channel):
+    global start_time
+    print("Button Pressed")
+    # Note start time
+    start_time = time.time()
+
+    GPIO.remove_event_detect(button_pin)
+    GPIO.add_event_detect(button_pin, GPIO.FALLING, callback=button_released, bouncetime=200)
+
+def button_released(channel):
+    global end_time
+    global start_time
+    print("Button Released")
+    # Note end time
+    end_time = time.time()
+    # Calculate the time difference
+    time_diff = end_time - start_time
+    print("Time Difference: " + str(time_diff))
+    # If the time is between 0 and 3 then print reboot
+    if time_diff > 0 and time_diff < 3:
+        print("Rebooting")
+    # If the time is between 4 and 10 then print shutdown
+    elif time_diff > 4 and time_diff < 10:
+        print("Shutting Down")
+    GPIO.remove_event_detect(button_pin)
+    GPIO.add_event_detect(button_pin, GPIO.RISING, callback=button_pressed, bouncetime=200)
+
+# Set the initial event detection for the button press
+GPIO.add_event_detect(button_pin, GPIO.RISING, callback=button_pressed, bouncetime=200)
+
+# Wait for the button press and release
 try:
-    print("Powerbutton")
-    setup()
-    start_time = 0
-    status = False
     while True:
-        try:
-            if GPIO.input(power) == 0 and status == False:
-                start_time = time()
-                status = True
-            if GPIO.input(power) == 1:
-                status = False
-            if status == True:
-                if(time()-start_time)>6:
-                    print('SUDO POWEROFF')
-                    sleep(1)
-                    call("sudo poweroff", shell=True)
-        except Exception as e:
-            print(e)
-except Exception as e:
-    print(e)
-    GPIO.cleanup()
+        pass
+except KeyboardInterrupt:
+    print("Exiting Program")
+
+# Clean up the GPIO setup
+GPIO.cleanup()
