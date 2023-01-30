@@ -16,8 +16,6 @@ def demo_callback(pin):
     sleep(1)
     call("sudo reboot", shell=True)
 
-
-
 try:
     print("Powerbutton")
     setup()

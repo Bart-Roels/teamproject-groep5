@@ -316,8 +316,6 @@ def handle_games():
             if (start_redvsblue_game):
                 if new_game_redvsblue and not pause:
                     print('new game')
-                    for i in range(0, 4):
-                        client.publish(str(i), "off")
                     list_leds = random_leds()
                     print(list_leds)
                     red_led = list_leds[0]
@@ -368,6 +366,7 @@ def handle_games():
         logger.error(e)
     finally:
         semaphore.release()
+
 
 # region memory
 
@@ -474,16 +473,24 @@ def analyse_pressed_buttons_redvsblue(number):
                 score_team_red += 1
                 print(f"score red: {score_team_red}")
                 client.publish("scoreRed", str(score_team_red))
+                # All of
+                for i in range(0, 4):
+                    client.publish(str(i), "off")
+                # New game
                 new_game_redvsblue = True
-
             elif number == blue_led:
                 print("blue wins")
                 global score_team_blue
                 score_team_blue += 1
                 print(f"score blue: {score_team_blue}")
                 client.publish("scoreBlue", str(score_team_blue))
+                # All of
+                for i in range(0, 4):
+                    client.publish(str(i), "off")
+                # New game
                 new_game_redvsblue = True
 
+            
         client.publish(
             "memorypoints", f"score red:{score_team_red} score blue:{score_team_blue}")
     except socket.error as e:
@@ -732,8 +739,9 @@ def get_logs():
 def get_game():
     # get current game
     global game
+    x = game
     # Return data
-    return jsonify({'game': game})
+    return jsonify({'game': x})
 
 #endregion
 
