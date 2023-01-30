@@ -1,58 +1,50 @@
 import time
 import RPi.GPIO as GPIO
-import os 
 
-# Set the GPIO numbering mode
 GPIO.setmode(GPIO.BCM)
 
-# Start time
-start_time = None 
-end_time = None
-
-# Set the input pin for the button
 button_pin = 6
 GPIO.setup(button_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.add_event_detect(button_pin, GPIO.RISING, bouncetime=200)
 
-# Define the functions to be called when the button is pressed or released
-def button_pressed(channel):
-    global start_time
-    print("Button Pressed")
-    # Note start time
-    start_time = time.time()
+def handle_button(channel):
+    # code to shutdown the pi
+    print("Shutting Down")
 
-    GPIO.remove_event_detect(button_pin)
-    GPIO.add_event_detect(button_pin, GPIO.FALLING, callback=button_released, bouncetime=200)
 
-def button_released(channel):
-    global end_time
-    global start_time
-    print("Button Released")
-    # Note end time
-    end_time = time.time()
-    # Calculate the time difference
-    time_diff = end_time - start_time
-    print("Time Difference: " + str(time_diff))
-    # If the time is between 0 and 3 then print reboot
-    if time_diff > 0 and time_diff < 5:
-        # Rebooot pi
-        print("Reboot")
-        # os.system("sudo reboot")
-    # If the time is between 4 and 10 then print shutdown
-    elif time_diff > 5:
-        print("Shutting Down")
-        # os.system("sudo poweroff")
-    GPIO.remove_event_detect(button_pin)
-    GPIO.add_event_detect(button_pin, GPIO.RISING, callback=button_pressed, bouncetime=200)
+# import time
+# import RPi.GPIO as GPIO
 
-# Set the initial event detection for the button press
-GPIO.add_event_detect(button_pin, GPIO.RISING, callback=button_pressed, bouncetime=200)
+# GPIO.setmode(GPIO.BCM)
 
-# Wait for the button press and release
-try:
-    while True:
-        pass
-except KeyboardInterrupt:
-    print("Exiting Program")
+# button_pin = 6
+# GPIO.setup(button_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-# Clean up the GPIO setup
-GPIO.cleanup()
+# def handle_button(channel):
+#     global start_time
+#     if GPIO.input(button_pin):
+#         print("Button Released")
+#         end_time = time.time()
+#         time_diff = end_time - start_time
+#         print("Time Difference: ", time_diff)
+#         if 0 < time_diff < 3:
+#             print("Reboot")
+#         elif time_diff >= 3:
+#             print("Shutting Down")
+#         GPIO.remove_event_detect(button_pin)
+#         GPIO.add_event_detect(button_pin, GPIO.RISING, callback=handle_button, bouncetime=200)
+#     else:
+#         print("Button Pressed")
+#         start_time = time.time()
+#         GPIO.remove_event_detect(button_pin)
+#         GPIO.add_event_detect(button_pin, GPIO.FALLING, callback=handle_button, bouncetime=200)
+
+# GPIO.add_event_detect(button_pin, GPIO.RISING, callback=handle_button, bouncetime=200)
+
+# try:
+#     while True:
+#         pass
+# except KeyboardInterrupt:
+#     print("Exiting Program")
+
+# GPIO.cleanup()
