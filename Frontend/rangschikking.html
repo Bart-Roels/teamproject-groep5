@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ranking | Interactieve paaltjes</title>
+    <meta name="description" content="Speel onze interactieve paaltjes" />
+
+    <link rel="icon" href="img/logos/favicon.svg" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+    <link rel="manifest" href="manifest.json" />
+
+    <link rel="stylesheet" href="css/normalize.css" />
+    <link rel="stylesheet" href="css/screen.css" />
+
+    <script src="vendor/mqtt.js"></script>
+    <script src="script/datahandler.js"></script>
+    <script src="script/app.js"></script>
+  </head>
+  <body class="js-ranking-page">
+    <main>
+      <!-- header -->
+      <header class="o-row u-p-clear">
+        <div class="o-container">
+          <div class="c-header u-mb-clear">
+            <h1 class="c-header__title">Rangschikking</h1>
+          </div>
+        </div>
+      </header>
+      <section class="o-row o-row--tags">
+        <div class="o-container">
+          <div class="c-tags">
+            <ul class="o-list c-tags__list">
+              <li class="c-tag"><input class="o-hide-accessible js-game-btn" type="radio" name="game" id="memorygame" checked /><label for="memorygame">Memory Game</label></li>
+              <li class="c-tag"><input class="o-hide-accessible js-game-btn" type="radio" name="game" id="bluevsred" /><label for="bluevsred">Red vs Blue</label></li>
+              <li class="c-tag"><input class="o-hide-accessible js-game-btn" type="radio" name="game" id="zengame" /><label for="zengame">Zen Game</label></li>
+              <li class="c-tag"><input class="o-hide-accessible js-game-btn" type="radio" name="game" id="minesweeper" /><label for="minesweeper">Mine Sweeper</label></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+      <section class="o-row">
+        <div class="o-container">
+          <div class="c-ranking">
+            <div class="js-dropdown">
+              <div class="c-custom-select">
+                <select class="c-input c-custom-select__input" name="select1" id="select1">
+                  <option value="3">3 min</option>
+                  <option value="5">5 min</option>
+                  <option value="10">10 min</option>
+                </select>
+                <svg class="c-custom-select__symbol" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M36 18L24 30L12 18" stroke="#333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </div>
+            </div>
+            <div class="c-ranking__body">
+              <ul class="o-list c-ranking__items js-rangschikking">
+                <li class="c-ranking__item c-ranking__item--first">
+                  <span><img src="img/icons/first_place.svg" alt="eerste plaat badge" /></span><span>Lei</span><span class="c-ranking__score">1420p</span>
+                </li>
+                <li class="c-ranking__item c-ranking__item--second">
+                  <span><img src="img/icons/second_place.svg" alt="eerste plaat badge" /></span><span>Bard</span><span class="c-ranking__score">1133p</span>
+                </li>
+                <li class="c-ranking__item c-ranking__item--third">
+                  <span><img src="img/icons/thrid_place.svg" alt="eerste plaat badge" /></span><span>Ruben</span><span class="c-ranking__score">1000p</span>
+                </li>
+                <li class="c-ranking__item"><span>4</span><span>Boy33</span><span class="c-ranking__score">900p</span></li>
+                <li class="c-ranking__item"><span>5</span><span>DCDF</span><span class="c-ranking__score">843p</span></li>
+                <li class="c-ranking__item"><span>6</span><span>Jens</span><span class="c-ranking__score">732p</span></li>
+                <li class="c-ranking__item"><span>7</span><span>Arnoux</span><span class="c-ranking__score">632p</span></li>
+                <li class="c-ranking__item"><span>8</span><span>Arnuad</span><span class="c-ranking__score">532p</span></li>
+                <li class="c-ranking__item"><span>9</span><span>Kobe</span><span class="c-ranking__score">242p</span></li>
+                <li class="c-ranking__item"><span>10</span><span>Bjarne</span><span class="c-ranking__score">132p</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- navigation bar -->
+      <section class="o-row o-row-tabbar">
+        <div class="o-container">
+          <nav class="c-tabbar">
+            <ul class="o-list c-tabbar__items">
+              <li class="c-tabbar__item">
+                <button class="c-tabbar__btn o-button-reset js-tabs" data-page="home">
+                  <div class="c-tabbar__symbol">
+                    <svg class="c-tabbar__icon" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <rect x="4" y="13" width="40" height="28" rx="14" fill="none" stroke="#333" stroke-width="3" stroke-linejoin="round" />
+                      <circle cx="31" cy="22" r="2" fill="#333" />
+                      <circle cx="35" cy="27" r="2" fill="#333" />
+                      <path d="M12 27H22M12 27H22" stroke="#333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                      <path d="M24 7V13M24 7V13" stroke="#333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                      <path d="M17 22V32" stroke="#333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </div>
+                </button>
+                <!-- <p class="c-tabbar__text">Home</p> -->
+              </li>
+              <li class="c-tabbar__item">
+                <button class="c-tabbar__btn o-button-reset is-active js-tabs" data-page="rangschikking">
+                  <div class="c-tabbar__symbol">
+                    <svg class="c-tabbar__icon" width="24" height="24" viewBox="0 0 48 48" fill="none" stroke="black">
+                      <path d="M17 18H4V42H17V18Z" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                      <path d="M30 6H17V42H30V6Z" stroke-width="3" stroke-linejoin="round" />
+                      <path d="M43 26H30V42H43V26Z" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </div>
+                </button>
+                <p class="c-tabbar__text">Rangschikking</p>
+              </li>
+              <li class="c-tabbar__item">
+                <button class="c-tabbar__btn o-button-reset js-tabs" data-page="overons">
+                  <div class="c-tabbar__symbol">
+                    <svg class="c-tabbar__icon" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M24 44C29.5228 44 34.5228 41.7614 38.1421 38.1421C41.7614 34.5228 44 29.5228 44 24C44 18.4772 41.7614 13.4772 38.1421 9.85786C34.5228 6.23858 29.5228 4 24 4C18.4772 4 13.4772 6.23858 9.85786 9.85786C6.23858 13.4772 4 18.4772 4 24C4 29.5228 6.23858 34.5228 9.85786 38.1421C13.4772 41.7614 18.4772 44 24 44Z"
+                        fill="none"
+                        stroke="#333"
+                        stroke-width="3"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        class="fill-point"
+                        fill-rule="evenodd"
+                        stroke-width="0"
+                        clip-rule="evenodd"
+                        d="M24 11C25.3807 11 26.5 12.1193 26.5 13.5C26.5 14.8807 25.3807 16 24 16C22.6193 16 21.5 14.8807 21.5 13.5C21.5 12.1193 22.6193 11 24 11Z"
+                        fill="#333"
+                      />
+                      <path d="M24.5 34V20H23.5H22.5" stroke="#333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                      <path d="M21 34H28" stroke="#333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </div>
+                </button>
+                <!-- <p class="c-tabbar__text">Over ons</p> -->
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

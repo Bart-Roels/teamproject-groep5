@@ -1,0 +1,17 @@
+### POST
+POST http://127.0.0.1:5000/api/v1/score HTTP/1.1 
+Content-Type: application/json
+
+
+{
+	"name": "blauworanje geelgeelgeel",
+	"score": "50000000",
+    "game": "memory",
+	"time": 3
+}
+
+
+
+### GET
+GET http://127.0.0.1:5000/api/v1/score/memory/3/null HTTP/1.1
+Content-Type: application/json

@@ -12,4 +12,5 @@ pyparsing==3.0.7
 six==1.16.0
 Werkzeug==2.0.3
 pymongo==4.3.3
+RPi.GPIO==0.7.1
 

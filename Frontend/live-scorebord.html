@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Live scorebord | Interactieve paaltjes</title>
+    <meta name="description" content="Speel onze interactieve paaltjes" />
+
+    <link rel="icon" href="img/logos/favicon.svg" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+    <link rel="manifest" href="manifest.json" />
+
+    <link rel="stylesheet" href="css/normalize.css" />
+    <link rel="stylesheet" href="css/screen.css" />
+
+    <script src="vendor/mqtt.js"></script>
+    <script src="script/datahandler.js"></script>
+    <script src="script/app.js"></script>
+  </head>
+  <body class="js-live-page">
+    <!-- <section class="c-live">
+      <h1 class="c-live__start js-start-text">START</h1>
+      <div class="c-live__game">
+        <svg class="c-icon" width="75" height="75" viewBox="0 0 75 75">
+          <g transform="translate(-254.5 -305.5)">
+            <g transform="translate(256 307)">
+              <path d="M36,0h0a0,0,0,0,1,0,0V36a0,0,0,0,1,0,0H0a0,0,0,0,1,0,0v0A36,36,0,0,1,36,0Z" fill="#f33" stroke="#919799" stroke-width="3" />
+              <path d="M0,0H0A36,36,0,0,1,36,36v0a0,0,0,0,1,0,0H0a0,0,0,0,1,0,0V0A0,0,0,0,1,0,0Z" transform="translate(36)" fill="#44c8f5" stroke="#919799" stroke-width="3" />
+              <path d="M0,0H36a0,0,0,0,1,0,0V36a0,0,0,0,1,0,0h0A36,36,0,0,1,0,0V0A0,0,0,0,1,0,0Z" transform="translate(0 36)" fill="#e5ea49" stroke="#919799" stroke-width="3" />
+              <path d="M0,0H36a0,0,0,0,1,0,0V0A36,36,0,0,1,0,36H0a0,0,0,0,1,0,0V0A0,0,0,0,1,0,0Z" transform="translate(36 36)" fill="#5ed540" stroke="#919799" stroke-width="3" />
+            </g>
+          </g>
+        </svg>
+        <h2 class="c-live__name">MEMORY GAME</h2>
+      </div>
+
+      <div class="c-live__timer">
+        <div class="c-timer">
+          <p class="c-timer__time js-time">00:00</p>
+        </div>
+      </div>
+      <div class="">
+        <p class="c-live__score js-score">0</p>
+      </div>
+      <div class="c-live__controls">
+        <div class="c-controls">
+          <button class="c-controls__button o-button-reset js-pause-btn">
+            <svg class="c-pause" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M16 12V36" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M32 12V36" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+          <button class="c-controls__button o-button-reset js-stop-btn">
+            <svg class="c-stop" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M14 14L34 34" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M14 34L34 14" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section> -->
+    <section class="c-live">
+      <h1 class="c-live__start c-live__start--bluevsred js-start-text">START</h1>
+      <div class="c-live--red">
+        <p class="c-live__score c-live__score--bluevsred js-score-red">0</p>
+      </div>
+      <div class="c-live--blue">
+        <p class="c-live__score c-live__score--bluevsred js-score-blue">0</p>
+      </div>
+      <div class="c-live__timer c-live__timer--bluevsred">
+        <div class="c-timer">
+          <p class="c-timer__time js-time">00:00</p>
+        </div>
+      </div>
+      <div class="c-live__controls">
+        <div class="c-controls">
+          <button class="c-controls__button o-button-reset js-pause-btn">
+            <svg class="c-pause" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M16 12V36" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M32 12V36" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+          <button class="c-controls__button o-button-reset js-stop-btn">
+            <svg class="c-stop" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M14 14L34 34" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M14 34L34 14" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>
