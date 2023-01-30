@@ -1,5 +1,6 @@
 import time
 import RPi.GPIO as GPIO
+import os 
 
 # Set the GPIO numbering mode
 GPIO.setmode(GPIO.BCM)
@@ -32,11 +33,14 @@ def button_released(channel):
     time_diff = end_time - start_time
     print("Time Difference: " + str(time_diff))
     # If the time is between 0 and 3 then print reboot
-    if time_diff > 0 and time_diff < 3:
-        print("Rebooting")
+    if time_diff > 0 and time_diff < 5:
+        # Rebooot pi
+        print("Reboot")
+        # os.system("sudo reboot")
     # If the time is between 4 and 10 then print shutdown
-    elif time_diff > 4 and time_diff < 10:
+    elif time_diff > 5:
         print("Shutting Down")
+        # os.system("sudo poweroff")
     GPIO.remove_event_detect(button_pin)
     GPIO.add_event_detect(button_pin, GPIO.RISING, callback=button_pressed, bouncetime=200)
 
