@@ -287,8 +287,8 @@ def handle_games():
     try:
         # Global variables memory
         global start_memory_var, sequence_number, new_game, haswon, haslost
-        won = [2, 2, 2, 2]
-        lose = [0, 0, 0, 0]
+        won = [5, 5, 5, 5]
+        lose = [6, 6, 6, 6]
 
         # Global variables redblue
         global red_led, blue_led, start_redvsblue_game, new_game_redvsblue, list_leds
@@ -314,7 +314,7 @@ def handle_games():
                         # Start new sequence
                         new_game = True
                     elif (haslost == True):
-                        send_sequence(lose, False)
+                        send_sequence(lose)
                         # Replay sequence
                         send_sequence(sequence, True)
                         haslost = False
@@ -595,6 +595,8 @@ def sequence_off():
     try:
         busy_minesweeper = True
         print('sequence off')
+        for i in range(4):
+            client.publish(str(i),'5')
         time.sleep(1)
         for i in range(4):
             client.publish(str(i), "off")
@@ -609,7 +611,7 @@ def sequence_mistake():
         busy_minesweeper = True
         print('mistake')
         for i in range(4):
-            client.publish(str(i), "0")
+            client.publish(str(i), "6")
         time.sleep(1)
         for i in range(4):
             client.publish(str(i), "off")
