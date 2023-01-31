@@ -9,6 +9,9 @@ from tinydb import TinyDB, Query
 import uuid
 import socket
 import logging
+import RPi.GPIO as GPIO
+import os
+
 
 # region SETUP
 
@@ -755,6 +758,16 @@ def subscribeing():
     client.on_message = on_message
     client.loop_forever()
 
+def shutdown(channel):
+    print('shutdown')
+    os.system("sudo poweroff")
+
+button_pin = 6
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(button_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.add_event_detect(button_pin, GPIO.FALLING, callback=shutdown, bouncetime=2000)
+
+
 
 def start_threads():
     # Start subscribeing thread
@@ -763,6 +776,7 @@ def start_threads():
     # Start memory thread
     games = threading.Thread(target=handle_games)
     games.start()
+
 
 # endregion
 
