@@ -1,5 +1,6 @@
 import time
 import RPi.GPIO as GPIO
+import os
 
 GPIO.setmode(GPIO.BCM)
 
@@ -10,6 +11,7 @@ GPIO.add_event_detect(button_pin, GPIO.RISING, bouncetime=200)
 def handle_button(channel):
     # code to shutdown the pi
     print("Shutting Down")
+    os.system("sudo poweroff")
 
 
 # import time
