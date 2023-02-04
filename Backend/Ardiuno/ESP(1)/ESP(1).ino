@@ -3,12 +3,17 @@ const int ledaantal = 12;
 int btn1Pin = 18;
 float bat = 34;
 
+const float BATTERY_FULL_VOLTAGE = 4.2;
+const float BATTERY_EMPTY_VOLTAGE = 3.3;
+
 //states
 bool btn1State;
 bool prevstate;
 
 //merkers
 bool a = false;
+bool b = false;
+bool c = false;
 float o;
 
 //library
@@ -62,9 +67,13 @@ int yellow = CRGB::Yellow;
 int blue = CRGB::Blue;
 int red = CRGB::Red;
 int green = CRGB::Green;
+int orange = CRGB::DarkOrange;
+int donkerblauw = CRGB::DarkBlue;
+
 
 //colors
-int kleuren[5] = { red, yellow, green, blue, black };
+int kleuren[7] = { red, yellow, green, blue, black, orange, donkerblauw };
+
 
 void setup_wifi() {
   delay(10);
@@ -148,6 +157,14 @@ void callback(char* topic, byte* message, unsigned int length) {
       delay(100);
       Serial.println("on");
     }
+    if (messageTemp == "5") {
+      b = true;
+      client.publish("1", "Message recieved at ESP32(1)");
+    }
+    if (messageTemp == "6") {
+      c = true;
+      client.publish("1", "Message recieved at ESP32(1)");
+    }
     if (messageTemp == "RGB") {
       // showke();
       client.publish("1", "Message recieved at ESP32(1)");
@@ -159,7 +176,10 @@ void callback(char* topic, byte* message, unsigned int length) {
       client.publish("2", "fade");
     }
     if (messageTemp == "bat1") {
-      measure_bat();
+      // measure_bat();
+      int batery = getBatteryPercentage();
+      publishVoltage(batery);
+
     } else if (messageTemp == "off") {
       for (int i = 0; i < ledaantal; i++) {
         leds[i] = kleuren[4];
@@ -167,6 +187,8 @@ void callback(char* topic, byte* message, unsigned int length) {
       FastLED.show();
       delay(100);
       a = false;
+      b = false;
+      c = false;
       Serial.println("off");
     }
   }
@@ -209,6 +231,7 @@ void reconnect() {
 }
 
 void loop() {
+
   if (WiFi.status() != WL_CONNECTED) {
     setup_wifi();
   }
@@ -222,10 +245,34 @@ void loop() {
       if (a == true) {
         rainbowCycle(1);
       }
+      if (b == true) {
+        win_green();
+      }
+      if (c == true) {
+        lose_rood();
+      }
     }
   }
 }
 
+
+void win_green() {
+  for (int i = 0; i < ledaantal; i++) {
+    leds[i] = CRGB::Green;
+    leds[(i + ledaantal / 2) % ledaantal] = CRGB::Black;
+    FastLED.show();
+    delay(20);
+  }
+}
+
+void lose_rood() {
+  for (int i = 0; i < ledaantal; i++) {
+    leds[i] = CRGB::Red;
+    leds[(i + ledaantal / 2) % ledaantal] = CRGB::Black;
+    FastLED.show();
+    delay(20);
+  }
+}
 
 void btnpress() {
   btn1State = digitalRead(btn1Pin);
@@ -240,11 +287,20 @@ void btnpress() {
   prevstate = btn1State;
 }
 
-void measure_bat() {
-  float reading = analogRead(bat);
-  float voltage = ((reading / 4095.0) * 3.3) * 2;
-  float percentage = (4095 - voltage) / 4095 * (100);
-  publishVoltage(percentage);
+
+
+float readBatteryVoltage() {
+  float rawValue = analogRead(bat);
+  float voltage = rawValue / 4095.0 * 3.3 * 2.0 * 1.0;
+  return voltage;
+}
+
+float getBatteryPercentage() {
+  float voltage = readBatteryVoltage();
+  Serial.println(voltage);
+  if (voltage >= BATTERY_FULL_VOLTAGE) return 100;
+  if (voltage <= BATTERY_EMPTY_VOLTAGE) return 0;
+  return (voltage - BATTERY_EMPTY_VOLTAGE) / (BATTERY_FULL_VOLTAGE - BATTERY_EMPTY_VOLTAGE) * 100;
 }
 
 void connectblink() {
@@ -357,7 +413,7 @@ void fadeAnimation(int red, int green, int blue) {
     delay(2);
   }
 }
-void publishVoltage(float voltage) {
+void publishVoltage(int voltage) {
   String message = String(voltage);
   client.publish("bat1", message.c_str());
   // Serial.println(message);
